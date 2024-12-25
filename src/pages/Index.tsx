@@ -67,7 +67,7 @@ const Index = () => {
       
       {/* Hero Section with Slideshow */}
       <section className="relative">
-        <Carousel className="w-full" opts={{ loop: true }}>
+        <Carousel className="w-full" opts={{ loop: true, duration: 5000, align: "start", autoplay: true }}>
           <CarouselContent>
             {HERO_SLIDES.map((slide) => (
               <CarouselItem key={slide.id}>
