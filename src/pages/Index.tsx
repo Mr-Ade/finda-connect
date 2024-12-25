@@ -8,6 +8,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { useEffect } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 
 const FEATURED_BUSINESSES = [
   {
@@ -61,13 +63,25 @@ const HERO_SLIDES = [
 ];
 
 const Index = () => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+
+  useEffect(() => {
+    if (emblaApi) {
+      const interval = setInterval(() => {
+        emblaApi.scrollNext();
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }
+  }, [emblaApi]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
       {/* Hero Section with Slideshow */}
       <section className="relative">
-        <Carousel className="w-full" opts={{ loop: true, duration: 5000, align: "start", autoplay: true }}>
+        <Carousel className="w-full" opts={{ loop: true, align: "start" }}>
           <CarouselContent>
             {HERO_SLIDES.map((slide) => (
               <CarouselItem key={slide.id}>
