@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/carousel";
 import { useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
+import { Building2, Utensils, Scissors, Wrench, ShoppingBag, Laptop, Stethoscope, Brush } from "lucide-react";
 
 const FEATURED_BUSINESSES = [
   {
@@ -62,6 +63,17 @@ const HERO_SLIDES = [
   },
 ];
 
+const CATEGORIES = [
+  { name: "Real Estate", icon: Building2, count: 48 },
+  { name: "Restaurants", icon: Utensils, count: 92 },
+  { name: "Beauty & Spa", icon: Scissors, count: 54 },
+  { name: "Home Services", icon: Wrench, count: 76 },
+  { name: "Shopping", icon: ShoppingBag, count: 89 },
+  { name: "Technology", icon: Laptop, count: 42 },
+  { name: "Healthcare", icon: Stethoscope, count: 36 },
+  { name: "Art & Design", icon: Brush, count: 28 },
+];
+
 const Index = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
 
@@ -112,10 +124,44 @@ const Index = () => {
         </Carousel>
       </section>
 
-      {/* Featured Businesses */}
+      {/* Popular Categories */}
       <section className="py-16 px-4 bg-white">
         <div className="container mx-auto">
-          <h2 className="text-3xl font-bold mb-8">Featured Businesses</h2>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Popular Categories</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Explore some of the most searched categories across our platform
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {CATEGORIES.map((category) => {
+              const Icon = category.icon;
+              return (
+                <div
+                  key={category.name}
+                  className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-all p-6 text-center cursor-pointer border border-gray-100 hover:border-primary hover:-translate-y-1"
+                >
+                  <div className="inline-flex items-center justify-center w-16 h-16 mb-4 bg-primary/10 rounded-lg group-hover:bg-primary group-hover:text-white text-primary transition-colors">
+                    <Icon size={32} />
+                  </div>
+                  <h3 className="font-semibold mb-2">{category.name}</h3>
+                  <p className="text-sm text-gray-500">{category.count} Listings</p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Businesses */}
+      <section className="py-16 px-4 bg-gray-50">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Featured Businesses</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Discover top-rated local businesses and services in your area
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {FEATURED_BUSINESSES.map((business) => (
               <BusinessCard key={business.id} {...business} />
@@ -124,21 +170,17 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section className="py-16 px-4">
+      {/* Book Your Space */}
+      <section className="py-16 px-4 bg-primary text-white">
         <div className="container mx-auto">
-          <h2 className="text-3xl font-bold mb-8">Popular Categories</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {["Restaurants", "Shopping", "Beauty & Spa", "Home Services"].map(
-              (category) => (
-                <div
-                  key={category}
-                  className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center cursor-pointer"
-                >
-                  <h3 className="font-semibold">{category}</h3>
-                </div>
-              )
-            )}
+          <div className="text-center">
+            <h2 className="text-3xl font-bold mb-4">Ready to List Your Business?</h2>
+            <p className="text-white/90 max-w-2xl mx-auto mb-8">
+              Join thousands of businesses that trust us to connect them with customers
+            </p>
+            <button className="bg-white text-primary px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              List Your Business
+            </button>
           </div>
         </div>
       </section>
