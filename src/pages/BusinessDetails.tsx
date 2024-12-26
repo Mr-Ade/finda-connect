@@ -27,7 +27,7 @@ export default function BusinessDetails() {
               avatar_url
             )
           ),
-          checkins (count),
+          checkins:checkins(count),
           owner:profiles (
             username,
             avatar_url
@@ -37,6 +37,7 @@ export default function BusinessDetails() {
         .single();
 
       if (error) {
+        console.error("Business fetch error:", error);
         toast({
           variant: "destructive",
           title: "Error",
@@ -45,7 +46,10 @@ export default function BusinessDetails() {
         throw error;
       }
 
-      return data;
+      return {
+        ...data,
+        checkins_count: data.checkins?.[0]?.count || 0
+      };
     },
   });
 
@@ -73,7 +77,7 @@ export default function BusinessDetails() {
                 <BookmarkButton businessId={business.id} />
               </div>
               <div className="text-sm text-gray-600">
-                <p>{business.checkins?.count || 0} check-ins</p>
+                <p>{business.checkins_count} check-ins</p>
               </div>
             </div>
           </div>

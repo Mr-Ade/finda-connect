@@ -31,15 +31,29 @@ export const ReviewSection = ({ businessId, reviews }: ReviewSectionProps) => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please login to submit a review",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     const { error } = await supabase
       .from("reviews")
       .insert({
         business_id: businessId,
         rating,
         comment,
+        user_id: user.id
       });
 
     if (error) {
+      console.error("Review submission error:", error);
       toast({
         variant: "destructive",
         title: "Error",

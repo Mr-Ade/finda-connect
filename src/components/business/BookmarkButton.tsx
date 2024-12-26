@@ -16,14 +16,28 @@ export const BookmarkButton = ({ businessId }: BookmarkButtonProps) => {
 
   const handleBookmark = async () => {
     setIsBookmarking(true);
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please login to bookmark businesses",
+      });
+      setIsBookmarking(false);
+      return;
+    }
 
     const { error } = await supabase
       .from("bookmarks")
       .insert({
         business_id: businessId,
+        user_id: user.id
       });
 
     if (error) {
+      console.error("Bookmark error:", error);
       toast({
         variant: "destructive",
         title: "Error",

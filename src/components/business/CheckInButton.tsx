@@ -16,14 +16,28 @@ export const CheckInButton = ({ businessId }: CheckInButtonProps) => {
 
   const handleCheckIn = async () => {
     setIsChecking(true);
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please login to check in",
+      });
+      setIsChecking(false);
+      return;
+    }
 
     const { error } = await supabase
       .from("checkins")
       .insert({
         business_id: businessId,
+        user_id: user.id
       });
 
     if (error) {
+      console.error("Check-in error:", error);
       toast({
         variant: "destructive",
         title: "Error",
