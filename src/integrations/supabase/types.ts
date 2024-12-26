@@ -9,6 +9,137 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bookmarks: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookmarks_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookmarks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      businesses: {
+        Row: {
+          address: string
+          category: string
+          city: string
+          created_at: string
+          description: string | null
+          email: string | null
+          id: string
+          name: string
+          owner_id: string | null
+          phone: string | null
+          state: string
+          updated_at: string
+          website: string | null
+          zip_code: string
+        }
+        Insert: {
+          address: string
+          category: string
+          city: string
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          owner_id?: string | null
+          phone?: string | null
+          state: string
+          updated_at?: string
+          website?: string | null
+          zip_code: string
+        }
+        Update: {
+          address?: string
+          category?: string
+          city?: string
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          owner_id?: string | null
+          phone?: string | null
+          state?: string
+          updated_at?: string
+          website?: string | null
+          zip_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "businesses_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checkins: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checkins_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkins_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -38,6 +169,51 @@ export type Database = {
           username?: string | null
         }
         Relationships: []
+      }
+      reviews: {
+        Row: {
+          business_id: string
+          comment: string
+          created_at: string
+          id: string
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          comment: string
+          created_at?: string
+          id?: string
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          comment?: string
+          created_at?: string
+          id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
