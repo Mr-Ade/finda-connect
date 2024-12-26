@@ -9,6 +9,9 @@ import { BookmarkButton } from "@/components/business/BookmarkButton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 
+// UUID validation regex
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 export default function BusinessDetails() {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
@@ -18,6 +21,12 @@ export default function BusinessDetails() {
     queryFn: async () => {
       if (!id) {
         throw new Error("Business ID is required");
+      }
+
+      // Validate UUID format
+      if (!UUID_REGEX.test(id)) {
+        console.error("Invalid UUID format:", id);
+        throw new Error("Invalid business ID format");
       }
 
       console.log("Fetching business with ID:", id);
@@ -75,7 +84,10 @@ export default function BusinessDetails() {
         <main className="container mx-auto px-4 py-8 mt-16">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900">Business not found</h1>
-            <p className="mt-2 text-gray-600">The business you're looking for doesn't exist or has been removed.</p>
+            <p className="mt-2 text-gray-600">
+              The business you're looking for doesn't exist or has been removed.
+              This could be because the ID format is invalid or the business no longer exists.
+            </p>
           </div>
         </main>
       </div>
