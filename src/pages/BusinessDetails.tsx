@@ -10,12 +10,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 
 export default function BusinessDetails() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
 
   const { data: business, isLoading } = useQuery({
     queryKey: ["business", id],
     queryFn: async () => {
+      if (!id) {
+        throw new Error("Business ID is required");
+      }
+
+      console.log("Fetching business with ID:", id);
+      
       const { data, error } = await supabase
         .from("businesses")
         .select(`
@@ -51,6 +57,7 @@ export default function BusinessDetails() {
         checkins_count: data.checkins?.[0]?.count || 0
       };
     },
+    enabled: !!id,
   });
 
   if (isLoading) {
