@@ -40,7 +40,7 @@ export default function BusinessDetails() {
           )
         `)
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("Business fetch error:", error);
@@ -50,6 +50,10 @@ export default function BusinessDetails() {
           description: "Failed to load business details",
         });
         throw error;
+      }
+
+      if (!data) {
+        throw new Error("Business not found");
       }
 
       return {
@@ -65,7 +69,17 @@ export default function BusinessDetails() {
   }
 
   if (!business) {
-    return <div>Business not found</div>;
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <main className="container mx-auto px-4 py-8 mt-16">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900">Business not found</h1>
+            <p className="mt-2 text-gray-600">The business you're looking for doesn't exist or has been removed.</p>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   return (
