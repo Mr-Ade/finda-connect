@@ -1,12 +1,13 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -14,16 +15,16 @@ const Login = () => {
       async (event, session) => {
         console.log("Auth state changed:", event);
         if (event === "SIGNED_IN") {
-          console.log("User signed in, redirecting to home");
-          navigate("/");
+          console.log("User signed in, redirecting");
+          // Get the return URL from state or default to home
+          const returnUrl = location.state?.returnUrl || "/";
+          navigate(returnUrl);
         } else if (event === "SIGNED_OUT") {
           console.log("User signed out");
-          navigate("/login");
         }
       }
     );
 
-    // Listen for auth errors
     const handleAuthError = (error: any) => {
       console.error("Auth error:", error);
       if (error.message.includes("weak_password")) {
@@ -41,7 +42,7 @@ const Login = () => {
       authListener.subscription.unsubscribe();
       window.removeEventListener("supabase.auth.error", handleAuthError);
     };
-  }, [navigate, toast]);
+  }, [navigate, location.state?.returnUrl, toast]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">

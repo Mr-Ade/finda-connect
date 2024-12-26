@@ -1,6 +1,29 @@
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export const ListingCTA = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleListBusiness = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to list your business",
+        variant: "default",
+      });
+      navigate("/login");
+      return;
+    }
+
+    // TODO: Navigate to business creation page once implemented
+    navigate("/create-business");
+  };
+
   return (
     <section className="py-16 px-4 bg-primary text-white">
       <div className="container mx-auto">
@@ -12,6 +35,7 @@ export const ListingCTA = () => {
           <Button
             className="bg-white text-primary hover:bg-gray-100"
             size="lg"
+            onClick={handleListBusiness}
           >
             List Your Business
           </Button>
