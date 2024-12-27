@@ -1,4 +1,4 @@
-import { Building2, Utensils, Scissors, Wrench, ShoppingBag, Laptop, Stethoscope, Brush, Ball, Car, Dumbbell, Hotel } from "lucide-react";
+import { Building2, Utensils, Scissors, Wrench, ShoppingBag, Laptop, Stethoscope, Brush, Trophy, Car, Dumbbell, Hotel } from "lucide-react";
 
 const CATEGORIES = [
   { name: "Real Estate", icon: Building2, count: 48 },
@@ -9,7 +9,7 @@ const CATEGORIES = [
   { name: "Technology", icon: Laptop, count: 42 },
   { name: "Healthcare", icon: Stethoscope, count: 36 },
   { name: "Art & Design", icon: Brush, count: 28 },
-  { name: "Sports", icon: Ball, count: 65 },
+  { name: "Sports", icon: Trophy, count: 65 },
   { name: "Automotive", icon: Car, count: 43 },
   { name: "Fitness", icon: Dumbbell, count: 51 },
   { name: "Hotels", icon: Hotel, count: 37 }
