@@ -1,4 +1,4 @@
-import { Building2, Utensils, Scissors, Wrench, ShoppingBag, Laptop, Stethoscope, Brush } from "lucide-react";
+import { Building2, Utensils, Scissors, Wrench, ShoppingBag, Laptop, Stethoscope, Brush, Ball, Car, Dumbbell, Hotel } from "lucide-react";
 
 const CATEGORIES = [
   { name: "Real Estate", icon: Building2, count: 48 },
@@ -9,6 +9,10 @@ const CATEGORIES = [
   { name: "Technology", icon: Laptop, count: 42 },
   { name: "Healthcare", icon: Stethoscope, count: 36 },
   { name: "Art & Design", icon: Brush, count: 28 },
+  { name: "Sports", icon: Ball, count: 65 },
+  { name: "Automotive", icon: Car, count: 43 },
+  { name: "Fitness", icon: Dumbbell, count: 51 },
+  { name: "Hotels", icon: Hotel, count: 37 }
 ];
 
 export const PopularCategories = () => {
@@ -21,7 +25,7 @@ export const PopularCategories = () => {
             Explore some of the most searched categories across our platform
           </p>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           {CATEGORIES.map((category) => {
             const Icon = category.icon;
             return (
