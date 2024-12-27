@@ -6,28 +6,28 @@ const REVIEWS = [
     id: 1,
     name: "Mark Jevenue",
     role: "CEO of Addle",
-    image: "/assets/img/t-1.png",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
     comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua veniam esse cillum."
   },
   {
     id: 2,
     name: "Henna Bajaj",
     role: "Aqua Founder",
-    image: "/assets/img/t-2.png",
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
     comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua veniam esse cillum."
   },
   {
     id: 3,
     name: "John Cenna",
     role: "CEO of Plike",
-    image: "/assets/img/t-3.png",
+    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
     comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua velit esse cillum."
   },
   {
     id: 4,
     name: "Madhu Sharma",
     role: "Team Manager",
-    image: "/assets/img/t-4.png",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
     comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut laboree voluptate velit esse cillum."
   }
 ];
@@ -55,7 +55,7 @@ export const CustomerReviews = () => {
               <CarouselItem key={review.id} className="md:basis-1/3">
                 <div className="p-6 text-center">
                   <Avatar className="w-20 h-20 mx-auto mb-4">
-                    <img src={review.image} alt={review.name} className="rounded-full" />
+                    <img src={review.image} alt={review.name} className="rounded-full w-full h-full object-cover" />
                   </Avatar>
                   <div className="mb-4">
                     <h4 className="font-medium text-lg">{review.name}</h4>

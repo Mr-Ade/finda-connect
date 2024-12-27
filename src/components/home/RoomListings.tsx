@@ -24,6 +24,72 @@ const ROOMS = [
     image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b",
     isFeatured: false,
     discount: 20
+  },
+  {
+    id: 3,
+    title: "5021 Luxury Suite",
+    price: 2200,
+    rating: 4.8,
+    reviews: 24,
+    distance: "0.8 km to Town Center",
+    image: "https://images.unsplash.com/photo-1590490360182-c33d57733427",
+    isFeatured: true,
+    discount: null
+  },
+  {
+    id: 4,
+    title: "2089 Cozy Studio",
+    price: 950,
+    rating: 4.3,
+    reviews: 18,
+    distance: "2.0 km to Town Center",
+    image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af",
+    isFeatured: false,
+    discount: 15
+  },
+  {
+    id: 5,
+    title: "6033 Executive Room",
+    price: 1650,
+    rating: 4.6,
+    reviews: 42,
+    distance: "1.2 km to Town Center",
+    image: "https://images.unsplash.com/photo-1566665797739-1674de7a421a",
+    isFeatured: true,
+    discount: null
+  },
+  {
+    id: 6,
+    title: "3077 Family Suite",
+    price: 1920,
+    rating: 4.5,
+    reviews: 29,
+    distance: "1.7 km to Town Center",
+    image: "https://images.unsplash.com/photo-1591088398332-8a7791972843",
+    isFeatured: false,
+    discount: null
+  },
+  {
+    id: 7,
+    title: "4099 Ocean View Room",
+    price: 2400,
+    rating: 4.9,
+    reviews: 56,
+    distance: "0.5 km to Town Center",
+    image: "https://images.unsplash.com/photo-1582719508461-905c673771fd",
+    isFeatured: true,
+    discount: null
+  },
+  {
+    id: 8,
+    title: "2045 Garden Suite",
+    price: 1750,
+    rating: 4.7,
+    reviews: 33,
+    distance: "1.3 km to Town Center",
+    image: "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa",
+    isFeatured: false,
+    discount: 10
   }
 ];
 

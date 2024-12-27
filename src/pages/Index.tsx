@@ -5,8 +5,9 @@ import { FeaturedBusinesses } from "@/components/home/FeaturedBusinesses";
 import { LocationSearch } from "@/components/home/LocationSearch";
 import { CustomerReviews } from "@/components/home/CustomerReviews";
 import { AppDownload } from "@/components/home/AppDownload";
-import { Footer } from "@/components/Footer";
+import { RoomListings } from "@/components/home/RoomListings";
 import { Newsletter } from "@/components/home/Newsletter";
+import { Footer } from "@/components/Footer";
 
 const Index = () => {
   return (
@@ -18,6 +19,7 @@ const Index = () => {
       <LocationSearch />
       <CustomerReviews />
       <AppDownload />
+      <RoomListings />
       <Newsletter />
       <Footer />
     </div>

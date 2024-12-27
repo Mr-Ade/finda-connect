@@ -72,79 +72,7 @@ const FEATURED_BUSINESSES = [
     rating: 4.6,
     reviewCount: 98,
     location: "Westside",
-  },
-  {
-    id: "9",
-    name: "Modern Art Gallery",
-    image: "https://images.unsplash.com/photo-1577720580479-7d839d829c73",
-    category: "Art",
-    rating: 4.7,
-    reviewCount: 87,
-    location: "Downtown",
-  },
-  {
-    id: "10",
-    name: "Vintage Bookstore",
-    image: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da",
-    category: "Books",
-    rating: 4.9,
-    reviewCount: 143,
-    location: "Eastside",
-  },
-  {
-    id: "11",
-    name: "The Music Studio",
-    image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04",
-    category: "Music",
-    rating: 4.8,
-    reviewCount: 76,
-    location: "Midtown",
-  },
-  {
-    id: "12",
-    name: "Pet Paradise",
-    image: "https://images.unsplash.com/photo-1587620962725-abab7fe55159",
-    category: "Pets",
-    rating: 4.7,
-    reviewCount: 192,
-    location: "Westside",
-  },
-  {
-    id: "13",
-    name: "Gourmet Market",
-    image: "https://images.unsplash.com/photo-1578916171728-46686eac8d58",
-    category: "Grocery",
-    rating: 4.6,
-    reviewCount: 167,
-    location: "Downtown",
-  },
-  {
-    id: "14",
-    name: "City Dental Care",
-    image: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5",
-    category: "Healthcare",
-    rating: 4.8,
-    reviewCount: 143,
-    location: "Midtown",
-  },
-  {
-    id: "15",
-    name: "Fashion Forward",
-    image: "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5",
-    category: "Fashion",
-    rating: 4.7,
-    reviewCount: 156,
-    location: "Downtown",
-  },
-  {
-    id: "16",
-    name: "Auto Care Plus",
-    image: "https://images.unsplash.com/photo-1562519819-016930ada31b",
-    category: "Automotive",
-    rating: 4.6,
-    reviewCount: 178,
-    location: "Eastside",
-  },
+  }
 ];
 
 export const FeaturedBusinesses = () => {
@@ -157,8 +85,8 @@ export const FeaturedBusinesses = () => {
             Discover top-rated local businesses and services in your area
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {FEATURED_BUSINESSES.map((business) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {FEATURED_BUSINESSES.slice(0, 8).map((business) => (
             <BusinessCard key={business.id} {...business} />
           ))}
         </div>
