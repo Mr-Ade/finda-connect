@@ -7,6 +7,8 @@ import { OffersSection } from "@/components/home/OffersSection";
 import { RecentListings } from "@/components/home/RecentListings";
 import { TopLocations } from "@/components/home/TopLocations";
 import { RoomListings } from "@/components/home/RoomListings";
+import { CustomerReviews } from "@/components/home/CustomerReviews";
+import { AppDownload } from "@/components/home/AppDownload";
 
 const Index = () => {
   return (
@@ -19,6 +21,8 @@ const Index = () => {
       <RoomListings />
       <FeaturedBusinesses />
       <PopularCategories />
+      <CustomerReviews />
+      <AppDownload />
       <ListingCTA />
     </div>
   );
