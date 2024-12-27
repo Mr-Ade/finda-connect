@@ -5,6 +5,8 @@ import { PopularCategories } from "@/components/home/PopularCategories";
 import { ListingCTA } from "@/components/home/ListingCTA";
 import { OffersSection } from "@/components/home/OffersSection";
 import { RecentListings } from "@/components/home/RecentListings";
+import { TopLocations } from "@/components/home/TopLocations";
+import { RoomListings } from "@/components/home/RoomListings";
 
 const Index = () => {
   return (
@@ -13,6 +15,8 @@ const Index = () => {
       <Hero />
       <OffersSection />
       <RecentListings />
+      <TopLocations />
+      <RoomListings />
       <FeaturedBusinesses />
       <PopularCategories />
       <ListingCTA />
