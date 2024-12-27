@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Heart, Star, Wifi, Pool, Car, Dog, Fan, Wine } from "lucide-react";
+import { Heart, Star, Wifi, Waves, Car, Dog, Fan, Wine } from "lucide-react";
 
 const ROOMS = [
   {
@@ -72,7 +72,7 @@ export const RoomListings = () => {
 
                 <div className="flex gap-3 mb-4">
                   <Wifi className="w-4 h-4 text-gray-400" />
-                  <Pool className="w-4 h-4 text-gray-400" />
+                  <Waves className="w-4 h-4 text-gray-400" />
                   <Car className="w-4 h-4 text-gray-400" />
                   <Dog className="w-4 h-4 text-gray-400" />
                   <Fan className="w-4 h-4 text-gray-400" />
