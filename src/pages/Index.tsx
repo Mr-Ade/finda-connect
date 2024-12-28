@@ -19,10 +19,10 @@ const Index = () => {
       <FeaturedBusinesses />
       <PopularCategories />
       <RoomListings />
-      <RecentListings />
-      <RecentActivities />
       <LocationSearch />
       <CustomerReviews />
+      <RecentListings />
+      <RecentActivities />
       <Newsletter />
       <Footer />
     </div>
