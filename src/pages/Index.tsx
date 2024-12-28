@@ -18,11 +18,11 @@ const Index = () => {
       <Hero />
       <FeaturedBusinesses />
       <PopularCategories />
+      <RoomListings />
       <RecentListings />
+      <RecentActivities />
       <LocationSearch />
       <CustomerReviews />
-      <RecentActivities />
-      <RoomListings />
       <Newsletter />
       <Footer />
     </div>
