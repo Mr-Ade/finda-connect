@@ -16,13 +16,13 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <Hero />
-      <PopularCategories />
       <FeaturedBusinesses />
+      <PopularCategories />
       <RecentListings />
       <LocationSearch />
       <CustomerReviews />
-      <RoomListings />
       <RecentActivities />
+      <RoomListings />
       <Newsletter />
       <Footer />
     </div>
