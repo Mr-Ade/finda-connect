@@ -3,75 +3,91 @@ import { BusinessCard } from "@/components/BusinessCard";
 const FEATURED_BUSINESSES = [
   {
     id: "1",
-    name: "The Cozy Corner Café",
-    image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24",
-    category: "Coffee & Tea",
-    rating: 4.5,
-    reviewCount: 127,
-    location: "Downtown",
+    name: "Pretty Woman Smart Batra",
+    image: "https://images.unsplash.com/photo-1560066984-138dadb4c035",
+    category: "Beauty & Makeup",
+    rating: 4.8,
+    reviewCount: 46,
+    location: "California, USA",
+    isOpen: false,
+    isFeatured: false
   },
   {
     id: "2",
-    name: "Fresh Fusion Restaurant",
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
-    category: "Restaurant",
-    rating: 4.8,
-    reviewCount: 89,
-    location: "Midtown",
+    name: "The Sartaj Blue Night",
+    image: "https://images.unsplash.com/photo-1575444758702-4a6b9222336e",
+    category: "Night Party",
+    rating: 4.1,
+    reviewCount: 17,
+    location: "San Francisco, USA",
+    isOpen: true,
+    isFeatured: true
   },
   {
     id: "3",
-    name: "Zen Spa & Wellness",
-    image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef",
-    category: "Spa",
-    rating: 4.7,
-    reviewCount: 156,
-    location: "Westside",
+    name: "Pizza Delight Cafe Shop",
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
+    category: "Coffee & Bars",
+    rating: 3.6,
+    reviewCount: 30,
+    location: "102 Safirio, Canada",
+    isOpen: true,
+    isFeatured: false
   },
   {
     id: "4",
-    name: "Urban Fitness Center",
-    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48",
-    category: "Fitness",
-    rating: 4.6,
-    reviewCount: 112,
-    location: "Downtown",
+    name: "The Great Allante Shop",
+    image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
+    category: "Shopping Mall",
+    rating: 2.3,
+    reviewCount: 42,
+    location: "Oliy Denver, USA",
+    isOpen: false,
+    isFeatured: true
   },
   {
     id: "5",
-    name: "The Green Garden",
-    image: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17",
-    category: "Restaurant",
-    rating: 4.9,
-    reviewCount: 178,
-    location: "Eastside",
+    name: "Unisex Blue Spa Massage",
+    image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef",
+    category: "Spa",
+    rating: 4.2,
+    reviewCount: 12,
+    location: "Warmingham, London",
+    isOpen: true,
+    isFeatured: false
   },
   {
     id: "6",
-    name: "Tech Hub Repairs",
+    name: "Washington, Canada",
     image: "https://images.unsplash.com/photo-1588702547919-26089e690ecc",
     category: "Technology",
-    rating: 4.7,
-    reviewCount: 143,
-    location: "Midtown",
+    rating: 2.7,
+    reviewCount: 36,
+    location: "Liverpool, London",
+    isOpen: false,
+    isFeatured: true
   },
   {
     id: "7",
-    name: "Artisan Bakery",
-    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff",
-    category: "Bakery",
-    rating: 4.8,
-    reviewCount: 165,
-    location: "Downtown",
+    name: "Ubber Shopping Services",
+    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48",
+    category: "Shopping",
+    rating: 4.3,
+    reviewCount: 22,
+    location: "Metrio General Store",
+    isOpen: false,
+    isFeatured: false
   },
   {
     id: "8",
-    name: "Sunset Yoga Studio",
-    image: "https://images.unsplash.com/photo-1588286840104-8957b019727f",
-    category: "Fitness",
-    rating: 4.6,
-    reviewCount: 98,
-    location: "Westside",
+    name: "Rajwara Marriage Home",
+    image: "https://images.unsplash.com/photo-1519741497674-611481863552",
+    category: "Wedding",
+    rating: 3.5,
+    reviewCount: 12,
+    location: "Old California, USA",
+    isOpen: true,
+    isFeatured: true
   }
 ];
 
@@ -79,14 +95,23 @@ export const FeaturedBusinesses = () => {
   return (
     <section className="py-16 px-4 bg-white">
       <div className="container mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Featured Businesses</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Discover top-rated local businesses and services in your area
-          </p>
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <span className="text-primary text-sm">Featured Listings</span>
+            <h2 className="text-3xl font-bold mt-2">Goodup in Los Angeles</h2>
+          </div>
+          <div className="flex gap-2">
+            <button className="px-4 py-2 rounded-full bg-primary text-white">Places</button>
+            <button className="px-4 py-2 rounded-full hover:bg-gray-100">Events</button>
+            <button className="px-4 py-2 rounded-full hover:bg-gray-100">Doctors</button>
+            <button className="px-4 py-2 rounded-full hover:bg-gray-100">Cars</button>
+            <button className="px-4 py-2 rounded-full hover:bg-gray-100">Real Estate</button>
+            <button className="px-4 py-2 rounded-full hover:bg-gray-100">Hotels</button>
+            <button className="px-4 py-2 rounded-full hover:bg-gray-100">jobs</button>
+          </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {FEATURED_BUSINESSES.slice(0, 8).map((business) => (
+          {FEATURED_BUSINESSES.map((business) => (
             <BusinessCard key={business.id} {...business} />
           ))}
         </div>

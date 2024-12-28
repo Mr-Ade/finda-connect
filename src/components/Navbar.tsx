@@ -27,18 +27,6 @@ export const Navbar = () => {
         <Link to="/" className="text-2xl font-bold text-primary">
           Finda
         </Link>
-        
-        <div className="hidden md:flex items-center space-x-6">
-          <Link to="/about" className="text-gray-600 hover:text-gray-900">
-            About
-          </Link>
-          <Link to="/blog" className="text-gray-600 hover:text-gray-900">
-            Blog
-          </Link>
-          <Link to="/contact" className="text-gray-600 hover:text-gray-900">
-            Contact
-          </Link>
-        </div>
 
         <div className="flex items-center space-x-4">
           {isAuthenticated ? (
