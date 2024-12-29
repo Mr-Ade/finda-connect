@@ -98,7 +98,7 @@ export const FeaturedBusinesses = () => {
         <div className="mb-8 text-center">
           <span className="text-primary text-sm">Featured Listings</span>
           <h2 className="text-3xl font-bold mt-2">Featured Businesses</h2>
-          <div className="flex gap-2 mt-4 justify-center">
+          <div className="flex flex-wrap gap-2 mt-4 justify-center items-center">
             <button className="px-4 py-2 rounded-full bg-primary text-white">Places</button>
             <button className="px-4 py-2 rounded-full hover:bg-gray-100">Events</button>
             <button className="px-4 py-2 rounded-full hover:bg-gray-100">Doctors</button>
