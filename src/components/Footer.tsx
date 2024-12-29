@@ -72,6 +72,18 @@ export const Footer = () => {
               <li><Link to="/dashboard" className="text-gray-600 hover:text-primary">Dashboard</Link></li>
             </ul>
           </div>
+
+          {/* Helpful Links */}
+          <div>
+            <h4 className="font-semibold text-lg mb-4">Helpful Links</h4>
+            <ul className="space-y-2">
+              <li><Link to="/sitemap" className="text-gray-600 hover:text-primary">Site Map</Link></li>
+              <li><Link to="/security" className="text-gray-600 hover:text-primary">Security</Link></li>
+              <li><Link to="/contact" className="text-gray-600 hover:text-primary">Contact</Link></li>
+              <li><Link to="/faq" className="text-gray-600 hover:text-primary">FAQ's Page</Link></li>
+              <li><Link to="/privacy" className="text-gray-600 hover:text-primary">Privacy</Link></li>
+            </ul>
+          </div>
         </div>
       </div>
       
