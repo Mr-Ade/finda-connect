@@ -38,7 +38,19 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Navigation */}
+          {/* About Company */}
+          <div>
+            <h4 className="font-semibold text-lg mb-4">About Company</h4>
+            <ul className="space-y-2">
+              <li><Link to="/about" className="text-gray-600 hover:text-primary">Who We're?</Link></li>
+              <li><Link to="/mission" className="text-gray-600 hover:text-primary">Our Mission</Link></li>
+              <li><Link to="/team" className="text-gray-600 hover:text-primary">Our team</Link></li>
+              <li><Link to="/packages" className="text-gray-600 hover:text-primary">Packages</Link></li>
+              <li><Link to="/dashboard" className="text-gray-600 hover:text-primary">Dashboard</Link></li>
+            </ul>
+          </div>
+
+          {/* Main Navigation */}
           <div>
             <h4 className="font-semibold text-lg mb-4">Main Navigation</h4>
             <ul className="space-y-2">
@@ -58,18 +70,6 @@ export const Footer = () => {
               <li><Link to="/payments" className="text-gray-600 hover:text-primary">Payment Links</Link></li>
               <li><Link to="/saved" className="text-gray-600 hover:text-primary">Saved Places</Link></li>
               <li><Link to="/dashboard" className="text-gray-600 hover:text-primary">Dashboard</Link></li>
-            </ul>
-          </div>
-
-          {/* Helpful Links */}
-          <div>
-            <h4 className="font-semibold text-lg mb-4">Helpful Links</h4>
-            <ul className="space-y-2">
-              <li><Link to="/sitemap" className="text-gray-600 hover:text-primary">Site Map</Link></li>
-              <li><Link to="/security" className="text-gray-600 hover:text-primary">Security</Link></li>
-              <li><Link to="/contact" className="text-gray-600 hover:text-primary">Contact</Link></li>
-              <li><Link to="/faq" className="text-gray-600 hover:text-primary">FAQ's Page</Link></li>
-              <li><Link to="/privacy" className="text-gray-600 hover:text-primary">Privacy</Link></li>
             </ul>
           </div>
         </div>
