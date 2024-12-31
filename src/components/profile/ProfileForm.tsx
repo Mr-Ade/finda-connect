@@ -18,25 +18,61 @@ export const ProfileForm = () => {
 
   useEffect(() => {
     const loadProfile = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        const { data: profile } = await supabase
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user) {
+          setLoading(false);
+          return;
+        }
+
+        // First try to get the existing profile
+        const { data: profile, error } = await supabase
           .from("profiles")
           .select("*")
           .eq("id", session.user.id)
-          .single();
+          .maybeSingle();
 
-        if (profile) {
+        if (error) throw error;
+
+        // If no profile exists, create one
+        if (!profile) {
+          const { error: insertError } = await supabase
+            .from("profiles")
+            .insert([
+              {
+                id: session.user.id,
+                username: "",
+                full_name: "",
+                updated_at: new Date().toISOString(),
+              },
+            ]);
+
+          if (insertError) throw insertError;
+
+          // Set empty values for new profile
+          setUsername("");
+          setFullName("");
+          setAvatarUrl(null);
+        } else {
+          // Set values from existing profile
           setUsername(profile.username || "");
           setFullName(profile.full_name || "");
           setAvatarUrl(profile.avatar_url);
         }
+      } catch (error) {
+        console.error("Error loading profile:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load profile. Please try again later.",
+          variant: "destructive",
+        });
+      } finally {
         setLoading(false);
       }
     };
 
     loadProfile();
-  }, []);
+  }, [toast]);
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
