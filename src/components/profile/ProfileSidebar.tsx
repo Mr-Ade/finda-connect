@@ -37,6 +37,18 @@ export const ProfileSidebar = () => {
           <Bookmark className="w-4 h-4" />
           Saved Listings
         </Link>
+        <Link to="/dashboard/bookings" className={`flex items-center gap-2 px-3 py-2 rounded-md ${isActive('/dashboard/bookings') ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'}`}>
+          <Briefcase className="w-4 h-4" />
+          My Bookings
+        </Link>
+        <Link to="/dashboard/wallet" className={`flex items-center gap-2 px-3 py-2 rounded-md ${isActive('/dashboard/wallet') ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'}`}>
+          <CreditCard className="w-4 h-4" />
+          Wallet
+        </Link>
+        <Link to="/dashboard/messages" className={`flex items-center gap-2 px-3 py-2 rounded-md ${isActive('/dashboard/messages') ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'}`}>
+          <Mail className="w-4 h-4" />
+          Messages
+        </Link>
       </div>
 
       <div className="mt-6 space-y-1">
