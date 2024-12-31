@@ -5,9 +5,11 @@ import { Footer } from "@/components/Footer";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileSidebar } from "@/components/profile/ProfileSidebar";
 import { ProfileDetails } from "@/components/profile/ProfileDetails";
+import { UserDashboard } from "@/components/profile/dashboard/UserDashboard";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -154,16 +156,27 @@ const Profile = () => {
             <ProfileSidebar />
           </div>
           <div className="md:col-span-3">
-            <ProfileDetails
-              username={username}
-              setUsername={setUsername}
-              fullName={fullName}
-              setFullName={setFullName}
-              avatarUrl={avatarUrl}
-              onAvatarChange={handleAvatarChange}
-              onSubmit={handleSubmit}
-              updating={updating}
-            />
+            <Tabs defaultValue="dashboard">
+              <TabsList>
+                <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+                <TabsTrigger value="profile">Profile</TabsTrigger>
+              </TabsList>
+              <TabsContent value="dashboard">
+                <UserDashboard />
+              </TabsContent>
+              <TabsContent value="profile">
+                <ProfileDetails
+                  username={username}
+                  setUsername={setUsername}
+                  fullName={fullName}
+                  setFullName={setFullName}
+                  avatarUrl={avatarUrl}
+                  onAvatarChange={handleAvatarChange}
+                  onSubmit={handleSubmit}
+                  updating={updating}
+                />
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>
