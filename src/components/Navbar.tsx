@@ -30,9 +30,14 @@ export const Navbar = () => {
 
         <div className="flex items-center space-x-4">
           {isAuthenticated ? (
-            <Button onClick={handleLogout} variant="ghost" size="sm">
-              Log out
-            </Button>
+            <>
+              <Button variant="ghost" size="sm" onClick={() => navigate("/profile")}>
+                Profile
+              </Button>
+              <Button onClick={handleLogout} variant="ghost" size="sm">
+                Log out
+              </Button>
+            </>
           ) : (
             <>
               <Button variant="ghost" size="sm" onClick={() => navigate("/login")}>
