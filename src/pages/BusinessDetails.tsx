@@ -6,6 +6,7 @@ import { BusinessInfo } from "@/components/business/BusinessInfo";
 import { ReviewSection } from "@/components/business/ReviewSection";
 import { CheckInButton } from "@/components/business/CheckInButton";
 import { BookmarkButton } from "@/components/business/BookmarkButton";
+import { PhotoGallery } from "@/components/business/PhotoGallery";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 
@@ -111,8 +112,9 @@ export default function BusinessDetails() {
       <Navbar />
       <main className="container mx-auto px-4 py-8 mt-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 space-y-6">
             <BusinessInfo business={business} isOwner={isOwner} />
+            <PhotoGallery businessId={business.id} isOwner={isOwner} />
             <ReviewSection businessId={business.id} reviews={business.reviews} />
           </div>
           <div className="space-y-4">

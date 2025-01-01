@@ -86,6 +86,44 @@ export type Database = {
           },
         ]
       }
+      business_photos: {
+        Row: {
+          business_id: string
+          caption: string | null
+          created_at: string
+          id: string
+          order_index: number
+          photo_url: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          caption?: string | null
+          created_at?: string
+          id?: string
+          order_index?: number
+          photo_url: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          caption?: string | null
+          created_at?: string
+          id?: string
+          order_index?: number
+          photo_url?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_photos_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       businesses: {
         Row: {
           address: string
