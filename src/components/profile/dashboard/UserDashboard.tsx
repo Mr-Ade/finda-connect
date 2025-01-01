@@ -2,10 +2,12 @@ import { Card } from "@/components/ui/card";
 import { Files, Eye, MessageSquare, Briefcase } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { DashboardChart } from "./DashboardChart";
 import { DashboardStats } from "./DashboardStats";
-import { RecentActivities } from "./RecentActivities";
-import { InvoicesList } from "./InvoicesList";
+import { ActivityChart } from "./ActivityChart";
+import { ActivitiesFeed } from "./ActivitiesFeed";
+import { RecentReviews } from "./RecentReviews";
+import { BookmarkedBusinesses } from "./BookmarkedBusinesses";
+import { CheckInHistory } from "./CheckInHistory";
 
 export const UserDashboard = () => {
   const { data: profile } = useQuery({
@@ -44,20 +46,20 @@ export const UserDashboard = () => {
       {/* Charts Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2">
-          <DashboardChart />
+          <ActivityChart />
         </div>
         <div className="md:col-span-1">
-          <Card className="p-5">
-            <h3 className="font-semibold mb-4">Recent Followers</h3>
-            {/* Add followers list here */}
-          </Card>
+          <ActivitiesFeed />
         </div>
       </div>
 
-      {/* Activities and Invoices */}
+      {/* Additional Sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <RecentActivities />
-        <InvoicesList />
+        <RecentReviews />
+        <div className="space-y-6">
+          <BookmarkedBusinesses />
+          <CheckInHistory />
+        </div>
       </div>
     </div>
   );
