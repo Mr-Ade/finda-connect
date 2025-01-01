@@ -16,6 +16,15 @@ export default function BusinessDetails() {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
 
+  // Get current user
+  const { data: session } = useQuery({
+    queryKey: ["session"],
+    queryFn: async () => {
+      const { data } = await supabase.auth.getSession();
+      return data.session;
+    },
+  });
+
   const { data: business, isLoading } = useQuery({
     queryKey: ["business", id],
     queryFn: async () => {
@@ -94,13 +103,16 @@ export default function BusinessDetails() {
     );
   }
 
+  // Determine if the current user is the owner of the business
+  const isOwner = session?.user?.id === business.owner_id;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <main className="container mx-auto px-4 py-8 mt-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-2">
-            <BusinessInfo business={business} />
+            <BusinessInfo business={business} isOwner={isOwner} />
             <ReviewSection businessId={business.id} reviews={business.reviews} />
           </div>
           <div className="space-y-4">
