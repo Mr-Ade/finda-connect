@@ -1,30 +1,30 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import Login from "./pages/Login";
-import Profile from "./pages/Profile";
-import BusinessDetails from "./pages/BusinessDetails";
+import Index from "@/pages/Index";
+import Login from "@/pages/Login";
+import Profile from "@/pages/Profile";
+import BusinessDetails from "@/pages/BusinessDetails";
+import Listings from "@/pages/dashboard/Listings";
+import Bookmarks from "@/pages/dashboard/Bookmarks";
+import Messages from "@/pages/dashboard/Messages";
+import Wallet from "@/pages/dashboard/Wallet";
+import ChangePassword from "@/pages/dashboard/ChangePassword";
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/business/:id" element={<BusinessDetails />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/business/:id" element={<BusinessDetails />} />
+        <Route path="/dashboard/listings" element={<Listings />} />
+        <Route path="/dashboard/bookmarks" element={<Bookmarks />} />
+        <Route path="/dashboard/messages" element={<Messages />} />
+        <Route path="/dashboard/wallet" element={<Wallet />} />
+        <Route path="/profile/password" element={<ChangePassword />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
 
 export default App;
