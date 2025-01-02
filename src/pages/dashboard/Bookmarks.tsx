@@ -8,6 +8,27 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 
+interface Business {
+  id: string;
+  name: string;
+  category: string;
+  city: string;
+  state: string;
+  description: string | null;
+  reviews: {
+    rating: number;
+  }[];
+  business_photos: {
+    photo_url: string;
+  }[];
+}
+
+interface Bookmark {
+  id: string;
+  business_id: string;
+  businesses: Business;
+}
+
 const Bookmarks = () => {
   const { toast } = useToast();
   const { data: bookmarks, isLoading } = useQuery({
@@ -27,6 +48,9 @@ const Bookmarks = () => {
             city,
             state,
             description,
+            business_photos (
+              photo_url
+            ),
             reviews (
               rating
             )
@@ -35,7 +59,7 @@ const Bookmarks = () => {
         .eq('user_id', session.user.id);
 
       if (error) throw error;
-      return data;
+      return data as Bookmark[];
     },
   });
 
@@ -87,11 +111,10 @@ const Bookmarks = () => {
             <Card className="p-6">
               <div className="border-b pb-4 mb-4">
                 <h4 className="text-lg font-medium flex items-center">
-                  <i className="far fa-file-alt mr-2 text-primary"></i>
-                  My Saved Listings
-                </h4>
+                  <i className="far fa-file-alt me-2 theme-cl fs-sm"></i>My Listings
+                </h4>  
               </div>
-
+              
               {isLoading ? (
                 <div className="flex justify-center p-8">
                   <Loader2 className="w-8 h-8 animate-spin" />
@@ -104,17 +127,17 @@ const Bookmarks = () => {
                     <div key={bookmark.id} className="flex flex-col md:flex-row gap-6 border rounded-lg p-4">
                       <div className="w-full md:w-48 h-48">
                         <img 
-                          src={bookmark.businesses?.photo_url || '/placeholder.svg'} 
-                          alt={bookmark.businesses?.name}
+                          src={bookmark.businesses.business_photos[0]?.photo_url || '/placeholder.svg'} 
+                          alt={bookmark.businesses.name}
                           className="w-full h-full object-cover rounded-lg"
                         />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-xl font-semibold mb-2">{bookmark.businesses?.name}</h3>
-                        <div className="flex items-center gap-1 text-gray-500 mb-3">
+                        <h3 className="text-xl font-semibold mb-2">{bookmark.businesses.name}</h3>
+                        <span className="flex items-center gap-1 text-gray-500 mb-3">
                           <MapPin className="w-4 h-4" />
-                          <span>{bookmark.businesses?.city}, {bookmark.businesses?.state}</span>
-                        </div>
+                          <span>{bookmark.businesses.city}, {bookmark.businesses.state}</span>
+                        </span>
                         <div className="flex items-center gap-2 mb-4">
                           <div className="flex">
                             {[1, 2, 3, 4, 5].map((star) => (
@@ -125,7 +148,7 @@ const Bookmarks = () => {
                             ))}
                           </div>
                           <span className="text-sm text-gray-500">
-                            {bookmark.businesses?._count?.reviews || 0} Reviews
+                            {bookmark.businesses.reviews.length} Reviews
                           </span>
                         </div>
                         <div className="flex gap-2">
