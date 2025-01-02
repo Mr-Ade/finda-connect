@@ -4,6 +4,7 @@ import Login from "@/pages/Login";
 import Profile from "@/pages/Profile";
 import BusinessDetails from "@/pages/BusinessDetails";
 import Listings from "@/pages/dashboard/Listings";
+import AddListing from "@/pages/dashboard/AddListing";
 import Bookmarks from "@/pages/dashboard/Bookmarks";
 import Messages from "@/pages/dashboard/Messages";
 import Wallet from "@/pages/dashboard/Wallet";
@@ -18,6 +19,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/business/:id" element={<BusinessDetails />} />
         <Route path="/dashboard/listings" element={<Listings />} />
+        <Route path="/dashboard/add-listing" element={<AddListing />} />
         <Route path="/dashboard/bookmarks" element={<Bookmarks />} />
         <Route path="/dashboard/messages" element={<Messages />} />
         <Route path="/dashboard/wallet" element={<Wallet />} />
