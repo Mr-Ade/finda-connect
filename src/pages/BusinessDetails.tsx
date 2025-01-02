@@ -10,9 +10,6 @@ import { PhotoGallery } from "@/components/business/PhotoGallery";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 
-// UUID validation regex
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
 export default function BusinessDetails() {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
@@ -34,7 +31,7 @@ export default function BusinessDetails() {
       }
 
       // Validate UUID format
-      if (!UUID_REGEX.test(id)) {
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
         console.error("Invalid UUID format:", id);
         throw new Error("Invalid business ID format");
       }
