@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileSidebar } from "@/components/profile/ProfileSidebar";
