@@ -99,3 +99,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .bookmark-card {
+    @apply transition-all duration-300 hover:shadow-lg;
+  }
+  
+  .bookmark-rating {
+    @apply flex items-center gap-1;
+  }
+  
+  .bookmark-actions {
+    @apply flex gap-2 mt-4;
+  }
+  
+  .bookmark-button {
+    @apply flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium transition-colors;
+  }
+}
