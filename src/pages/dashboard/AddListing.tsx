@@ -10,6 +10,7 @@ import { Amenities } from "@/components/listings/Amenities";
 import { SocialLinks } from "@/components/listings/SocialLinks";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 
 const AddListing = () => {
   const navigate = useNavigate();
@@ -21,6 +22,17 @@ const AddListing = () => {
     setIsSubmitting(true);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: "Authentication Required",
+          description: "Please log in to create a listing",
+          variant: "destructive",
+        });
+        navigate("/login");
+        return;
+      }
+
       // Submit logic will be implemented here
       toast({
         title: "Success",
@@ -40,11 +52,11 @@ const AddListing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+    <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-2xl font-semibold mb-2">Add Listing</h1>
         <nav className="text-sm breadcrumbs">
-          <ol className="flex gap-2 text-gray-500">
+          <ol className="flex gap-2 text-muted-foreground">
             <li><a href="/">Home</a></li>
             <li>•</li>
             <li><a href="/dashboard">Dashboard</a></li>
@@ -69,11 +81,11 @@ const AddListing = () => {
             disabled={isSubmitting}
             className="w-full md:w-auto"
           >
-            Submit & Preview
+            {isSubmitting ? "Creating..." : "Submit & Preview"}
           </Button>
         </div>
       </form>
-    </div>
+    </DashboardLayout>
   );
 };
 
