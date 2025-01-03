@@ -10,8 +10,9 @@ interface MapProps {
 
 const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: MapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const marker = useRef<mapboxgl.Marker | null>(null);
+  // Store these refs outside of React's state management to avoid cloning issues
+  const mapInstance = useRef<mapboxgl.Map | null>(null);
+  const markerInstance = useRef<mapboxgl.Marker | null>(null);
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -19,7 +20,8 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
     // Initialize map with the provided token
     mapboxgl.accessToken = 'pk.eyJ1IjoibXItYWRlIiwiYSI6ImNtNWZ2MXZyazAxbDUyaXF2aDk5cnR2cDcifQ.nayeg3Bmwhnz4lkNHxImgg';
     
-    map.current = new mapboxgl.Map({
+    // Create map instance
+    mapInstance.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [initialLng, initialLat],
@@ -27,33 +29,37 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
     });
 
     // Add navigation controls
-    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    mapInstance.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
     // Add initial marker
-    marker.current = new mapboxgl.Marker({ draggable: true })
+    markerInstance.current = new mapboxgl.Marker({ draggable: true })
       .setLngLat([initialLng, initialLat])
-      .addTo(map.current);
+      .addTo(mapInstance.current);
 
     // Handle marker drag events
-    marker.current.on('dragend', () => {
-      const lngLat = marker.current?.getLngLat();
+    const handleMarkerDragEnd = () => {
+      const lngLat = markerInstance.current?.getLngLat();
       if (lngLat && onLocationSelect) {
         onLocationSelect(lngLat.lat, lngLat.lng);
       }
-    });
+    };
 
     // Handle map click events
-    map.current.on('click', (e) => {
+    const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
       const { lng, lat } = e.lngLat;
-      marker.current?.setLngLat([lng, lat]);
+      markerInstance.current?.setLngLat([lng, lat]);
       if (onLocationSelect) {
         onLocationSelect(lat, lng);
       }
-    });
+    };
 
+    markerInstance.current.on('dragend', handleMarkerDragEnd);
+    mapInstance.current.on('click', handleMapClick);
+
+    // Cleanup function
     return () => {
-      if (map.current) {
-        map.current.remove();
+      if (mapInstance.current) {
+        mapInstance.current.remove();
       }
     };
   }, [initialLat, initialLng, onLocationSelect]);
