@@ -1,97 +1,48 @@
 import { BusinessCard } from "@/components/BusinessCard";
-
-const FEATURED_BUSINESSES = [
-  {
-    id: "1",
-    name: "Pretty Woman Smart Batra",
-    image: "https://images.unsplash.com/photo-1560066984-138dadb4c035",
-    category: "Beauty & Makeup",
-    rating: 4.8,
-    reviewCount: 46,
-    location: "California, USA",
-    isOpen: false,
-    isFeatured: false
-  },
-  {
-    id: "2",
-    name: "The Sartaj Blue Night",
-    image: "https://images.unsplash.com/photo-1575444758702-4a6b9222336e",
-    category: "Night Party",
-    rating: 4.1,
-    reviewCount: 17,
-    location: "San Francisco, USA",
-    isOpen: true,
-    isFeatured: true
-  },
-  {
-    id: "3",
-    name: "Pizza Delight Cafe Shop",
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
-    category: "Coffee & Bars",
-    rating: 3.6,
-    reviewCount: 30,
-    location: "102 Safirio, Canada",
-    isOpen: true,
-    isFeatured: false
-  },
-  {
-    id: "4",
-    name: "The Great Allante Shop",
-    image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
-    category: "Shopping Mall",
-    rating: 2.3,
-    reviewCount: 42,
-    location: "Oliy Denver, USA",
-    isOpen: false,
-    isFeatured: true
-  },
-  {
-    id: "5",
-    name: "Unisex Blue Spa Massage",
-    image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef",
-    category: "Spa",
-    rating: 4.2,
-    reviewCount: 12,
-    location: "Warmingham, London",
-    isOpen: true,
-    isFeatured: false
-  },
-  {
-    id: "6",
-    name: "Washington, Canada",
-    image: "https://images.unsplash.com/photo-1588702547919-26089e690ecc",
-    category: "Technology",
-    rating: 2.7,
-    reviewCount: 36,
-    location: "Liverpool, London",
-    isOpen: false,
-    isFeatured: true
-  },
-  {
-    id: "7",
-    name: "Ubber Shopping Services",
-    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48",
-    category: "Shopping",
-    rating: 4.3,
-    reviewCount: 22,
-    location: "Metrio General Store",
-    isOpen: false,
-    isFeatured: false
-  },
-  {
-    id: "8",
-    name: "Rajwara Marriage Home",
-    image: "https://images.unsplash.com/photo-1519741497674-611481863552",
-    category: "Wedding",
-    rating: 3.5,
-    reviewCount: 12,
-    location: "Old California, USA",
-    isOpen: true,
-    isFeatured: true
-  }
-];
+import { useLocation } from "@/contexts/LocationContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const FeaturedBusinesses = () => {
+  const { city, state, country } = useLocation();
+
+  const { data: businesses, isLoading } = useQuery({
+    queryKey: ['featured-businesses', city, state, country],
+    queryFn: async () => {
+      let query = supabase
+        .from('businesses')
+        .select(`
+          *,
+          reviews (rating),
+          business_photos (photo_url)
+        `);
+
+      // Filter by location if available
+      if (city) query = query.eq('city', city);
+      if (state) query = query.eq('state', state);
+
+      const { data, error } = await query.limit(8);
+
+      if (error) throw error;
+
+      return data.map(business => ({
+        id: business.id,
+        name: business.name,
+        image: business.business_photos?.[0]?.photo_url || "https://images.unsplash.com/photo-1560066984-138dadb4c035",
+        category: business.category,
+        rating: business.reviews?.reduce((acc: number, review: any) => acc + review.rating, 0) / (business.reviews?.length || 1) || 0,
+        reviewCount: business.reviews?.length || 0,
+        location: `${business.city}, ${business.state}`,
+        isOpen: true, // This should be calculated based on business hours
+        isFeatured: true
+      }));
+    },
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <section className="py-16 px-4 bg-white">
       <div className="container mx-auto">
@@ -109,7 +60,7 @@ export const FeaturedBusinesses = () => {
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {FEATURED_BUSINESSES.map((business) => (
+          {businesses?.map((business) => (
             <BusinessCard key={business.id} {...business} />
           ))}
         </div>
