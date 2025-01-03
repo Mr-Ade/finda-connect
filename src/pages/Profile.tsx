@@ -3,9 +3,97 @@ import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { ProfileDetails } from "@/components/profile/ProfileDetails";
 import { UserDashboard } from "@/components/profile/dashboard/UserDashboard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [updating, setUpdating] = useState(false);
+
+  // Fetch profile data
+  const { data: profile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error('No user session found');
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+        
+      if (error) throw error;
+      
+      // Update local state with profile data
+      setUsername(data.username || '');
+      setFullName(data.full_name || '');
+      
+      return data;
+    }
+  });
+
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      setUpdating(true);
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error('No user session found');
+
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${session.user.id}-${Math.random()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: filePath })
+        .eq('id', session.user.id);
+
+      if (updateError) throw updateError;
+
+      toast.success('Avatar updated successfully');
+    } catch (error) {
+      console.error('Error updating avatar:', error);
+      toast.error('Error updating avatar');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setUpdating(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error('No user session found');
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          username,
+          full_name: fullName,
+        })
+        .eq('id', session.user.id);
+
+      if (error) throw error;
+      toast.success('Profile updated successfully');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('Error updating profile');
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   return (
     <DashboardLayout loading={loading}>
@@ -18,7 +106,16 @@ const Profile = () => {
           <UserDashboard />
         </TabsContent>
         <TabsContent value="profile">
-          <ProfileDetails />
+          <ProfileDetails
+            username={username}
+            setUsername={setUsername}
+            fullName={fullName}
+            setFullName={setFullName}
+            avatarUrl={profile?.avatar_url}
+            onAvatarChange={handleAvatarChange}
+            onSubmit={handleSubmit}
+            updating={updating}
+          />
         </TabsContent>
       </Tabs>
     </DashboardLayout>
