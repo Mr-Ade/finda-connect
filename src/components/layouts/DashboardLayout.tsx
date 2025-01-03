@@ -39,12 +39,12 @@ export const DashboardLayout = ({ children, loading = false }: DashboardLayoutPr
       <Navbar />
       <ProfileHeader />
       
-      <div className="container mx-auto px-4 py-8 mt-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="md:col-span-1">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="w-full md:w-1/4">
             <ProfileSidebar />
           </div>
-          <div className="md:col-span-3">
+          <div className="w-full md:w-3/4">
             {children}
           </div>
         </div>

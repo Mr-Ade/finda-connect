@@ -1,4 +1,3 @@
-import React from "react";
 import { Card } from "@/components/ui/card";
 import { FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";

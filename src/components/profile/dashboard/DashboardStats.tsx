@@ -34,19 +34,19 @@ export const DashboardStats = () => {
       color: "bg-red-500",
     },
     {
-      title: "Total Reviews",
+      title: "Total Views",
       value: stats?.reviews || 0,
       icon: Eye,
       color: "bg-green-500",
     },
     {
-      title: "Saved Places",
+      title: "Total Reviews",
       value: stats?.bookmarks || 0,
       icon: MessageSquare,
       color: "bg-yellow-500",
     },
     {
-      title: "Total Check-ins",
+      title: "Total Bookings",
       value: stats?.checkins || 0,
       icon: Briefcase,
       color: "bg-purple-500",

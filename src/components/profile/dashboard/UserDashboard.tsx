@@ -1,12 +1,11 @@
-import { Card } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { DashboardStats } from "./DashboardStats";
 import { ActivityChart } from "./ActivityChart";
 import { ActivitiesFeed } from "./ActivitiesFeed";
-import { RecentReviews } from "./RecentReviews";
-import { BookmarkedBusinesses } from "./BookmarkedBusinesses";
-import { CheckInHistory } from "./CheckInHistory";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { InvoicesList } from "./InvoicesList";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { X } from "lucide-react";
 
 export const UserDashboard = () => {
   const { data: profile } = useQuery({
@@ -39,6 +38,16 @@ export const UserDashboard = () => {
         </nav>
       </div>
 
+      {/* Notification */}
+      <Alert className="bg-primary/10 border-none text-primary mb-6">
+        <AlertDescription className="flex items-center justify-between">
+          <span>Your listing <a href="#" className="font-semibold hover:underline">Wedding Willa Resort</a> has been approved!</span>
+          <button className="text-primary hover:opacity-75">
+            <X className="h-4 w-4" />
+          </button>
+        </AlertDescription>
+      </Alert>
+
       {/* Stats Grid */}
       <DashboardStats />
 
@@ -54,11 +63,8 @@ export const UserDashboard = () => {
 
       {/* Additional Sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <RecentReviews />
-        <div className="space-y-6">
-          <BookmarkedBusinesses />
-          <CheckInHistory />
-        </div>
+        <ActivitiesFeed />
+        <InvoicesList />
       </div>
     </div>
   );
