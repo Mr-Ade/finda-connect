@@ -72,7 +72,6 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
               await supabase
                 .from('profiles')
                 .update({
-                  username: session.user.email?.split('@')[0],
                   location_data: {
                     latitude,
                     longitude,

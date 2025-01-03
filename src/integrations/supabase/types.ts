@@ -369,6 +369,10 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          location_data: Json | null
+          preferred_currency: string | null
+          preferred_language: string | null
+          timezone: string | null
           updated_at: string
           username: string | null
         }
@@ -378,6 +382,10 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
+          location_data?: Json | null
+          preferred_currency?: string | null
+          preferred_language?: string | null
+          timezone?: string | null
           updated_at?: string
           username?: string | null
         }
@@ -387,6 +395,10 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          location_data?: Json | null
+          preferred_currency?: string | null
+          preferred_language?: string | null
+          timezone?: string | null
           updated_at?: string
           username?: string | null
         }
