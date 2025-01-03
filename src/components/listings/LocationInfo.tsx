@@ -4,19 +4,77 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin } from "lucide-react";
 import Map from "@/components/Map";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "@/contexts/LocationContext";
+import { useToast } from "@/hooks/use-toast";
 
 export const LocationInfo = () => {
+  const { toast } = useToast();
+  const locationContext = useLocation();
   const [coordinates, setCoordinates] = useState({
-    latitude: 40.7128,
-    longitude: -74.0060
+    latitude: locationContext.coordinates.latitude || 40.7128,
+    longitude: locationContext.coordinates.longitude || -74.0060
   });
+  const [address, setAddress] = useState({
+    country: locationContext.country || "",
+    state: locationContext.state || "",
+    city: locationContext.city || "",
+    street: "",
+    zipCode: "",
+    phone: "",
+    email: "",
+    website: ""
+  });
+
+  useEffect(() => {
+    // Update coordinates when location context changes
+    if (locationContext.coordinates.latitude && locationContext.coordinates.longitude) {
+      setCoordinates({
+        latitude: locationContext.coordinates.latitude,
+        longitude: locationContext.coordinates.longitude
+      });
+    }
+    
+    // Update address fields
+    setAddress(prev => ({
+      ...prev,
+      country: locationContext.country || prev.country,
+      state: locationContext.state || prev.state,
+      city: locationContext.city || prev.city
+    }));
+  }, [locationContext]);
 
   const handleLocationSelect = (lat: number, lng: number) => {
     setCoordinates({
       latitude: lat,
       longitude: lng
     });
+
+    // Attempt to reverse geocode the selected location
+    fetch(`https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=155e6c1220b94de0a87f628b659b430b`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.results && data.results[0]) {
+          const result = data.results[0].components;
+          console.log("Reverse geocoding result:", result);
+          
+          setAddress(prev => ({
+            ...prev,
+            country: result.country || prev.country,
+            state: result.state || prev.state,
+            city: result.city || prev.city,
+            zipCode: result.postcode || prev.zipCode
+          }));
+        }
+      })
+      .catch(error => {
+        console.error("Error reverse geocoding:", error);
+        toast({
+          title: "Location Error",
+          description: "Could not fetch location details. Please enter them manually.",
+          variant: "destructive",
+        });
+      });
   };
 
   return (
@@ -55,58 +113,75 @@ export const LocationInfo = () => {
 
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="state">State</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select state" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ca">California</SelectItem>
-                <SelectItem value="ny">New York</SelectItem>
-                <SelectItem value="tx">Texas</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label htmlFor="country">Country</Label>
+            <Input 
+              id="country" 
+              value={address.country}
+              onChange={(e) => setAddress(prev => ({ ...prev, country: e.target.value }))}
+            />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="city">City</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select city" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="sf">San Francisco</SelectItem>
-                <SelectItem value="la">Los Angeles</SelectItem>
-                <SelectItem value="sd">San Diego</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label htmlFor="state">State</Label>
+            <Input 
+              id="state" 
+              value={address.state}
+              onChange={(e) => setAddress(prev => ({ ...prev, state: e.target.value }))}
+            />
           </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="address">Address</Label>
-            <Input id="address" placeholder="Enter street address" />
+            <Label htmlFor="city">City</Label>
+            <Input 
+              id="city" 
+              value={address.city}
+              onChange={(e) => setAddress(prev => ({ ...prev, city: e.target.value }))}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="zipCode">Zip Code</Label>
-            <Input id="zipCode" placeholder="Enter zip code" />
+            <Input 
+              id="zipCode" 
+              value={address.zipCode}
+              onChange={(e) => setAddress(prev => ({ ...prev, zipCode: e.target.value }))}
+              placeholder="Enter zip code"
+            />
           </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="phone">Phone</Label>
-            <Input id="phone" type="tel" placeholder="Enter phone number" />
+            <Input 
+              id="phone" 
+              type="tel" 
+              value={address.phone}
+              onChange={(e) => setAddress(prev => ({ ...prev, phone: e.target.value }))}
+              placeholder="Enter phone number"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="Enter email address" />
+            <Input 
+              id="email" 
+              type="email" 
+              value={address.email}
+              onChange={(e) => setAddress(prev => ({ ...prev, email: e.target.value }))}
+              placeholder="Enter email address"
+            />
           </div>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="website">Website</Label>
-          <Input id="website" type="url" placeholder="Enter website URL" />
+          <Input 
+            id="website" 
+            type="url" 
+            value={address.website}
+            onChange={(e) => setAddress(prev => ({ ...prev, website: e.target.value }))}
+            placeholder="Enter website URL"
+          />
         </div>
       </CardContent>
     </Card>
