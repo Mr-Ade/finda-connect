@@ -1,13 +1,12 @@
 import { Card } from "@/components/ui/card";
-import { Files, Eye, MessageSquare, Briefcase } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { DashboardStats } from "./DashboardStats";
 import { ActivityChart } from "./ActivityChart";
 import { ActivitiesFeed } from "./ActivitiesFeed";
 import { RecentReviews } from "./RecentReviews";
 import { BookmarkedBusinesses } from "./BookmarkedBusinesses";
 import { CheckInHistory } from "./CheckInHistory";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const UserDashboard = () => {
   const { data: profile } = useQuery({
