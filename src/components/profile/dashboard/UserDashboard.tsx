@@ -3,7 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { DashboardStats } from "./DashboardStats";
 import { ActivityChart } from "./ActivityChart";
 import { ActivitiesFeed } from "./ActivitiesFeed";
-import { InvoicesList } from "./InvoicesList";
+import { RecentReviews } from "./RecentReviews";
+import { BookmarkedBusinesses } from "./BookmarkedBusinesses";
+import { CheckInHistory } from "./CheckInHistory";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { X } from "lucide-react";
 
@@ -63,8 +65,13 @@ export const UserDashboard = () => {
 
       {/* Additional Sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <RecentReviews />
+        <BookmarkedBusinesses />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CheckInHistory />
         <ActivitiesFeed />
-        <InvoicesList />
       </div>
     </div>
   );
