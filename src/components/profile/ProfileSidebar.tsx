@@ -14,6 +14,18 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const ProfileSidebar = () => {
   const location = useLocation();
@@ -25,6 +37,10 @@ export const ProfileSidebar = () => {
     try {
       await supabase.auth.signOut();
       navigate("/login");
+      toast({
+        title: "Logged out successfully",
+        description: "You have been logged out of your account",
+      });
     } catch (error: any) {
       toast({
         title: "Error",
@@ -35,11 +51,33 @@ export const ProfileSidebar = () => {
   };
 
   const handleDeleteAccount = async () => {
-    // This is a placeholder for account deletion functionality
-    toast({
-      title: "Coming Soon",
-      description: "Account deletion will be available in a future update.",
-    });
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error("No user session");
+
+      // Delete user data from profiles table
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .delete()
+        .eq("id", session.user.id);
+
+      if (profileError) throw profileError;
+
+      // Sign out after deletion
+      await supabase.auth.signOut();
+      navigate("/login");
+      
+      toast({
+        title: "Account deleted",
+        description: "Your account has been successfully deleted",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to delete account. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -54,7 +92,7 @@ export const ProfileSidebar = () => {
           <Files className="w-4 h-4" />
           My Listings
         </Link>
-        <Link to="/business/new" className={`flex items-center gap-2 px-3 py-2 rounded-md ${isActive('/business/new') ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'}`}>
+        <Link to="/dashboard/add-listing" className={`flex items-center gap-2 px-3 py-2 rounded-md ${isActive('/dashboard/add-listing') ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'}`}>
           <PlusCircle className="w-4 h-4" />
           Add Listing
         </Link>
@@ -82,20 +120,38 @@ export const ProfileSidebar = () => {
           <Lock className="w-4 h-4" />
           Change Password
         </Link>
-        <button 
-          onClick={handleDeleteAccount}
-          className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-red-600 hover:bg-red-50"
-        >
-          <Trash2 className="w-4 h-4" />
-          Delete Account
-        </button>
-        <button 
+        
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="ghost" className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-red-600 hover:bg-red-50 justify-start">
+              <Trash2 className="w-4 h-4" />
+              Delete Account
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteAccount} className="bg-red-600 hover:bg-red-700">
+                Delete Account
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <Button 
           onClick={handleLogout}
-          className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100"
+          variant="ghost" 
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 justify-start"
         >
           <LogOut className="w-4 h-4" />
           Log Out
-        </button>
+        </Button>
       </div>
     </div>
   );
