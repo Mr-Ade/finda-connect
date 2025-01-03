@@ -1,14 +1,18 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 interface MenuItem {
   id: string;
+  business_id: string;
   name: string;
-  description: string;
+  description: string | null;
   price: number;
-  image_url: string;
-  category: string;
+  image_url: string | null;
+  category: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 interface MenuItemsProps {
@@ -16,45 +20,65 @@ interface MenuItemsProps {
 }
 
 export const MenuItems = ({ businessId }: MenuItemsProps) => {
-  const { data: menuItems } = useQuery({
-    queryKey: ["menu-items", businessId],
+  const { data: menuItems, isLoading } = useQuery<MenuItem[]>({
+    queryKey: ['menu-items', businessId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("menu_items")
-        .select("*")
-        .eq("business_id", businessId);
+        .from('menu_items')
+        .select('*')
+        .eq('business_id', businessId)
+        .order('category', { ascending: true });
 
       if (error) throw error;
-      return (data || []) as MenuItem[];
+      return data;
     },
   });
+
+  if (isLoading) {
+    return <div className="animate-pulse">Loading menu items...</div>;
+  }
+
+  if (!menuItems?.length) {
+    return null;
+  }
+
+  // Group menu items by category
+  const groupedItems = menuItems.reduce((acc, item) => {
+    const category = item.category || 'Other';
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(item);
+    return acc;
+  }, {} as Record<string, MenuItem[]>);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Menu Items</CardTitle>
+        <CardTitle>Menu</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {menuItems?.map((item) => (
-            <div key={item.id} className="group relative">
-              <div className="aspect-square overflow-hidden rounded-lg">
-                <img
-                  src={item.image_url}
-                  alt={item.name}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                />
-              </div>
-              <div className="mt-2">
-                <h4 className="font-medium text-lg">{item.name}</h4>
-                <p className="text-sm text-gray-600 line-clamp-2">{item.description}</p>
-                <div className="mt-1">
-                  <span className="text-primary font-semibold">${item.price}</span>
+        {Object.entries(groupedItems).map(([category, items]) => (
+          <div key={category} className="mb-8 last:mb-0">
+            <h3 className="text-lg font-semibold mb-4">{category}</h3>
+            <div className="space-y-4">
+              {items.map((item) => (
+                <div key={item.id} className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <h4 className="font-medium">{item.name}</h4>
+                    {item.description && (
+                      <p className="text-sm text-gray-500 mt-1">{item.description}</p>
+                    )}
+                  </div>
+                  <div className="ml-4">
+                    <span className="font-medium">${item.price.toFixed(2)}</span>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+            <Separator className="mt-4" />
+          </div>
+        ))}
       </CardContent>
     </Card>
   );
