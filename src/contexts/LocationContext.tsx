@@ -47,12 +47,13 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
           
           // Use reverse geocoding to get location details
           const response = await fetch(
-            `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=YOUR_API_KEY`
+            `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=155e6c1220b94de0a87f628b659b430b`
           );
           const data = await response.json();
 
           if (data.results && data.results[0]) {
             const result = data.results[0].components;
+            console.log("Location data received:", result);
             
             setLocationData(prev => ({
               ...prev,
@@ -69,7 +70,7 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
             // Store location in user profile if authenticated
             const { data: { session } } = await supabase.auth.getSession();
             if (session?.user) {
-              await supabase
+              const { error } = await supabase
                 .from('profiles')
                 .update({
                   location_data: {
@@ -81,6 +82,10 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
                   }
                 })
                 .eq('id', session.user.id);
+
+              if (error) {
+                console.error("Error updating profile location:", error);
+              }
             }
           }
         } else {
@@ -92,6 +97,7 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
         try {
           const response = await fetch("https://ipapi.co/json/");
           const data = await response.json();
+          console.log("IP-based location data:", data);
           
           setLocationData(prev => ({
             ...prev,
