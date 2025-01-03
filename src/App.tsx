@@ -9,6 +9,7 @@ import Bookmarks from "@/pages/dashboard/Bookmarks";
 import Messages from "@/pages/dashboard/Messages";
 import Wallet from "@/pages/dashboard/Wallet";
 import ChangePassword from "@/pages/dashboard/ChangePassword";
+import Appointments from "@/pages/dashboard/Appointments";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/dashboard/bookmarks" element={<Bookmarks />} />
         <Route path="/dashboard/messages" element={<Messages />} />
         <Route path="/dashboard/wallet" element={<Wallet />} />
+        <Route path="/dashboard/appointments" element={<Appointments />} />
         <Route path="/profile/password" element={<ChangePassword />} />
       </Routes>
     </BrowserRouter>
