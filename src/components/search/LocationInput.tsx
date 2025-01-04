@@ -17,6 +17,7 @@ export const LocationInput = ({ className = "h-12" }: LocationInputProps) => {
         placeholder={isLoading ? "Detecting location..." : "Location"} 
         value={!isLoading ? locationString : ""} 
         className={`pl-10 ${className}`}
+        readOnly
       />
     </div>
   );
