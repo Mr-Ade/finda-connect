@@ -22,7 +22,7 @@ export const RecentlyViewedListings = () => {
             photo_url
           )
         `)
-        .limit(4)
+        .limit(6)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -39,8 +39,8 @@ export const RecentlyViewedListings = () => {
   }
 
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="container mx-auto px-4">
+    <section className="w-full bg-gray-50">
+      <div className="max-w-[1400px] mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h3 className="text-primary text-sm font-semibold uppercase tracking-wide">
             Related Listings
@@ -50,7 +50,7 @@ export const RecentlyViewedListings = () => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {businesses.map((business) => (
             <BusinessCard
               key={business.id}
