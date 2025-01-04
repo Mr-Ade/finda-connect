@@ -40,13 +40,13 @@ export const Hero = () => {
   }, []);
 
   return (
-    <div className="relative bg-primary">
+    <div className="relative">
       {/* Background Image */}
       <div 
         className="absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-1000"
         style={{ 
           backgroundImage: `url(${HERO_IMAGES[currentImageIndex].url})`,
-          opacity: 0.3
+          opacity: 0.7
         }}
       />
       
