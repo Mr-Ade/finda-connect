@@ -4,18 +4,24 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Heart, Mail, Star, Wifi, Car, Dog, Wind } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 type Business = Database["public"]["Tables"]["businesses"]["Row"];
 
 export const RecentListings = () => {
+  const [showAll, setShowAll] = useState(false);
+
   const { data: businesses, isLoading, error } = useQuery({
     queryKey: ['recentListings'],
     queryFn: async () => {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      
       const { data, error } = await supabase
         .from('businesses')
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(6);
+        .gte('created_at', oneWeekAgo.toISOString())
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       return data as Business[];
@@ -25,6 +31,9 @@ export const RecentListings = () => {
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading listings</div>;
   if (!businesses?.length) return <div>No listings found</div>;
+
+  const displayedBusinesses = showAll ? businesses : businesses.slice(0, 8);
+  const hasMore = businesses.length > 8;
 
   return (
     <section className="py-16 bg-gray-50">
@@ -37,10 +46,9 @@ export const RecentListings = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {businesses.map((business) => (
+          {displayedBusinesses.map((business) => (
             <div key={business.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
               <div className="relative">
-                {/* Bookmark Button */}
                 <Button 
                   variant="ghost" 
                   size="icon"
@@ -49,7 +57,6 @@ export const RecentListings = () => {
                   <Heart className="h-5 w-5" />
                 </Button>
                 
-                {/* Status Tags */}
                 <div className="absolute top-3 left-3 z-10 flex gap-2">
                   <span className="bg-green-500 text-white px-2 py-1 rounded text-sm">
                     Open
@@ -59,7 +66,6 @@ export const RecentListings = () => {
                   </span>
                 </div>
 
-                {/* Main Image */}
                 <Link to={`/business/${business.id}`}>
                   <img 
                     src="/placeholder.svg"
@@ -68,7 +74,6 @@ export const RecentListings = () => {
                   />
                 </Link>
 
-                {/* Rating Overlay */}
                 <div className="absolute bottom-3 right-3 bg-white/90 rounded-full p-2 flex items-center gap-2">
                   <div className="text-yellow-500 font-bold">4.5</div>
                   <div className="flex items-center">
@@ -79,7 +84,6 @@ export const RecentListings = () => {
               </div>
 
               <div className="p-4">
-                {/* Business Info */}
                 <div className="flex items-center gap-2 mb-2">
                   <img 
                     src="/placeholder.svg"
@@ -107,7 +111,6 @@ export const RecentListings = () => {
                   {business.description}
                 </p>
 
-                {/* Facilities */}
                 <div className="mb-4">
                   <div className="text-sm text-gray-500 mb-2">Facilities:</div>
                   <div className="flex gap-3">
@@ -118,7 +121,6 @@ export const RecentListings = () => {
                   </div>
                 </div>
 
-                {/* Footer */}
                 <div className="flex items-center justify-between pt-4 border-t">
                   <div className="flex items-center text-gray-500 text-sm">
                     <Mail className="h-4 w-4 mr-1" />
@@ -132,6 +134,18 @@ export const RecentListings = () => {
             </div>
           ))}
         </div>
+
+        {hasMore && (
+          <div className="mt-8 text-center">
+            <Button 
+              variant="outline"
+              onClick={() => setShowAll(!showAll)}
+              className="px-8"
+            >
+              {showAll ? 'Show Less' : 'See More'}
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );
