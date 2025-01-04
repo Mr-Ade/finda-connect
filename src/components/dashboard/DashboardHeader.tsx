@@ -4,6 +4,11 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
+interface LocationData {
+  city: string;
+  country: string;
+}
+
 export const DashboardHeader = () => {
   const { data: profile } = useQuery({
     queryKey: ['profile'],
@@ -21,6 +26,8 @@ export const DashboardHeader = () => {
       return data;
     }
   });
+
+  const locationData = profile?.location_data as LocationData;
 
   return (
     <section className="relative bg-cover bg-center py-16" style={{ backgroundImage: "url('/placeholder.svg')" }}>
@@ -46,7 +53,7 @@ export const DashboardHeader = () => {
             <h4 className="text-2xl font-semibold text-white">{profile?.full_name}</h4>
             <span className="text-gray-200">
               <i className="lni lni-map-marker me-1"></i>
-              {profile?.location_data?.city}, {profile?.location_data?.country}
+              {locationData?.city}, {locationData?.country}
             </span>
           </div>
         </div>
