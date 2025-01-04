@@ -1,65 +1,111 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { Loader } from '@googlemaps/js-api-loader';
-import { MapContainer } from './map/MapContainer';
-import { MapMarker } from './map/MapMarker';
+import { useEffect, useRef, useState } from "react";
+import { Loader } from "@googlemaps/js-api-loader";
+import { supabase } from "@/integrations/supabase/client";
 
 interface MapProps {
-  onLocationSelect?: (lat: number, lng: number) => void;
-  initialLat?: number;
-  initialLng?: number;
+  center?: { lat: number; lng: number };
+  zoom?: number;
+  markers?: Array<{ lat: number; lng: number; title?: string }>;
+  onMarkerClick?: (marker: google.maps.Marker) => void;
+  onMapClick?: (e: google.maps.MapMouseEvent) => void;
+  className?: string;
 }
 
-const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: MapProps) => {
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
+export const Map = ({
+  center = { lat: 9.0820, lng: 8.6753 }, // Default center on Nigeria
+  zoom = 6,
+  markers = [],
+  onMarkerClick,
+  onMapClick,
+  className = "w-full h-[400px]"
+}: MapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<google.maps.Map | null>(null);
+  const markersRef = useRef<google.maps.Marker[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!mapRef.current) return;
-
     const initMap = async () => {
-      const loader = new Loader({
-        apiKey: 'AIzaSyDVYLvGDi-_fuY1zd1DlDJPKd-5qCuktDY', // We'll move this to Supabase secrets
-        version: 'weekly',
-      });
-
       try {
+        // Fetch API key from Supabase Edge Function
+        const { data, error: configError } = await supabase.functions.invoke('get-config', {
+          body: { keys: ['GOOGLE_MAPS_API_KEY'] }
+        });
+
+        if (configError || !data?.GOOGLE_MAPS_API_KEY) {
+          throw new Error('Failed to load Google Maps API key');
+        }
+
+        const loader = new Loader({
+          apiKey: data.GOOGLE_MAPS_API_KEY,
+          version: "weekly"
+        });
+
         const google = await loader.load();
-        const newMap = new google.maps.Map(mapRef.current, {
-          center: { lat: initialLat, lng: initialLng },
-          zoom: 13,
+        
+        if (!mapRef.current) return;
+
+        // Initialize map
+        const map = new google.maps.Map(mapRef.current, {
+          center,
+          zoom,
           styles: [
             {
-              featureType: 'poi',
-              elementType: 'labels',
-              stylers: [{ visibility: 'off' }]
+              featureType: "poi",
+              elementType: "labels",
+              stylers: [{ visibility: "off" }]
             }
           ]
         });
 
-        setMap(newMap);
-        setIsMapLoaded(true);
+        mapInstanceRef.current = map;
 
-        if (onLocationSelect) {
-          newMap.addListener('click', (e: google.maps.MapMouseEvent) => {
-            if (e.latLng) {
-              onLocationSelect(e.latLng.lat(), e.latLng.lng());
-            }
+        // Add markers
+        markers.forEach(markerData => {
+          const marker = new google.maps.Marker({
+            position: { lat: markerData.lat, lng: markerData.lng },
+            map,
+            title: markerData.title,
+            animation: google.maps.Animation.DROP
           });
+
+          if (onMarkerClick) {
+            marker.addListener("click", () => onMarkerClick(marker));
+          }
+
+          markersRef.current.push(marker);
+        });
+
+        // Add map click handler
+        if (onMapClick) {
+          map.addListener("click", onMapClick);
         }
-      } catch (error) {
-        console.error('Error loading Google Maps:', error);
+
+      } catch (err) {
+        console.error('Error initializing map:', err);
+        setError('Failed to load map');
       }
     };
 
     initMap();
-  }, [initialLat, initialLng, onLocationSelect]);
 
-  return (
-    <div className="relative w-full h-[400px] rounded-lg overflow-hidden">
-      <div ref={mapRef} className="absolute inset-0" />
-    </div>
-  );
+    // Cleanup
+    return () => {
+      if (mapInstanceRef.current) {
+        // Remove markers
+        markersRef.current.forEach(marker => marker.setMap(null));
+        markersRef.current = [];
+      }
+    };
+  }, [center, zoom, markers, onMarkerClick, onMapClick]);
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center bg-gray-100 rounded-lg p-4">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
+
+  return <div ref={mapRef} className={className} />;
 };
-
-export default Map;
