@@ -5,6 +5,15 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Mail, MapPin, Phone, Globe, FileText, ThumbsUp, Heart } from "lucide-react";
 import { RecentListings } from "@/components/home/RecentListings";
+import type { Database } from "@/integrations/supabase/types";
+
+type Profile = Database["public"]["Tables"]["profiles"]["Row"] & {
+  businesses: { count: number }[];
+  followers: { count: number }[];
+  email?: string;
+  phone?: string;
+  website?: string;
+};
 
 const AuthorDetail = () => {
   const { username } = useParams();
@@ -22,7 +31,7 @@ const AuthorDetail = () => {
         .eq('username', username)
         .single();
 
-      return profile;
+      return profile as Profile;
     }
   });
 
