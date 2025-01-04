@@ -12,8 +12,9 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { BusinessCard } from "@/components/BusinessCard";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, MapIcon, List } from "lucide-react";
 import { useLocation } from "@/contexts/LocationContext";
+import { MapView } from "@/components/map/MapView";
 
 export const BusinessSearch = () => {
   const { city, state } = useLocation();
@@ -21,6 +22,7 @@ export const BusinessSearch = () => {
   const [category, setCategory] = useState<string>("all");
   const [priceRange, setPriceRange] = useState([0]);
   const [showFilters, setShowFilters] = useState(false);
+  const [showMap, setShowMap] = useState(false);
 
   const { data: businesses, isLoading } = useQuery({
     queryKey: ['search-businesses', searchTerm, category, priceRange, city, state],
@@ -66,10 +68,20 @@ export const BusinessSearch = () => {
         rating: business.reviews?.reduce((acc: number, review: any) => acc + review.rating, 0) / (business.reviews?.length || 1) || 0,
         reviewCount: business.reviews?.length || 0,
         location: `${business.city}, ${business.state}`,
-        isOpen: true, // This should be calculated based on business hours
+        latitude: business.latitude || 0,
+        longitude: business.longitude || 0,
+        isOpen: true,
       }));
     },
   });
+
+  const handleMarkerClick = (businessId: string) => {
+    // Implement smooth scroll to business card
+    const element = document.getElementById(`business-${businessId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -90,6 +102,22 @@ export const BusinessSearch = () => {
           >
             <SlidersHorizontal className="w-4 h-4 mr-2" />
             Filters
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setShowMap(!showMap)}
+          >
+            {showMap ? (
+              <>
+                <List className="w-4 h-4 mr-2" />
+                Show List
+              </>
+            ) : (
+              <>
+                <MapIcon className="w-4 h-4 mr-2" />
+                Show Map
+              </>
+            )}
           </Button>
         </div>
 
@@ -135,10 +163,31 @@ export const BusinessSearch = () => {
           <p className="text-gray-500">No businesses found matching your criteria.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {businesses?.map((business) => (
-            <BusinessCard key={business.id} {...business} />
-          ))}
+        <div className="flex flex-col lg:flex-row gap-6">
+          <div className={showMap ? "lg:w-1/2" : "w-full"}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {businesses?.map((business) => (
+                <div key={business.id} id={`business-${business.id}`}>
+                  <BusinessCard {...business} />
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {showMap && (
+            <div className="lg:w-1/2 h-[calc(100vh-200px)] sticky top-20">
+              <MapView
+                markers={businesses?.map(b => ({
+                  id: b.id,
+                  latitude: b.latitude,
+                  longitude: b.longitude,
+                  title: b.name
+                }))}
+                onMarkerClick={handleMarkerClick}
+                className="w-full h-full rounded-lg shadow-lg"
+              />
+            </div>
+          )}
         </div>
       )}
     </div>
