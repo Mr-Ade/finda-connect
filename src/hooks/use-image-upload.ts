@@ -10,6 +10,11 @@ export const useImageUpload = (bucket: "business-images" | "avatars") => {
     try {
       setIsUploading(true);
       
+      // Validate file size (800KB)
+      if (file.size > 800 * 1024) {
+        throw new Error("File size must be less than 800KB");
+      }
+
       const fileExt = file.name.split(".").pop();
       const filePath = `${crypto.randomUUID()}.${fileExt}`;
 
@@ -28,7 +33,7 @@ export const useImageUpload = (bucket: "business-images" | "avatars") => {
       console.error("Error uploading image:", error);
       toast({
         title: "Error",
-        description: "Failed to upload image. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to upload image",
         variant: "destructive",
       });
       return null;

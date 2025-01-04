@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ProfileFormProps {
   username: string;
@@ -21,8 +24,43 @@ export const ProfileForm = ({
   updating,
   onSubmit
 }: ProfileFormProps) => {
+  const [bio, setBio] = useState("");
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          username,
+          full_name: fullName,
+          bio,
+        })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Profile updated successfully",
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update profile",
+      });
+    }
+  };
+
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label>First Name</Label>
@@ -68,51 +106,16 @@ export const ProfileForm = ({
             placeholder="email@example.com"
           />
         </div>
-
-        <div className="space-y-2">
-          <Label>State</Label>
-          <Select>
-            <SelectTrigger>
-              <SelectValue placeholder="Select state" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ca">California</SelectItem>
-              <SelectItem value="ny">New York</SelectItem>
-              <SelectItem value="tx">Texas</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label>City</Label>
-          <Select>
-            <SelectTrigger>
-              <SelectValue placeholder="Select city" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="sf">San Francisco</SelectItem>
-              <SelectItem value="la">Los Angeles</SelectItem>
-              <SelectItem value="sd">San Diego</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label>Address</Label>
-          <Input placeholder="Enter your address" />
-        </div>
-
-        <div className="space-y-2">
-          <Label>Zip Code</Label>
-          <Input placeholder="Enter zip code" />
-        </div>
       </div>
 
       <div className="space-y-2">
-        <Label>About</Label>
+        <Label>Bio</Label>
         <Textarea 
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
           placeholder="Tell us about yourself"
           className="min-h-[150px]"
+          disabled={updating}
         />
       </div>
 
