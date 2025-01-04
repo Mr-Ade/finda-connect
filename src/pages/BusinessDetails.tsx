@@ -1,160 +1,132 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Navbar } from "@/components/Navbar";
 import { BusinessInfo } from "@/components/business/BusinessInfo";
-import { ReviewSection } from "@/components/business/ReviewSection";
-import { CheckInButton } from "@/components/business/CheckInButton";
+import { MenuItems } from "@/components/business/MenuItems";
+import { Amenities } from "@/components/business/Amenities";
+import { FAQ } from "@/components/business/FAQ";
+import { PhotoGallerySlider } from "@/components/business/PhotoGallerySlider";
 import { BookmarkButton } from "@/components/business/BookmarkButton";
-import { PhotoGallery } from "@/components/business/PhotoGallery";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/hooks/use-toast";
-import { Newsletter } from "@/components/home/Newsletter";
-import { Footer } from "@/components/Footer";
+import { CheckInButton } from "@/components/business/CheckInButton";
 
-export default function BusinessDetails() {
-  const { id } = useParams<{ id: string }>();
-  const { toast } = useToast();
-
-  // Get current user
-  const { data: session } = useQuery({
-    queryKey: ["session"],
-    queryFn: async () => {
-      const { data } = await supabase.auth.getSession();
-      return data.session;
-    },
-  });
+const BusinessDetails = () => {
+  const { id } = useParams();
 
   const { data: business, isLoading } = useQuery({
-    queryKey: ["business", id],
+    queryKey: ['business', id],
     queryFn: async () => {
-      if (!id) {
-        throw new Error("Business ID is required");
-      }
-
-      // Validate UUID format
-      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
-        console.error("Invalid UUID format:", id);
-        throw new Error("Invalid business ID format");
-      }
-
-      console.log("Fetching business with ID:", id);
-      
       const { data, error } = await supabase
-        .from("businesses")
+        .from('businesses')
         .select(`
           *,
-          reviews (
+          business_photos(*),
+          menu_items(*),
+          business_hours(*),
+          reviews(
             *,
-            profiles (
-              username,
-              avatar_url
-            )
+            profiles:user_id(username, avatar_url),
+            review_responses(*),
+            review_photos(*)
           ),
-          checkins:checkins(count),
-          owner:profiles (
+          owner:owner_id(
             username,
-            avatar_url
+            avatar_url,
+            full_name
           )
         `)
         .eq('id', id)
-        .maybeSingle();
+        .single();
 
-      if (error) {
-        console.error("Business fetch error:", error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to load business details",
-        });
-        throw error;
-      }
-
-      if (!data) {
-        throw new Error("Business not found");
-      }
-
-      return {
-        ...data,
-        checkins_count: data.checkins?.[0]?.count || 0
-      };
-    },
-    enabled: !!id,
+      if (error) throw error;
+      return data;
+    }
   });
 
   if (isLoading) {
-    return <BusinessDetailsSkeleton />;
+    return <div>Loading...</div>;
   }
 
   if (!business) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <main className="container mx-auto px-4 py-8 mt-16">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900">Business not found</h1>
-            <p className="mt-2 text-gray-600">
-              The business you're looking for doesn't exist or has been removed.
-              This could be because the ID format is invalid or the business no longer exists.
-            </p>
-          </div>
-        </main>
-        <Newsletter />
-        <Footer />
-      </div>
-    );
+    return <div>Business not found</div>;
   }
 
-  // Determine if the current user is the owner of the business
-  const isOwner = session?.user?.id === business.owner_id;
+  const amenities = [
+    { name: "Health Score 8.7/10", available: true },
+    { name: "Offers Delivery", available: true },
+    { name: "Offers Takeout", available: true },
+    { name: "Reservations", available: true },
+    { name: "Staff wears masks", available: true },
+    { name: "Vegan Options", available: true },
+    { name: "Vegetarian Options", available: true },
+    { name: "Accepts Credit Cards", available: true },
+    { name: "Casual", available: true },
+    { name: "Moderate Noise", available: true },
+    { name: "Offers Catering", available: true },
+    { name: "Good for Groups", available: true },
+    { name: "Good For Kids", available: true },
+    { name: "Good for Breakfast", available: true },
+    { name: "Brunch, Lunch, Dinner", available: true },
+    { name: "Private Lot Parking", available: true },
+    { name: "Waiter Service", available: true },
+    { name: "Free Wi-Fi", available: true },
+    { name: "Beer & Wine", available: true },
+    { name: "Drive-Thru", available: true },
+    { name: "Wheelchair Accessible", available: false },
+    { name: "TV Services", available: false },
+    { name: "Outdoor Seating", available: false },
+    { name: "Happy Hour", available: false },
+    { name: "Pets Allow", available: false }
+  ];
+
+  const faqs = [
+    {
+      question: "Can I get GoodUP listing for free?",
+      answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    },
+    {
+      question: "How to Permanently Delete Files From Windows?", 
+      answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    },
+    {
+      question: "For GoodUp which license is better for business purpose?",
+      answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    }
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <main className="container mx-auto px-4 py-8 mt-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-2 space-y-6">
-            <BusinessInfo business={business} isOwner={isOwner} />
-            <PhotoGallery businessId={business.id} isOwner={isOwner} />
-            <ReviewSection 
-              businessId={business.id} 
-              reviews={business.reviews} 
-              isOwner={isOwner}
-            />
-          </div>
-          <div className="space-y-4">
-            <div className="bg-white p-4 rounded-lg shadow">
-              <div className="flex gap-2 mb-4">
-                <CheckInButton businessId={business.id} />
-                <BookmarkButton businessId={business.id} />
-              </div>
-              <div className="text-sm text-gray-600">
-                <p>{business.checkins_count} check-ins</p>
+    <div>
+      {/* Hero Section with Gallery */}
+      <PhotoGallerySlider businessId={business.id} />
+
+      {/* Main Content */}
+      <section className="gray py-5 position-relative">
+        <div className="container">
+          <div className="row">
+            {/* Left Column */}
+            <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12">
+              <BusinessInfo business={business} isOwner={false} />
+              <MenuItems businessId={business.id} />
+              <Amenities amenities={amenities} />
+              <FAQ faqs={faqs} />
+            </div>
+
+            {/* Right Column */}
+            <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+              {/* Action Buttons */}
+              <div className="row g-3 mb-3">
+                <div className="col-4">
+                  <BookmarkButton businessId={business.id} />
+                </div>
+                <div className="col-4">
+                  <CheckInButton businessId={business.id} />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </main>
-      <Newsletter />
-      <Footer />
+      </section>
     </div>
   );
-}
+};
 
-const BusinessDetailsSkeleton = () => (
-  <div className="min-h-screen bg-gray-50">
-    <Navbar />
-    <main className="container mx-auto px-4 py-8 mt-16">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-2">
-          <Skeleton className="h-64 w-full mb-8" />
-          <Skeleton className="h-40 w-full mb-4" />
-          <Skeleton className="h-20 w-full" />
-        </div>
-        <div>
-          <Skeleton className="h-40 w-full" />
-        </div>
-      </div>
-    </main>
-  </div>
-);
+export default BusinessDetails;

@@ -12,6 +12,7 @@ import Wallet from "@/pages/dashboard/Wallet";
 import NotFound from "@/pages/404";
 import AuthorDetail from "@/pages/AuthorDetail";
 import ExploreListings from "@/pages/ExploreListings";
+import BusinessDetails from "@/pages/BusinessDetails";
 
 const Routes = () => {
   return (
@@ -28,6 +29,7 @@ const Routes = () => {
       <Route path="/dashboard/wallet" element={<Wallet />} />
       <Route path="/author/:username" element={<AuthorDetail />} />
       <Route path="/explore-listings" element={<ExploreListings />} />
+      <Route path="/business/:id" element={<BusinessDetails />} />
       <Route path="*" element={<NotFound />} />
     </RouterRoutes>
   );
