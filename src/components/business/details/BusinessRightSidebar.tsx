@@ -12,7 +12,7 @@ export const BusinessRightSidebar = ({ business }: BusinessRightSidebarProps) =>
         business={{
           id: business.id,
           name: business.name,
-          description: business.description || "",
+          description: business.description || "", // Provide default empty string
           address: business.address,
           city: business.city,
           state: business.state,
