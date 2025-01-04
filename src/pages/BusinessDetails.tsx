@@ -3,73 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BusinessHeader } from "@/components/business/BusinessHeader";
 import { BusinessGallery } from "@/components/business/BusinessGallery";
-import { BusinessInfo } from "@/components/business/BusinessInfo";
-import { MenuItems } from "@/components/business/MenuItems";
-import { Amenities } from "@/components/business/Amenities";
-import { FAQ } from "@/components/business/FAQ";
-import { ReviewSection } from "@/components/business/ReviewSection";
-import { BusinessSidebar } from "@/components/business/BusinessSidebar";
-import { RecentlyViewedListings } from "@/components/business/RecentlyViewedListings";
-
-interface ReviewResponse {
-  id: string;
-  response_text: string;
-  created_at: string;
-}
-
-interface ReviewPhoto {
-  id: string;
-  photo_url: string;
-}
-
-interface Review {
-  id: string;
-  rating: number;
-  comment: string;
-  created_at: string;
-  profiles: {
-    username: string;
-    avatar_url: string;
-  };
-  review_responses?: ReviewResponse[];
-  review_photos?: ReviewPhoto[];
-}
-
-interface BusinessPhoto {
-  id: string;
-  photo_url: string;
-  caption: string | null;
-}
-
-interface Business {
-  id: string;
-  name: string;
-  description: string | null;
-  category: string;
-  address: string;
-  city: string;
-  state: string;
-  zip_code: string;
-  phone: string | null;
-  website: string | null;
-  email: string | null;
-  owner: {
-    username: string | null;
-    avatar_url: string | null;
-    full_name: string | null;
-  } | null;
-  business_photos: BusinessPhoto[];
-  menu_items: any[];
-  business_hours: any[];
-  reviews: Review[];
-}
-
-interface SupabaseResponse extends Omit<Business, 'reviews'> {
-  reviews: Array<Omit<Review, 'review_responses' | 'review_photos'> & {
-    review_responses?: ReviewResponse | ReviewResponse[];
-    review_photos?: ReviewPhoto[];
-  }>;
-}
+import { BusinessMainContent } from "@/components/business/details/BusinessMainContent";
+import { BusinessRightSidebar } from "@/components/business/details/BusinessRightSidebar";
+import type { Business } from "@/types/business";
 
 const BusinessDetails = () => {
   const { id } = useParams();
@@ -103,25 +39,7 @@ const BusinessDetails = () => {
         .single();
 
       if (error) throw error;
-
-      if (data) {
-        const transformedData: SupabaseResponse = {
-          ...data,
-          reviews: data.reviews.map(review => ({
-            ...review,
-            review_responses: Array.isArray(review.review_responses) 
-              ? review.review_responses 
-              : review.review_responses 
-                ? [review.review_responses] 
-                : [],
-            review_photos: review.review_photos || []
-          }))
-        };
-
-        return transformedData as unknown as Business;
-      }
-
-      return null;
+      return data as Business;
     }
   });
 
@@ -141,66 +59,11 @@ const BusinessDetails = () => {
       <section className="gray py-5 position-relative">
         <div className="container">
           <div className="row">
-            {/* Main Content */}
-            <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12">
-              <BusinessInfo business={business} isOwner={false} />
-              <MenuItems businessId={business.id} />
-              <Amenities amenities={[
-                { name: "Health Score 8.7/10", available: true },
-                { name: "Offers Delivery", available: true },
-                { name: "Reservations", available: true },
-                { name: "Staff wears masks", available: true },
-                { name: "Vegan Options", available: true },
-                { name: "Vegetarian Options", available: true },
-                { name: "Accepts Credit Cards", available: true },
-                { name: "Casual", available: true },
-                { name: "Moderate Noise", available: true },
-                { name: "Offers Catering", available: true },
-                { name: "Good for Groups", available: true },
-                { name: "Good For Kids", available: true },
-                { name: "Good for Breakfast", available: true },
-                { name: "Brunch, Lunch, Dinner", available: true },
-                { name: "Private Lot Parking", available: true },
-                { name: "Waiter Service", available: true },
-                { name: "Free Wi-Fi", available: true },
-                { name: "Beer & Wine", available: true },
-                { name: "Drive-Thru", available: true },
-                { name: "Wheelchair Accessible", available: false },
-                { name: "TV Services", available: false },
-                { name: "Outdoor Seating", available: false },
-                { name: "Happy Hour", available: false },
-                { name: "Pets Allow", available: false }
-              ]} />
-              <FAQ faqs={[
-                {
-                  question: "Can I get GoodUP listing for free?",
-                  answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit..."
-                },
-                {
-                  question: "How to Permanently Delete Files From Windows?", 
-                  answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                },
-                {
-                  question: "For GoodUp which license is better for business purpose?",
-                  answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                }
-              ]} />
-              <ReviewSection 
-                businessId={business.id} 
-                isOwner={false} 
-                reviews={business.reviews} 
-              />
-            </div>
-
-            {/* Sidebar */}
-            <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12">
-              <BusinessSidebar business={business} />
-            </div>
+            <BusinessMainContent business={business} />
+            <BusinessRightSidebar business={business} />
           </div>
         </div>
       </section>
-
-      <RecentlyViewedListings />
     </div>
   );
 };
