@@ -1,9 +1,72 @@
 import { createContext, useContext, useState } from "react";
-import { BusinessFormData } from "@/types/business";
+
+interface WorkingHour {
+  dayOfWeek: number;
+  openTime: string;
+  closeTime: string;
+  isClosed: boolean;
+}
+
+interface MenuItem {
+  name: string;
+  description?: string;
+  price: number;
+  category?: string;
+  imageUrl?: string;
+}
+
+interface SocialLinks {
+  facebook?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
+}
+
+export interface BusinessFormData {
+  // Basic Info
+  name: string;
+  description: string;
+  category: string;
+  keywords: string[];
+  
+  // Location
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  latitude: number;
+  longitude: number;
+  phone: string;
+  email: string;
+  website: string;
+
+  // Working Hours
+  workingHours: WorkingHour[];
+
+  // Menu Items
+  menuItems: MenuItem[];
+
+  // Amenities
+  amenities: {
+    name: string;
+    available: boolean;
+  }[];
+
+  // Social Links
+  socialLinks: SocialLinks;
+
+  // Photos
+  logo?: File;
+  featuredImage?: File;
+  galleryImages: File[];
+}
 
 interface BusinessFormContextType {
   formData: BusinessFormData;
-  updateFormData: (section: keyof BusinessFormData, data: any) => void;
+  updateFormData: <K extends keyof BusinessFormData>(
+    field: K,
+    value: BusinessFormData[K]
+  ) => void;
   isSubmitting: boolean;
   setIsSubmitting: (value: boolean) => void;
 }
@@ -17,14 +80,16 @@ const defaultFormData: BusinessFormData = {
   city: "",
   state: "",
   zipCode: "",
-  latitude: 0,
-  longitude: 0,
+  latitude: 9.0820,
+  longitude: 8.6753,
   phone: "",
   email: "",
   website: "",
   workingHours: [],
   menuItems: [],
   amenities: [],
+  socialLinks: {},
+  galleryImages: [],
 };
 
 const BusinessFormContext = createContext<BusinessFormContextType | undefined>(undefined);
@@ -33,10 +98,13 @@ export const BusinessFormProvider = ({ children }: { children: React.ReactNode }
   const [formData, setFormData] = useState<BusinessFormData>(defaultFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const updateFormData = (section: keyof BusinessFormData, data: any) => {
+  const updateFormData = <K extends keyof BusinessFormData>(
+    field: K,
+    value: BusinessFormData[K]
+  ) => {
     setFormData(prev => ({
       ...prev,
-      [section]: data
+      [field]: value
     }));
   };
 
