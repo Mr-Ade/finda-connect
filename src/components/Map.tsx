@@ -10,55 +10,68 @@ interface MapProps {
 
 const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: MapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<mapboxgl.Map | null>(null);
-  const markerRef = useRef<mapboxgl.Marker | null>(null);
+  const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
+  const markerInstanceRef = useRef<mapboxgl.Marker | null>(null);
   
   // Initialize map only once when component mounts
   useEffect(() => {
-    if (!mapContainer.current || mapRef.current) return;
+    if (!mapContainer.current || mapInstanceRef.current) return;
 
+    console.log('Initializing Mapbox map');
     mapboxgl.accessToken = 'pk.eyJ1IjoibXItYWRlIiwiYSI6ImNtNWZ2MXZyazAxbDUyaXF2aDk5cnR2cDcifQ.nayeg3Bmwhnz4lkNHxImgg';
     
-    const map = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [initialLng, initialLat],
-      zoom: 13
-    });
+    try {
+      const map = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [initialLng, initialLat],
+        zoom: 13
+      });
 
-    mapRef.current = map;
+      const navigationControl = new mapboxgl.NavigationControl();
+      map.addControl(navigationControl, 'top-right');
 
-    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+      const marker = new mapboxgl.Marker({ draggable: true })
+        .setLngLat([initialLng, initialLat])
+        .addTo(map);
 
-    const marker = new mapboxgl.Marker({ draggable: true })
-      .setLngLat([initialLng, initialLat])
-      .addTo(map);
+      mapInstanceRef.current = map;
+      markerInstanceRef.current = marker;
 
-    markerRef.current = marker;
+      console.log('Map and marker initialized successfully');
 
-    // Clean up on unmount
-    return () => {
-      marker.remove();
-      map.remove();
-      mapRef.current = null;
-      markerRef.current = null;
-    };
+      // Clean up on unmount
+      return () => {
+        console.log('Cleaning up map instance');
+        navigationControl.remove();
+        marker.remove();
+        map.remove();
+        mapInstanceRef.current = null;
+        markerInstanceRef.current = null;
+      };
+    } catch (error) {
+      console.error('Error initializing map:', error);
+    }
   }, []); // Empty dependency array for one-time initialization
 
   // Handle location updates separately
   useEffect(() => {
-    const map = mapRef.current;
-    const marker = markerRef.current;
+    const map = mapInstanceRef.current;
+    const marker = markerInstanceRef.current;
     
     if (!map || !marker || !onLocationSelect) return;
 
+    console.log('Setting up map event handlers');
+
     const handleMarkerDragEnd = () => {
       const lngLat = marker.getLngLat();
+      console.log('Marker dragged to:', lngLat);
       onLocationSelect(lngLat.lat, lngLat.lng);
     };
 
     const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
       const { lng, lat } = e.lngLat;
+      console.log('Map clicked at:', { lng, lat });
       marker.setLngLat([lng, lat]);
       onLocationSelect(lat, lng);
     };
@@ -67,18 +80,22 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
     map.on('click', handleMapClick);
 
     return () => {
-      marker.off('dragend', handleMarkerDragEnd);
-      map.off('click', handleMapClick);
+      console.log('Removing map event handlers');
+      if (marker && map) {
+        marker.off('dragend', handleMarkerDragEnd);
+        map.off('click', handleMapClick);
+      }
     };
   }, [onLocationSelect]); // Only re-run if onLocationSelect changes
 
   // Update marker position when initialLat/initialLng change
   useEffect(() => {
-    const marker = markerRef.current;
-    const map = mapRef.current;
+    const marker = markerInstanceRef.current;
+    const map = mapInstanceRef.current;
     
     if (!marker || !map) return;
     
+    console.log('Updating marker position:', { initialLat, initialLng });
     marker.setLngLat([initialLng, initialLat]);
     map.setCenter([initialLng, initialLat]);
   }, [initialLat, initialLng]);
