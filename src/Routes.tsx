@@ -8,6 +8,7 @@ import Blog from "@/pages/Blog";
 import BlogDetail from "@/pages/BlogDetail";
 import AboutUs from "@/pages/AboutUs";
 import Contact from "@/pages/Contact";
+import Checkout from "@/pages/Checkout";
 import Listings from "@/pages/dashboard/Listings";
 import AddListing from "@/pages/dashboard/AddListing";
 import Appointments from "@/pages/dashboard/Appointments";
@@ -28,6 +29,7 @@ const Routes = () => {
       <Route path="/blog/:id" element={<BlogDetail />} />
       <Route path="/about" element={<AboutUs />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/checkout" element={<Checkout />} />
       <Route path="/dashboard/listings" element={<Listings />} />
       <Route path="/dashboard/add-listing" element={<AddListing />} />
       <Route path="/dashboard/appointments" element={<Appointments />} />

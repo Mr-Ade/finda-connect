@@ -1,1 +1,9 @@
 project_id = "ycmugolragcyqogscqhl"
+
+[api]
+enabled = true
+url = "https://ycmugolragcyqogscqhl.supabase.co"
+
+[functions]
+[functions.process-payment]
+verify_jwt = false
