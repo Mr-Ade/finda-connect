@@ -2,12 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Newsletter } from "@/components/home/Newsletter";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { FAQ as FAQComponent } from "@/components/business/FAQ";
 
 const FAQ = () => {
   const breadcrumbItems = [
@@ -61,20 +56,6 @@ const FAQ = () => {
     }
   ];
 
-  const FAQSection = ({ title, faqs }: { title: string; faqs: { question: string; answer: string }[] }) => (
-    <div className="mb-8">
-      <h4 className="text-xl font-semibold mb-4">{title}</h4>
-      <Accordion type="single" collapsible className="w-full">
-        {faqs.map((faq, index) => (
-          <AccordionItem key={index} value={`item-${index}`}>
-            <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
-            <AccordionContent>{faq.answer}</AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -82,7 +63,7 @@ const FAQ = () => {
       {/* Breadcrumb */}
       <div className="bg-gray-900 py-3">
         <div className="container mx-auto px-4">
-          <Breadcrumb items={breadcrumbItems} className="text-white" />
+          <Breadcrumb items={breadcrumbItems} />
         </div>
       </div>
 
@@ -94,10 +75,21 @@ const FAQ = () => {
             <h3 className="text-2xl text-gray-600">Frequently Asked Questions</h3>
           </div>
 
-          <div className="max-w-4xl mx-auto">
-            <FAQSection title="Basic FAQ's:" faqs={basicFaqs} />
-            <FAQSection title="Payment and Data's FAQ's:" faqs={paymentFaqs} />
-            <FAQSection title="Advanced FAQ's:" faqs={advancedFaqs} />
+          <div className="max-w-4xl mx-auto space-y-8">
+            <div>
+              <h4 className="text-xl font-semibold mb-4">Basic FAQ's:</h4>
+              <FAQComponent faqs={basicFaqs} />
+            </div>
+
+            <div>
+              <h4 className="text-xl font-semibold mb-4">Payment and Data's FAQ's:</h4>
+              <FAQComponent faqs={paymentFaqs} />
+            </div>
+
+            <div>
+              <h4 className="text-xl font-semibold mb-4">Advanced FAQ's:</h4>
+              <FAQComponent faqs={advancedFaqs} />
+            </div>
           </div>
         </div>
       </section>
