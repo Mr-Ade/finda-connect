@@ -180,52 +180,58 @@ export type Database = {
       }
       businesses: {
         Row: {
-          address: string
-          category: string
-          city: string
-          created_at: string
-          description: string | null
-          email: string | null
           id: string
-          name: string
           owner_id: string | null
-          phone: string | null
+          name: string
+          description: string | null
+          category: string
+          address: string
+          city: string
           state: string
-          updated_at: string
-          website: string | null
           zip_code: string
+          phone: string | null
+          website: string | null
+          email: string | null
+          created_at: string
+          updated_at: string
+          latitude: number | null
+          longitude: number | null
         }
         Insert: {
-          address: string
-          category: string
-          city: string
-          created_at?: string
-          description?: string | null
-          email?: string | null
           id?: string
-          name: string
           owner_id?: string | null
-          phone?: string | null
+          name: string
+          description?: string | null
+          category: string
+          address: string
+          city: string
           state: string
-          updated_at?: string
-          website?: string | null
           zip_code: string
+          phone?: string | null
+          website?: string | null
+          email?: string | null
+          created_at?: string
+          updated_at?: string
+          latitude?: number | null
+          longitude?: number | null
         }
         Update: {
-          address?: string
-          category?: string
-          city?: string
-          created_at?: string
-          description?: string | null
-          email?: string | null
           id?: string
-          name?: string
           owner_id?: string | null
-          phone?: string | null
+          name?: string
+          description?: string | null
+          category?: string
+          address?: string
+          city?: string
           state?: string
-          updated_at?: string
-          website?: string | null
           zip_code?: string
+          phone?: string | null
+          website?: string | null
+          email?: string | null
+          created_at?: string
+          updated_at?: string
+          latitude?: number | null
+          longitude?: number | null
         }
         Relationships: [
           {
@@ -417,14 +423,14 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           business_owner?: boolean | null
-          created_at?: string
+          created_at: string
           full_name?: string | null
           id: string
           location_data?: Json | null
           preferred_currency?: string | null
           preferred_language?: string | null
           timezone?: string | null
-          updated_at?: string
+          updated_at: string
           username?: string | null
         }
         Update: {
@@ -433,7 +439,7 @@ export type Database = {
           business_owner?: boolean | null
           created_at?: string
           full_name?: string | null
-          id?: string
+          id: string
           location_data?: Json | null
           preferred_currency?: string | null
           preferred_language?: string | null
@@ -464,8 +470,8 @@ export type Database = {
           caption?: string | null
           created_at?: string
           id?: string
-          photo_url?: string
-          review_id?: string
+          photo_url: string
+          review_id: string
           updated_at?: string
         }
         Relationships: [
@@ -629,7 +635,7 @@ export type Tables<
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
         Database[PublicTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
       Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
@@ -641,10 +647,10 @@ export type Tables<
         PublicSchema["Views"])
     ? (PublicSchema["Tables"] &
         PublicSchema["Views"])[PublicTableNameOrOptions] extends {
-        Row: infer R
-      }
-      ? R
-      : never
+      Row: infer R
+    }
+    ? R
+    : never
     : never
 
 export type TablesInsert<
