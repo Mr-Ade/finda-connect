@@ -11,6 +11,17 @@ import { ReviewSection } from "@/components/business/ReviewSection";
 import { BusinessHours } from "@/components/business/BusinessHours";
 import { BusinessSidebar } from "@/components/business/BusinessSidebar";
 
+interface ReviewResponse {
+  id: string;
+  response_text: string;
+  created_at: string;
+}
+
+interface ReviewPhoto {
+  id: string;
+  photo_url: string;
+}
+
 interface Review {
   id: string;
   rating: number;
@@ -20,15 +31,35 @@ interface Review {
     username: string;
     avatar_url: string;
   };
-  review_responses?: Array<{
-    id: string;
-    response_text: string;
-    created_at: string;
-  }>;
-  review_photos?: Array<{
+  review_responses?: ReviewResponse[];
+  review_photos?: ReviewPhoto[];
+}
+
+interface Business {
+  id: string;
+  name: string;
+  description: string | null;
+  category: string;
+  address: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  phone: string | null;
+  website: string | null;
+  email: string | null;
+  owner: {
+    username: string | null;
+    avatar_url: string | null;
+    full_name: string | null;
+  } | null;
+  business_photos: Array<{
     id: string;
     photo_url: string;
+    caption: string | null;
   }>;
+  menu_items: Array<any>;
+  business_hours: Array<any>;
+  reviews: Review[];
 }
 
 const BusinessDetails = () => {
@@ -64,16 +95,19 @@ const BusinessDetails = () => {
 
       if (error) throw error;
 
-      // Transform the review_responses to ensure it's always an array
       if (data) {
         data.reviews = data.reviews.map(review => ({
           ...review,
-          review_responses: review.review_responses ? [review.review_responses] : [],
+          review_responses: Array.isArray(review.review_responses) 
+            ? review.review_responses 
+            : review.review_responses 
+              ? [review.review_responses] 
+              : [],
           review_photos: review.review_photos || []
         })) as Review[];
       }
 
-      return data;
+      return data as Business;
     }
   });
 
