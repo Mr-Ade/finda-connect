@@ -4,8 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { MapPin, Phone, Star } from "lucide-react";
 
+type BusinessPhoto = {
+  id: string;
+  photo_url: string;
+};
+
 type Business = Database["public"]["Tables"]["businesses"]["Row"] & {
-  business_photos?: Database["public"]["Tables"]["business_photos"]["Row"][];
+  business_photos?: BusinessPhoto[];
 };
 
 interface AuthorListingsProps {
