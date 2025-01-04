@@ -8,6 +8,12 @@ interface MapProps {
   className?: string;
 }
 
+// Create a singleton loader instance
+const loader = new Loader({
+  apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
+  version: "weekly",
+});
+
 export const Map = ({ center, markers = [], onMapClick, className = "" }: MapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
@@ -16,33 +22,34 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
   useEffect(() => {
     const initMap = async () => {
       try {
-        const loader = new Loader({
-          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
-          version: "weekly",
-        });
-
         const { Map } = await loader.importLibrary("maps");
         
         if (!mapRef.current) return;
 
         const defaultCenter = center || { lat: 9.0820, lng: 8.6753 }; // Nigeria center
         
-        const mapInstance = new Map(mapRef.current, {
-          center: defaultCenter,
-          zoom: 8,
-          styles: [
-            {
-              featureType: "poi",
-              elementType: "labels",
-              stylers: [{ visibility: "off" }],
-            },
-          ],
-        });
+        // Only create new map instance if one doesn't exist
+        if (!mapInstanceRef.current) {
+          mapInstanceRef.current = new Map(mapRef.current, {
+            center: defaultCenter,
+            zoom: 8,
+            styles: [
+              {
+                featureType: "poi",
+                elementType: "labels",
+                stylers: [{ visibility: "off" }],
+              },
+            ],
+          });
+        } else {
+          // Update existing map center if needed
+          mapInstanceRef.current.setCenter(defaultCenter);
+        }
 
-        mapInstanceRef.current = mapInstance;
-
-        if (onMapClick) {
-          mapInstance.addListener("click", onMapClick);
+        if (onMapClick && mapInstanceRef.current) {
+          // Remove existing click listeners before adding new one
+          google.maps.event.clearListeners(mapInstanceRef.current, 'click');
+          mapInstanceRef.current.addListener("click", onMapClick);
         }
 
         // Clear existing markers
@@ -51,11 +58,13 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
 
         // Add new markers
         markers.forEach(position => {
-          const marker = new google.maps.Marker({
-            position,
-            map: mapInstance,
-          });
-          markersRef.current.push(marker);
+          if (mapInstanceRef.current) {
+            const marker = new google.maps.Marker({
+              position,
+              map: mapInstanceRef.current,
+            });
+            markersRef.current.push(marker);
+          }
         });
 
       } catch (error) {
