@@ -1,61 +1,10 @@
-import { 
-  Building2, Store, Utensils, Scissors, Wrench, ShoppingBag, 
-  Laptop, Stethoscope, Brush, GraduationCap, Car, Hotel,
-  ChevronDown, ChevronUp, Shirt, Book, Home, Gift,
-  UtensilsCrossed, Coffee, Briefcase, Bath, Music,
-  HeartPulse, School, ShoppingCart, Watch, Glasses,
-  Flower, Palette, GamepadIcon, Printer, Camera, Baby,
-  Wine, Building, Hammer, Bed, Plane, Bus
-} from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-
-const INITIAL_CATEGORIES = [
-  { name: "Retail & Shopping", icon: Store, count: 0 },
-  { name: "Food & Drink", icon: Utensils, count: 0 },
-  { name: "Professional Services", icon: Building2, count: 0 },
-  { name: "Personal Services", icon: Scissors, count: 0 },
-  { name: "Home Services", icon: Wrench, count: 0 },
-  { name: "Automotive Services", icon: Car, count: 0 },
-  { name: "Technology", icon: Laptop, count: 0 },
-  { name: "Healthcare", icon: Stethoscope, count: 0 },
-  { name: "Arts & Entertainment", icon: Brush, count: 0 },
-  { name: "Education", icon: GraduationCap, count: 0 },
-  { name: "Travel & Transportation", icon: Hotel, count: 0 },
-  { name: "Shopping", icon: ShoppingBag, count: 0 }
-];
-
-const ADDITIONAL_CATEGORIES = [
-  { name: "Apparel & Fashion", icon: Shirt, count: 0 },
-  { name: "Books & Media", icon: Book, count: 0 },
-  { name: "Home & Garden", icon: Home, count: 0 },
-  { name: "Gifts & Specialty", icon: Gift, count: 0 },
-  { name: "Restaurants", icon: UtensilsCrossed, count: 0 },
-  { name: "Cafes & Bakeries", icon: Coffee, count: 0 },
-  { name: "Business Services", icon: Briefcase, count: 0 },
-  { name: "Beauty & Wellness", icon: Bath, count: 0 },
-  { name: "Entertainment Venues", icon: Music, count: 0 },
-  { name: "Medical Services", icon: HeartPulse, count: 0 },
-  { name: "Educational Services", icon: School, count: 0 },
-  { name: "Grocery & Markets", icon: ShoppingCart, count: 0 },
-  { name: "Jewelry & Watches", icon: Watch, count: 0 },
-  { name: "Eyewear & Opticals", icon: Glasses, count: 0 },
-  { name: "Florists", icon: Flower, count: 0 },
-  { name: "Art Galleries", icon: Palette, count: 0 },
-  { name: "Gaming & Hobbies", icon: GamepadIcon, count: 0 },
-  { name: "Printing Services", icon: Printer, count: 0 },
-  { name: "Photography", icon: Camera, count: 0 },
-  { name: "Childcare Services", icon: Baby, count: 0 },
-  { name: "Bars & Nightlife", icon: Wine, count: 0 },
-  { name: "Real Estate", icon: Building, count: 0 },
-  { name: "Hardware & Tools", icon: Hammer, count: 0 },
-  { name: "Hotels & Lodging", icon: Bed, count: 0 },
-  { name: "Air Travel", icon: Plane, count: 0 },
-  { name: "Public Transport", icon: Bus, count: 0 }
-];
+import { CategoryCard } from "./CategoryCard";
+import { ShowMoreButton } from "./ShowMoreButton";
+import { INITIAL_CATEGORIES, ADDITIONAL_CATEGORIES } from "./CategoryData";
 
 export const PopularCategories = () => {
   const navigate = useNavigate();
@@ -106,44 +55,22 @@ export const PopularCategories = () => {
           </p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {displayedCategories.map((category) => {
-            const Icon = category.icon;
-            const count = categoryCounts?.[category.name] || 0;
-            
-            return (
-              <div
-                key={category.name}
-                onClick={() => handleCategoryClick(category.name)}
-                className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-all p-6 text-center cursor-pointer border border-gray-100 hover:border-primary hover:-translate-y-1"
-              >
-                <div className="inline-flex items-center justify-center w-16 h-16 mb-4 bg-primary/10 rounded-lg group-hover:bg-primary group-hover:text-white text-primary transition-colors">
-                  <Icon size={32} />
-                </div>
-                <h3 className="font-semibold mb-2">{category.name}</h3>
-                <p className="text-sm text-gray-500">{count} Listings</p>
-              </div>
-            );
-          })}
+          {displayedCategories.map((category) => (
+            <CategoryCard
+              key={category.name}
+              name={category.name}
+              Icon={category.icon}
+              count={categoryCounts?.[category.name] || 0}
+              onClick={() => handleCategoryClick(category.name)}
+            />
+          ))}
         </div>
         
         {ADDITIONAL_CATEGORIES.length > 0 && (
-          <div className="mt-8 text-center">
-            <Button
-              variant="outline"
-              onClick={() => setShowAll(!showAll)}
-              className="inline-flex items-center gap-2"
-            >
-              {showAll ? (
-                <>
-                  Show Less <ChevronUp className="h-4 w-4" />
-                </>
-              ) : (
-                <>
-                  Show More Categories <ChevronDown className="h-4 w-4" />
-                </>
-              )}
-            </Button>
-          </div>
+          <ShowMoreButton 
+            showAll={showAll} 
+            onClick={() => setShowAll(!showAll)} 
+          />
         )}
       </div>
     </section>
