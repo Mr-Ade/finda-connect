@@ -2,12 +2,42 @@ import { MapPin } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const POPULAR_LOCATIONS = [
-  { name: "New York", image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9", count: 25 },
-  { name: "Chicago", image: "https://images.unsplash.com/photo-1494522855154-9297ac14b55f", count: 18 },
-  { name: "Los Angeles", image: "https://images.unsplash.com/photo-1515896769750-31548aa180ed", count: 22 },
-  { name: "San Francisco", image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29", count: 15 },
-  { name: "Miami", image: "https://images.unsplash.com/photo-1506966953602-c20cc11f75e3", count: 20 },
-  { name: "Seattle", image: "https://images.unsplash.com/photo-1502175353174-a7a70e73b362", count: 12 }
+  { 
+    id: "1",
+    name: "Lagos", 
+    image: "https://images.unsplash.com/photo-1587659901518-7020d4413085",
+    count: 25 
+  },
+  { 
+    id: "2",
+    name: "Abuja", 
+    image: "https://images.unsplash.com/photo-1472224371017-08207f84aaae",
+    count: 18 
+  },
+  { 
+    id: "3",
+    name: "Port Harcourt", 
+    image: "https://images.unsplash.com/photo-1577948000111-9c970dfe3743",
+    count: 22 
+  },
+  { 
+    id: "4",
+    name: "Kano", 
+    image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9",
+    count: 15 
+  },
+  { 
+    id: "5",
+    name: "Ibadan", 
+    image: "https://images.unsplash.com/photo-1506966953602-c20cc11f75e3",
+    count: 20 
+  },
+  { 
+    id: "6",
+    name: "Benin City", 
+    image: "https://images.unsplash.com/photo-1502175353174-a7a70e73b362",
+    count: 12 
+  }
 ];
 
 export const LocationSearch = () => {
@@ -30,7 +60,7 @@ export const LocationSearch = () => {
         >
           <CarouselContent>
             {POPULAR_LOCATIONS.map((location) => (
-              <CarouselItem key={location.name} className="md:basis-1/2 lg:basis-1/3">
+              <CarouselItem key={location.id} className="md:basis-1/2 lg:basis-1/3">
                 <div className="relative overflow-hidden rounded-lg group cursor-pointer h-64">
                   <img
                     src={location.image}
