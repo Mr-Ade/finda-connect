@@ -57,7 +57,7 @@ export const SearchBar = () => {
           </div>
           <div className="relative flex-1">
             <Input
-              placeholder="Min Price"
+              placeholder="Min Price (₦)"
               value={minPrice}
               onChange={(e) => setMinPrice(e.target.value)}
               className="h-12"
@@ -66,7 +66,7 @@ export const SearchBar = () => {
           </div>
           <div className="relative flex-1">
             <Input
-              placeholder="Max Price"
+              placeholder="Max Price (₦)"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
               className="h-12"
