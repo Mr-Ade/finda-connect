@@ -2,8 +2,10 @@ import {
   Building2, Store, Utensils, Scissors, Wrench, ShoppingBag, 
   Laptop, Stethoscope, Brush, GraduationCap, Car, Hotel,
   ChevronDown, ChevronUp, Shirt, Book, Home, Gift,
-  UtensilsCrossed, Coffee, Briefcase, Bath, Car2, Music,
-  FirstAid, School
+  UtensilsCrossed, Coffee, Briefcase, Bath, Music,
+  HeartPulse, School, ShoppingCart, Watch, Glasses,
+  Flower, Palette, GamepadIcon, Printer, Camera, Baby,
+  Wine, Building, Hammer, Bed, Plane, Bus
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -35,10 +37,24 @@ const ADDITIONAL_CATEGORIES = [
   { name: "Cafes & Bakeries", icon: Coffee, count: 0 },
   { name: "Business Services", icon: Briefcase, count: 0 },
   { name: "Beauty & Wellness", icon: Bath, count: 0 },
-  { name: "Auto Dealers", icon: Car2, count: 0 },
   { name: "Entertainment Venues", icon: Music, count: 0 },
-  { name: "Medical Services", icon: FirstAid, count: 0 },
-  { name: "Educational Services", icon: School, count: 0 }
+  { name: "Medical Services", icon: HeartPulse, count: 0 },
+  { name: "Educational Services", icon: School, count: 0 },
+  { name: "Grocery & Markets", icon: ShoppingCart, count: 0 },
+  { name: "Jewelry & Watches", icon: Watch, count: 0 },
+  { name: "Eyewear & Opticals", icon: Glasses, count: 0 },
+  { name: "Florists", icon: Flower, count: 0 },
+  { name: "Art Galleries", icon: Palette, count: 0 },
+  { name: "Gaming & Hobbies", icon: GamepadIcon, count: 0 },
+  { name: "Printing Services", icon: Printer, count: 0 },
+  { name: "Photography", icon: Camera, count: 0 },
+  { name: "Childcare Services", icon: Baby, count: 0 },
+  { name: "Bars & Nightlife", icon: Wine, count: 0 },
+  { name: "Real Estate", icon: Building, count: 0 },
+  { name: "Hardware & Tools", icon: Hammer, count: 0 },
+  { name: "Hotels & Lodging", icon: Bed, count: 0 },
+  { name: "Air Travel", icon: Plane, count: 0 },
+  { name: "Public Transport", icon: Bus, count: 0 }
 ];
 
 export const PopularCategories = () => {
