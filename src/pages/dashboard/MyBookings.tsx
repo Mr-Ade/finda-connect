@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar, Clock, MapPin, Building, Car, Home, X, Check } from "lucide-react";
+import { Calendar, Clock, MapPin, Building, Check, X } from "lucide-react";
 
 const MyBookings = () => {
   const { toast } = useToast();
@@ -43,7 +43,7 @@ const MyBookings = () => {
 
       console.log('Fetched bookings:', data);
       return data;
-    }
+    },
   });
 
   const getStatusColor = (status: string) => {
@@ -56,16 +56,6 @@ const MyBookings = () => {
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getCategoryIcon = (category: string) => {
-    if (category?.toLowerCase().includes('car')) {
-      return <Car className="w-5 h-5" />;
-    } else if (category?.toLowerCase().includes('property') || category?.toLowerCase().includes('real estate')) {
-      return <Home className="w-5 h-5" />;
-    } else {
-      return <Building className="w-5 h-5" />;
     }
   };
 
@@ -95,7 +85,7 @@ const MyBookings = () => {
                   <div>
                     <h3 className="text-lg font-semibold mb-2">{booking.businesses?.name}</h3>
                     <div className="flex items-center gap-2 text-gray-600 mb-2">
-                      {getCategoryIcon(booking.businesses?.category)}
+                      <Building className="w-4 h-4" />
                       <span>{booking.businesses?.category}</span>
                     </div>
                   </div>
