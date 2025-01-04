@@ -2,6 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/home/Hero";
 import { PopularCategories } from "@/components/home/PopularCategories";
 import { BusinessSearch } from "@/components/search/BusinessSearch";
+import { LocationRecommendations } from "@/components/search/LocationRecommendations";
 import { LocationSearch } from "@/components/home/LocationSearch";
 import { CustomerReviews } from "@/components/home/CustomerReviews";
 import { AppDownload } from "@/components/home/AppDownload";
@@ -47,6 +48,7 @@ const Index = () => {
           <div className="flex flex-col lg:flex-row gap-6">
             <div className={`${showMap ? 'lg:w-1/2' : 'w-full'}`}>
               <BusinessSearch />
+              {!showMap && <LocationRecommendations />}
             </div>
             
             {showMap && (
