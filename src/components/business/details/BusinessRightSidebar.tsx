@@ -1,5 +1,4 @@
 import { BusinessSidebar } from "@/components/business/BusinessSidebar";
-import { RecentlyViewedListings } from "@/components/business/RecentlyViewedListings";
 import type { Business } from "@/types/business";
 
 interface BusinessRightSidebarProps {
@@ -28,9 +27,6 @@ export const BusinessRightSidebar = ({ business }: BusinessRightSidebarProps) =>
           } : undefined
         }} 
       />
-      <div className="mt-4">
-        <RecentlyViewedListings />
-      </div>
     </div>
   );
 };
