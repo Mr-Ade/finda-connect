@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Star } from "lucide-react";
+import { Star, Check } from "lucide-react";
 
 interface BusinessHeaderProps {
   business: {
