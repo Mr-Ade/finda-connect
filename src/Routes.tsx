@@ -1,4 +1,4 @@
-import { Routes as RouterRoutes, Route } from "react-router-dom";
+import { Routes as RouterRoutes, Route, Outlet } from "react-router-dom";
 import { MainLayout } from "@/components/layouts/MainLayout";
 import Index from "@/pages/Index";
 import Profile from "@/pages/Profile";
@@ -39,7 +39,7 @@ import Security from "@/pages/Security";
 const Routes = () => {
   return (
     <RouterRoutes>
-      <Route element={<MainLayout />}>
+      <Route element={<MainLayout><Outlet /></MainLayout>}>
         <Route path="/" element={<Index />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/business/:id" element={<BusinessDetails />} />
