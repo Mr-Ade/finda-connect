@@ -4,6 +4,9 @@ import { Card } from "@/components/ui/card";
 import { BillingForm, type CheckoutFormData } from "@/components/checkout/BillingForm";
 import { OrderSummary } from "@/components/checkout/OrderSummary";
 import { supabase } from "@/integrations/supabase/client";
+import { Navbar } from "@/components/Navbar";
+import { Newsletter } from "@/components/home/Newsletter";
+import { Footer } from "@/components/Footer";
 
 const Checkout = () => {
   const { toast } = useToast();
@@ -81,8 +84,9 @@ const Checkout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background py-12">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <div className="container mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold mb-8">Checkout</h1>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -97,6 +101,8 @@ const Checkout = () => {
           </div>
         </div>
       </div>
+      <Newsletter />
+      <Footer />
     </div>
   );
 };

@@ -9,6 +9,8 @@ import { BookmarkButton } from "@/components/business/BookmarkButton";
 import { PhotoGallery } from "@/components/business/PhotoGallery";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { Newsletter } from "@/components/home/Newsletter";
+import { Footer } from "@/components/Footer";
 
 export default function BusinessDetails() {
   const { id } = useParams<{ id: string }>();
@@ -97,6 +99,8 @@ export default function BusinessDetails() {
             </p>
           </div>
         </main>
+        <Newsletter />
+        <Footer />
       </div>
     );
   }
@@ -127,6 +131,8 @@ export default function BusinessDetails() {
           </div>
         </div>
       </main>
+      <Newsletter />
+      <Footer />
     </div>
   );
 }
