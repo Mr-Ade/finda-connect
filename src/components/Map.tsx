@@ -12,7 +12,6 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
   const markerInstanceRef = useRef<mapboxgl.Marker | null>(null);
-  const navigationControlRef = useRef<mapboxgl.NavigationControl | null>(null);
   
   // Initialize map only once when component mounts
   useEffect(() => {
@@ -29,8 +28,7 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
         zoom: 13
       });
 
-      const navigationControl = new mapboxgl.NavigationControl();
-      map.addControl(navigationControl, 'top-right');
+      map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
       const marker = new mapboxgl.Marker({ draggable: true })
         .setLngLat([initialLng, initialLat])
@@ -38,7 +36,6 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
 
       mapInstanceRef.current = map;
       markerInstanceRef.current = marker;
-      navigationControlRef.current = navigationControl;
 
       console.log('Map and marker initialized successfully');
 
@@ -46,17 +43,14 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
       return () => {
         console.log('Cleaning up map instance');
         if (mapInstanceRef.current) {
-          if (navigationControlRef.current) {
-            mapInstanceRef.current.removeControl(navigationControlRef.current);
-          }
           if (markerInstanceRef.current) {
             markerInstanceRef.current.remove();
           }
           mapInstanceRef.current.remove();
-          mapInstanceRef.current = null;
-          markerInstanceRef.current = null;
-          navigationControlRef.current = null;
         }
+        // Clear refs after cleanup
+        mapInstanceRef.current = null;
+        markerInstanceRef.current = null;
       };
     } catch (error) {
       console.error('Error initializing map:', error);
@@ -73,12 +67,14 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
     console.log('Setting up map event handlers');
 
     const handleMarkerDragEnd = () => {
+      if (!marker) return;
       const lngLat = marker.getLngLat();
       console.log('Marker dragged to:', lngLat);
       onLocationSelect(lngLat.lat, lngLat.lng);
     };
 
     const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
+      if (!marker) return;
       const { lng, lat } = e.lngLat;
       console.log('Map clicked at:', { lng, lat });
       marker.setLngLat([lng, lat]);
@@ -90,10 +86,8 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
 
     return () => {
       console.log('Removing map event handlers');
-      if (marker && map) {
-        marker.off('dragend', handleMarkerDragEnd);
-        map.off('click', handleMapClick);
-      }
+      marker.off('dragend', handleMarkerDragEnd);
+      map.off('click', handleMapClick);
     };
   }, [onLocationSelect]); // Only re-run if onLocationSelect changes
 
