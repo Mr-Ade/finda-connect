@@ -2,7 +2,6 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { countries } from "@/lib/countries";
-import { getStatesByCountry } from "@/lib/states";
 
 interface AddressFieldsProps {
   address: {
@@ -42,14 +41,14 @@ export const AddressFields = ({ address, availableStates, onAddressChange }: Add
           </Select>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="state">State</Label>
+          <Label htmlFor="state">State/Province</Label>
           <Select 
             value={address.state} 
             onValueChange={(value) => onAddressChange('state', value)}
             disabled={!address.country}
           >
             <SelectTrigger>
-              <SelectValue placeholder={address.country ? "Select state" : "Select country first"} />
+              <SelectValue placeholder={address.country ? "Select state/province" : "Select country first"} />
             </SelectTrigger>
             <SelectContent>
               {availableStates.map((state) => (
@@ -69,6 +68,7 @@ export const AddressFields = ({ address, availableStates, onAddressChange }: Add
             id="city" 
             value={address.city}
             onChange={(e) => onAddressChange('city', e.target.value)}
+            placeholder="Enter city"
           />
         </div>
         <div className="space-y-2">
