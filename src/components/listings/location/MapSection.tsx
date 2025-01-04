@@ -42,8 +42,8 @@ export const MapSection = ({ coordinates, onCoordinatesChange }: MapSectionProps
           center={{ lat: coordinates.latitude, lng: coordinates.longitude }}
           markers={[{ lat: coordinates.latitude, lng: coordinates.longitude }]}
           onMapClick={(e) => {
-            if (e.latLng) {
-              onCoordinatesChange(e.latLng.lat(), e.latLng.lng());
+            if (e.lngLat) {
+              onCoordinatesChange(e.lngLat.lat, e.lngLat.lng);
             }
           }}
         />
