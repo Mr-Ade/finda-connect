@@ -20,7 +20,10 @@ interface FlutterwaveConfig {
 }
 
 interface Window {
-  FlutterwaveCheckout: (config: FlutterwaveConfig) => void;
+  FlutterwaveCheckout: {
+    (config: FlutterwaveConfig): void;
+    close: () => void;
+  };
   PaystackPop: {
     setup: (config: any) => void;
   };
