@@ -59,18 +59,20 @@ const POPULAR_LOCATIONS = [
 ];
 
 export const LocationCarousel = () => {
+  const autoplayOptions = {
+    delay: 5000,
+    stopOnInteraction: false,
+    stopOnMouseEnter: true,
+    rootNode: (emblaRoot: any) => emblaRoot.parentElement,
+  };
+
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { 
       loop: true,
-      duration: 50
+      align: "start",
+      skipSnaps: false
     },
-    [
-      Autoplay({
-        delay: 5000,
-        stopOnInteraction: false,
-        stopOnMouseEnter: true
-      })
-    ]
+    [Autoplay(autoplayOptions)]
   );
 
   const [api, setApi] = useState<UseEmblaCarouselType[1] | null>(null);
