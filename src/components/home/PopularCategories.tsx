@@ -3,23 +3,54 @@ import {
   Laptop, Stethoscope, Brush, GraduationCap, Car, 
   Dumbbell, Hotel
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const CATEGORIES = [
-  { name: "Real Estate", icon: Building2, count: 48 },
-  { name: "Restaurants", icon: Utensils, count: 92 },
-  { name: "Fashion & Tailoring", icon: Scissors, count: 154 },
-  { name: "Artisans & Repairs", icon: Wrench, count: 176 },
-  { name: "Markets & Shops", icon: ShoppingBag, count: 289 },
-  { name: "Technology", icon: Laptop, count: 82 },
-  { name: "Healthcare", icon: Stethoscope, count: 66 },
-  { name: "Arts & Culture", icon: Brush, count: 72 },
-  { name: "Education", icon: GraduationCap, count: 95 },
-  { name: "Automotive", icon: Car, count: 73 },
-  { name: "Sports & Fitness", icon: Dumbbell, count: 51 },
-  { name: "Hotels & Lodging", icon: Hotel, count: 87 }
+  { name: "Real Estate", icon: Building2, count: 0 },
+  { name: "Restaurants", icon: Utensils, count: 0 },
+  { name: "Fashion & Tailoring", icon: Scissors, count: 0 },
+  { name: "Artisans & Repairs", icon: Wrench, count: 0 },
+  { name: "Markets & Shops", icon: ShoppingBag, count: 0 },
+  { name: "Technology", icon: Laptop, count: 0 },
+  { name: "Healthcare", icon: Stethoscope, count: 0 },
+  { name: "Arts & Culture", icon: Brush, count: 0 },
+  { name: "Education", icon: GraduationCap, count: 0 },
+  { name: "Automotive", icon: Car, count: 0 },
+  { name: "Sports & Fitness", icon: Dumbbell, count: 0 },
+  { name: "Hotels & Lodging", icon: Hotel, count: 0 }
 ];
 
 export const PopularCategories = () => {
+  const navigate = useNavigate();
+  
+  const { data: categoryCounts } = useQuery({
+    queryKey: ['category-counts'],
+    queryFn: async () => {
+      console.log('Fetching category counts...');
+      const { data, error } = await supabase
+        .from('businesses')
+        .select('category, count(*)', { count: 'exact' })
+        .group('category');
+
+      if (error) {
+        console.error('Error fetching category counts:', error);
+        throw error;
+      }
+
+      console.log('Category counts:', data);
+      return data.reduce((acc: Record<string, number>, curr) => {
+        acc[curr.category] = parseInt(curr.count);
+        return acc;
+      }, {});
+    },
+  });
+
+  const handleCategoryClick = (categoryName: string) => {
+    navigate(`/search?category=${encodeURIComponent(categoryName)}`);
+  };
+
   return (
     <section className="py-16 px-4 bg-gray-50">
       <div className="container mx-auto">
@@ -32,16 +63,19 @@ export const PopularCategories = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           {CATEGORIES.map((category) => {
             const Icon = category.icon;
+            const count = categoryCounts?.[category.name] || 0;
+            
             return (
               <div
                 key={category.name}
+                onClick={() => handleCategoryClick(category.name)}
                 className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-all p-6 text-center cursor-pointer border border-gray-100 hover:border-primary hover:-translate-y-1"
               >
                 <div className="inline-flex items-center justify-center w-16 h-16 mb-4 bg-primary/10 rounded-lg group-hover:bg-primary group-hover:text-white text-primary transition-colors">
                   <Icon size={32} />
                 </div>
                 <h3 className="font-semibold mb-2">{category.name}</h3>
-                <p className="text-sm text-gray-500">{category.count} Listings</p>
+                <p className="text-sm text-gray-500">{count} Listings</p>
               </div>
             );
           })}
