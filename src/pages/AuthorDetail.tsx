@@ -46,6 +46,8 @@ const AuthorDetail = () => {
     return <div>Author not found</div>;
   }
 
+  const locationData = author.location_data as { city?: string; address?: string } | null;
+
   return (
     <div className="bg-gray-50 py-16">
       <div className="container mx-auto px-4">
@@ -68,7 +70,7 @@ const AuthorDetail = () => {
                     <h3 className="text-xl font-semibold">{author.full_name}</h3>
                     <p className="text-gray-600 flex items-center gap-1">
                       <MapPin className="w-4 h-4" />
-                      {author.location_data?.city || "Location not set"}
+                      {locationData?.city || "Location not set"}
                     </p>
                   </div>
                 </div>
@@ -78,7 +80,7 @@ const AuthorDetail = () => {
                     <div className="bg-blue-100 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2">
                       <FileText className="w-5 h-5 text-blue-600" />
                     </div>
-                    <div className="font-semibold text-xl">{author.businesses?.count || 0}</div>
+                    <div className="font-semibold text-xl">{author.businesses?.[0]?.count || 0}</div>
                     <div className="text-sm text-gray-600">Listings</div>
                   </div>
                   
@@ -86,7 +88,7 @@ const AuthorDetail = () => {
                     <div className="bg-yellow-100 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2">
                       <ThumbsUp className="w-5 h-5 text-yellow-600" />
                     </div>
-                    <div className="font-semibold text-xl">{author.followers?.count || 0}</div>
+                    <div className="font-semibold text-xl">{author.followers?.[0]?.count || 0}</div>
                     <div className="text-sm text-gray-600">Followers</div>
                   </div>
                   
@@ -111,7 +113,7 @@ const AuthorDetail = () => {
                     </div>
                     <div>
                       <h5 className="font-medium">Mail Us</h5>
-                      <p className="text-gray-600 text-sm">{author.email}</p>
+                      <p className="text-gray-600 text-sm">{author.email || "Not provided"}</p>
                     </div>
                   </div>
 
@@ -131,7 +133,7 @@ const AuthorDetail = () => {
                     </div>
                     <div>
                       <h5 className="font-medium">Location</h5>
-                      <p className="text-gray-600 text-sm">{author.location_data?.address || "Not provided"}</p>
+                      <p className="text-gray-600 text-sm">{locationData?.address || "Not provided"}</p>
                     </div>
                   </div>
 
@@ -154,13 +156,17 @@ const AuthorDetail = () => {
             <div className="bg-white rounded-lg p-6 mb-6">
               <div className="flex justify-between items-center mb-6">
                 <h4 className="text-lg font-semibold">
-                  You have total <span className="text-primary px-2">{author.businesses?.count || 0}</span> Listings
+                  You have total <span className="text-primary px-2">{author.businesses?.[0]?.count || 0}</span> Listings
                 </h4>
               </div>
             </div>
 
             {/* Display author's listings */}
-            <RecentListings authorId={author.id} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {listings?.map((listing) => (
+                <RecentListings key={listing.id} data={listing} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
