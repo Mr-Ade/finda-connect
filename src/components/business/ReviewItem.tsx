@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star, ThumbsUp } from "lucide-react";
+import { Star, ThumbsUp, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ReviewResponse } from "./ReviewResponse";
 import { useToast } from "@/hooks/use-toast";
@@ -20,6 +20,10 @@ interface ReviewItemProps {
       response_text: string;
       created_at: string;
     }>;
+    review_photos?: Array<{
+      id: string;
+      photo_url: string;
+    }>;
   };
   businessId: string;
   isOwner: boolean;
@@ -28,6 +32,7 @@ interface ReviewItemProps {
 
 export const ReviewItem = ({ review, businessId, isOwner, onUpdate }: ReviewItemProps) => {
   const [isVoting, setIsVoting] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleVote = async () => {
@@ -53,7 +58,7 @@ export const ReviewItem = ({ review, businessId, isOwner, onUpdate }: ReviewItem
       });
 
     if (error) {
-      if (error.code === '23505') { // Unique violation
+      if (error.code === '23505') {
         toast({
           description: "You have already voted on this review",
         });
@@ -97,6 +102,39 @@ export const ReviewItem = ({ review, businessId, isOwner, onUpdate }: ReviewItem
         </div>
       </div>
       <p className="text-gray-700 mb-4">{review.comment}</p>
+
+      {review.review_photos && review.review_photos.length > 0 && (
+        <div className="flex gap-2 mb-4">
+          {review.review_photos.map((photo) => (
+            <div
+              key={photo.id}
+              className="relative cursor-pointer"
+              onClick={() => setSelectedPhoto(photo.photo_url)}
+            >
+              <img
+                src={photo.photo_url}
+                alt="Review photo"
+                className="w-20 h-20 object-cover rounded-lg"
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {selectedPhoto && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={() => setSelectedPhoto(null)}
+        >
+          <div className="max-w-3xl max-h-[90vh] p-4">
+            <img
+              src={selectedPhoto}
+              alt="Review photo"
+              className="max-w-full max-h-full object-contain rounded-lg"
+            />
+          </div>
+        </div>
+      )}
 
       <Button
         variant="ghost"

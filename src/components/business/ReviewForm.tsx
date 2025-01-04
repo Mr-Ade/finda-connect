@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { ReviewPhotoUpload } from "./ReviewPhotoUpload";
 
 interface ReviewFormProps {
   businessId: string;
@@ -14,6 +15,7 @@ export const ReviewForm = ({ businessId, onReviewSubmitted }: ReviewFormProps) =
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reviewId, setReviewId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleSubmitReview = async (e: React.FormEvent) => {
@@ -32,14 +34,16 @@ export const ReviewForm = ({ businessId, onReviewSubmitted }: ReviewFormProps) =
       return;
     }
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("reviews")
       .insert({
         business_id: businessId,
         rating,
         comment,
         user_id: user.id
-      });
+      })
+      .select()
+      .single();
 
     if (error) {
       console.error("Review submission error:", error);
@@ -53,12 +57,18 @@ export const ReviewForm = ({ businessId, onReviewSubmitted }: ReviewFormProps) =
         title: "Success",
         description: "Your review has been submitted.",
       });
+      setReviewId(data.id);
       setRating(0);
       setComment("");
       onReviewSubmitted();
     }
 
     setIsSubmitting(false);
+  };
+
+  const handlePhotoUploaded = () => {
+    setReviewId(null);
+    onReviewSubmitted();
   };
 
   return (
@@ -91,6 +101,15 @@ export const ReviewForm = ({ businessId, onReviewSubmitted }: ReviewFormProps) =
           Submit Review
         </Button>
       </div>
+      {reviewId && (
+        <div className="mt-4">
+          <h3 className="text-sm font-medium mb-2">Add photos to your review</h3>
+          <ReviewPhotoUpload
+            reviewId={reviewId}
+            onPhotoUploaded={handlePhotoUploaded}
+          />
+        </div>
+      )}
     </form>
   );
 };
