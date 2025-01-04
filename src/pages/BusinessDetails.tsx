@@ -72,7 +72,7 @@ const BusinessDetails = () => {
             <div className="lg:col-span-8">
               <BusinessMainContent business={business} />
             </div>
-            <div className="lg:col-span-4">
+            <div className="lg:col-span-4 relative z-10">
               <BusinessRightSidebar business={business} />
             </div>
           </div>
