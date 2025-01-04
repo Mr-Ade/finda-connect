@@ -9,8 +9,8 @@ export type Json =
 export interface LocationData {
   city?: string;
   address?: string;
-  country?: string;
   state?: string;
+  country?: string;
   zip?: string;
   latitude?: number;
   longitude?: number;
