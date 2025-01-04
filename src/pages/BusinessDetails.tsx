@@ -10,6 +10,7 @@ import { FAQ } from "@/components/business/FAQ";
 import { ReviewSection } from "@/components/business/ReviewSection";
 import { BusinessHours } from "@/components/business/BusinessHours";
 import { BusinessSidebar } from "@/components/business/BusinessSidebar";
+import { RecentlyViewedListings } from "@/components/business/RecentlyViewedListings";
 
 interface ReviewResponse {
   id: string;
@@ -200,6 +201,8 @@ const BusinessDetails = () => {
           </div>
         </div>
       </section>
+
+      <RecentlyViewedListings />
     </div>
   );
 };
