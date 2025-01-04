@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Mail, MapPin, Phone, Globe, FileText, ThumbsUp, Heart } from "lucide-react";
 import { AuthorListings } from "@/components/author/AuthorListings";
+import { useToast } from "@/hooks/use-toast";
 import type { Database } from "@/integrations/supabase/types";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"] & {
@@ -17,11 +18,12 @@ type Profile = Database["public"]["Tables"]["profiles"]["Row"] & {
 
 const AuthorDetail = () => {
   const { username } = useParams();
+  const { toast } = useToast();
 
   const { data: author, isLoading } = useQuery({
     queryKey: ['author', username],
     queryFn: async () => {
-      const { data: profile } = await supabase
+      const { data: profile, error } = await supabase
         .from('profiles')
         .select(`
           *,
@@ -31,6 +33,15 @@ const AuthorDetail = () => {
         .eq('username', username)
         .single();
 
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load author profile",
+          variant: "destructive",
+        });
+        throw error;
+      }
+
       return profile as Profile;
     }
   });
@@ -38,14 +49,72 @@ const AuthorDetail = () => {
   const { data: listings } = useQuery({
     queryKey: ['author-listings', username],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('businesses')
         .select('*')
         .eq('owner_id', author?.id);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load listings",
+          variant: "destructive",
+        });
+        throw error;
+      }
+
       return data;
     },
     enabled: !!author?.id
   });
+
+  const handleFollow = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to follow users",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { error } = await supabase
+      .from('follows')
+      .insert({
+        follower_id: session.user.id,
+        following_id: author?.id,
+      });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to follow user",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Success",
+      description: "You are now following this user",
+    });
+  };
+
+  const handleMessage = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to send messages",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Navigate to messages page with pre-selected user
+    window.location.href = `/dashboard/messages?user=${author?.id}`;
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -111,8 +180,8 @@ const AuthorDetail = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mb-8">
-                  <Button variant="outline" className="w-full">Follow</Button>
-                  <Button className="w-full">Message</Button>
+                  <Button onClick={handleFollow} variant="outline" className="w-full">Follow</Button>
+                  <Button onClick={handleMessage} className="w-full">Message</Button>
                 </div>
 
                 <div className="space-y-6">
