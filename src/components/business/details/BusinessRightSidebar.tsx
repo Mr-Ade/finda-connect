@@ -21,7 +21,11 @@ export const BusinessRightSidebar = ({ business }: BusinessRightSidebarProps) =>
           phone: business.phone,
           website: business.website,
           email: business.email,
-          owner: business.owner
+          owner: business.owner ? {
+            username: business.owner.username || "Anonymous",
+            avatar_url: business.owner.avatar_url || "/placeholder.svg",
+            full_name: business.owner.full_name || "Anonymous"
+          } : undefined
         }} 
       />
       <div className="mt-4">

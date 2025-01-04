@@ -72,7 +72,13 @@ export const BusinessMainContent = ({ business }: BusinessMainContentProps) => {
       <ReviewSection 
         businessId={business.id} 
         isOwner={false} 
-        reviews={business.reviews || []}
+        reviews={business.reviews?.map(review => ({
+          ...review,
+          profiles: {
+            username: review.profiles?.username || "Anonymous",
+            avatar_url: review.profiles?.avatar_url || "/placeholder.svg"
+          }
+        })) || []}
       />
     </div>
   );
