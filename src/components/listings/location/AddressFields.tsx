@@ -2,7 +2,6 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { countries } from "@/lib/countries";
-import { getStatesByCountry } from "@/lib/states";
 
 interface AddressFieldsProps {
   address: {
@@ -20,46 +19,29 @@ interface AddressFieldsProps {
 }
 
 export const AddressFields = ({ address, availableStates, onAddressChange }: AddressFieldsProps) => {
-  console.log("Current country:", address.country);
-  console.log("Available states:", availableStates);
   console.log("Current state:", address.state);
+  console.log("Available states:", availableStates);
 
   return (
     <>
       <div className="grid md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="country">Country</Label>
-          <Select 
-            value={address.country} 
-            onValueChange={(value) => onAddressChange('country', value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select country" />
-            </SelectTrigger>
-            <SelectContent>
-              {countries.map((country) => (
-                <SelectItem key={country.code} value={country.name}>
-                  {country.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Input 
+            id="country" 
+            value="Nigeria"
+            disabled
+            className="bg-gray-100"
+          />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="state">State/Province</Label>
+          <Label htmlFor="state">State</Label>
           <Select 
             value={address.state} 
             onValueChange={(value) => onAddressChange('state', value)}
-            disabled={!address.country || availableStates.length === 0}
           >
             <SelectTrigger>
-              <SelectValue placeholder={
-                !address.country 
-                  ? "Select country first" 
-                  : availableStates.length === 0 
-                    ? "No states available" 
-                    : "Select state/province"
-              } />
+              <SelectValue placeholder="Select state" />
             </SelectTrigger>
             <SelectContent>
               {availableStates.map((state) => (

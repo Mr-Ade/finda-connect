@@ -11,11 +11,11 @@ export const LocationInfo = () => {
   const { toast } = useToast();
   const locationContext = useLocation();
   const [coordinates, setCoordinates] = useState({
-    latitude: locationContext.coordinates.latitude || 40.7128,
-    longitude: locationContext.coordinates.longitude || -74.0060
+    latitude: locationContext.coordinates.latitude || 9.0820,  // Nigeria's approximate center
+    longitude: locationContext.coordinates.longitude || 8.6753
   });
   const [address, setAddress] = useState({
-    country: locationContext.country || "",
+    country: "Nigeria",  // Default to Nigeria
     state: locationContext.state || "",
     city: locationContext.city || "",
     street: "",
@@ -25,7 +25,7 @@ export const LocationInfo = () => {
     website: ""
   });
 
-  const [availableStates, setAvailableStates] = useState<{ name: string; code: string }[]>([]);
+  const [availableStates, setAvailableStates] = useState<{ name: string; code: string }[]>(getStatesByCountry("Nigeria"));
 
   useEffect(() => {
     if (locationContext.coordinates.latitude && locationContext.coordinates.longitude) {
@@ -37,23 +37,10 @@ export const LocationInfo = () => {
     
     setAddress(prev => ({
       ...prev,
-      country: locationContext.country || prev.country,
       state: locationContext.state || prev.state,
       city: locationContext.city || prev.city
     }));
   }, [locationContext]);
-
-  useEffect(() => {
-    console.log("Country changed:", address.country);
-    if (address.country) {
-      const states = getStatesByCountry(address.country);
-      console.log("Available states:", states);
-      setAvailableStates(states);
-      if (!states.find(s => s.name === address.state)) {
-        setAddress(prev => ({ ...prev, state: "" }));
-      }
-    }
-  }, [address.country]);
 
   const handleLocationSelect = (lat: number, lng: number) => {
     setCoordinates({ latitude: lat, longitude: lng });
@@ -67,7 +54,6 @@ export const LocationInfo = () => {
           
           setAddress(prev => ({
             ...prev,
-            country: result.country || prev.country,
             state: result.state || prev.state,
             city: result.city || prev.city,
             zipCode: result.postcode || prev.zipCode
