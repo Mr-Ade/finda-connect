@@ -1,4 +1,5 @@
 import { Routes as RouterRoutes, Route } from "react-router-dom";
+import { MainLayout } from "@/components/layouts/MainLayout";
 import Index from "@/pages/Index";
 import Profile from "@/pages/Profile";
 import BusinessDetails from "@/pages/BusinessDetails";
@@ -38,41 +39,43 @@ import Security from "@/pages/Security";
 const Routes = () => {
   return (
     <RouterRoutes>
-      <Route path="/" element={<Index />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/business/:id" element={<BusinessDetails />} />
-      <Route path="/job/:id" element={<JobListing />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/blog" element={<Blog />} />
-      <Route path="/blog/:id" element={<BlogDetail />} />
-      <Route path="/about" element={<AboutUs />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/checkout" element={<Checkout />} />
-      <Route path="/pricing" element={<Pricing />} />
-      <Route path="/privacy" element={<Privacy />} />
-      <Route path="/faq" element={<FAQ />} />
-      <Route path="/explore-listings" element={<ExploreListings />} />
-      <Route path="/browse-authors" element={<BrowseAuthors />} />
-      <Route path="/submit-listing" element={<SubmitListing />} />
-      <Route path="/shortlisted" element={<Shortlisted />} />
-      <Route path="/browse-categories" element={<BrowseCategories />} />
-      <Route path="/payment-links" element={<PaymentLinks />} />
-      <Route path="/saved-places" element={<SavedPlaces />} />
-      <Route path="/who-we-are" element={<WhoWeAre />} />
-      <Route path="/our-mission" element={<OurMission />} />
-      <Route path="/our-team" element={<OurTeam />} />
-      <Route path="/packages" element={<Packages />} />
-      <Route path="/sitemap" element={<SiteMap />} />
-      <Route path="/security" element={<Security />} />
-      <Route path="/dashboard/listings" element={<Listings />} />
-      <Route path="/dashboard/add-listing" element={<AddListing />} />
-      <Route path="/dashboard/appointments" element={<Appointments />} />
-      <Route path="/dashboard/bookmarks" element={<Bookmarks />} />
-      <Route path="/dashboard/change-password" element={<ChangePassword />} />
-      <Route path="/dashboard/messages" element={<Messages />} />
-      <Route path="/dashboard/wallet" element={<Wallet />} />
-      <Route path="*" element={<NotFound />} />
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Index />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/business/:id" element={<BusinessDetails />} />
+        <Route path="/job/:id" element={<JobListing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:id" element={<BlogDetail />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/explore-listings" element={<ExploreListings />} />
+        <Route path="/browse-authors" element={<BrowseAuthors />} />
+        <Route path="/submit-listing" element={<SubmitListing />} />
+        <Route path="/shortlisted" element={<Shortlisted />} />
+        <Route path="/browse-categories" element={<BrowseCategories />} />
+        <Route path="/payment-links" element={<PaymentLinks />} />
+        <Route path="/saved-places" element={<SavedPlaces />} />
+        <Route path="/who-we-are" element={<WhoWeAre />} />
+        <Route path="/our-mission" element={<OurMission />} />
+        <Route path="/our-team" element={<OurTeam />} />
+        <Route path="/packages" element={<Packages />} />
+        <Route path="/sitemap" element={<SiteMap />} />
+        <Route path="/security" element={<Security />} />
+        <Route path="/dashboard/listings" element={<Listings />} />
+        <Route path="/dashboard/add-listing" element={<AddListing />} />
+        <Route path="/dashboard/appointments" element={<Appointments />} />
+        <Route path="/dashboard/bookmarks" element={<Bookmarks />} />
+        <Route path="/dashboard/change-password" element={<ChangePassword />} />
+        <Route path="/dashboard/messages" element={<Messages />} />
+        <Route path="/dashboard/wallet" element={<Wallet />} />
+        <Route path="*" element={<NotFound />} />
+      </Route>
     </RouterRoutes>
   );
 };
