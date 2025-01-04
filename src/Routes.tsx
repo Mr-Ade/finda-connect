@@ -34,6 +34,7 @@ import OurTeam from "@/pages/OurTeam";
 import Packages from "@/pages/Packages";
 import SiteMap from "@/pages/SiteMap";
 import Security from "@/pages/Security";
+import { MapSearch } from "@/components/search/MapSearch";
 
 const Routes = () => {
   return (
@@ -72,6 +73,7 @@ const Routes = () => {
       <Route path="/dashboard/change-password" element={<ChangePassword />} />
       <Route path="/dashboard/messages" element={<Messages />} />
       <Route path="/dashboard/wallet" element={<Wallet />} />
+      <Route path="/map-search" element={<MapSearch />} />
       <Route path="*" element={<NotFound />} />
     </RouterRoutes>
   );
