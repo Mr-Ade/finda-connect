@@ -1,44 +1,41 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-}
+import { corsHeaders } from "../_shared/cors.ts"
 
 serve(async (req) => {
-  // Handle CORS preflight requests
+  // Handle CORS
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
+    // Parse the request body
     const { keys } = await req.json()
-    const config: Record<string, string> = {}
 
-    // Get requested keys from environment variables
+    // Only return specifically requested keys
+    const config: Record<string, string> = {}
     for (const key of keys) {
-      const value = Deno.env.get(key)
-      if (value) {
-        config[key] = value
-      }
+      config[key] = Deno.env.get(key) || ''
     }
 
     return new Response(
-      JSON.stringify(config),
+      JSON.stringify({ data: config }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
-      }
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
+      },
     )
   } catch (error) {
-    console.error('Error in get-config function:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500 
-      }
+        status: 400,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
+      },
     )
   }
 })

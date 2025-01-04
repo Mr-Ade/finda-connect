@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
+import { supabase } from "@/integrations/supabase/client";
 
 interface MapProps {
   center?: { lat: number; lng: number };
@@ -8,11 +9,21 @@ interface MapProps {
   className?: string;
 }
 
-// Create a singleton loader instance
-const loader = new Loader({
-  apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
-  version: "weekly",
-});
+// Create a loader function that gets the API key from Supabase
+const getLoader = async () => {
+  const { data: { GOOGLE_MAPS_API_KEY } } = await supabase.functions.invoke('get-config', {
+    body: { keys: ['GOOGLE_MAPS_API_KEY'] }
+  });
+
+  if (!GOOGLE_MAPS_API_KEY) {
+    throw new Error('Google Maps API key not found');
+  }
+
+  return new Loader({
+    apiKey: GOOGLE_MAPS_API_KEY,
+    version: "weekly",
+  });
+};
 
 export const Map = ({ center, markers = [], onMapClick, className = "" }: MapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -22,6 +33,7 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
   useEffect(() => {
     const initMap = async () => {
       try {
+        const loader = await getLoader();
         const { Map } = await loader.importLibrary("maps");
         
         if (!mapRef.current) return;
