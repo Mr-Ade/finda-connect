@@ -44,8 +44,10 @@ export const LocationInfo = () => {
   }, [locationContext]);
 
   useEffect(() => {
+    console.log("Country changed:", address.country);
     if (address.country) {
       const states = getStatesByCountry(address.country);
+      console.log("Available states:", states);
       setAvailableStates(states);
       if (!states.find(s => s.name === address.state)) {
         setAddress(prev => ({ ...prev, state: "" }));
@@ -83,6 +85,7 @@ export const LocationInfo = () => {
   };
 
   const handleAddressChange = (field: string, value: string) => {
+    console.log("Address field changed:", field, value);
     setAddress(prev => ({ ...prev, [field]: value }));
   };
 
