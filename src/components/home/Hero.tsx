@@ -76,15 +76,6 @@ export const Hero = () => {
               </div>
             </div>
           </div>
-          <div className="w-full lg:w-5/12">
-            <div className="relative">
-              <img 
-                src="/assets/img/hero-image.jpg" 
-                alt="Hero" 
-                className="rounded-lg shadow-xl"
-              />
-            </div>
-          </div>
         </div>
       </div>
     </div>
