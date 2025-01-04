@@ -434,6 +434,87 @@ export type Database = {
         }
         Relationships: []
       }
+      offer_clicks: {
+        Row: {
+          clicked_at: string
+          id: string
+          offer_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          clicked_at?: string
+          id?: string
+          offer_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          clicked_at?: string
+          id?: string
+          offer_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_clicks_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offer_clicks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offers: {
+        Row: {
+          background_image: string
+          category: string
+          created_at: string
+          discount_amount: number
+          discount_type: string
+          end_date: string
+          id: string
+          is_active: boolean | null
+          start_date: string
+          subtitle: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          background_image: string
+          category: string
+          created_at?: string
+          discount_amount: number
+          discount_type: string
+          end_date: string
+          id?: string
+          is_active?: boolean | null
+          start_date: string
+          subtitle: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          background_image?: string
+          category?: string
+          created_at?: string
+          discount_amount?: number
+          discount_type?: string
+          end_date?: string
+          id?: string
+          is_active?: boolean | null
+          start_date?: string
+          subtitle?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
