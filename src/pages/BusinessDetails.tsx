@@ -8,7 +8,6 @@ import { MenuItems } from "@/components/business/MenuItems";
 import { Amenities } from "@/components/business/Amenities";
 import { FAQ } from "@/components/business/FAQ";
 import { ReviewSection } from "@/components/business/ReviewSection";
-import { BusinessHours } from "@/components/business/BusinessHours";
 import { BusinessSidebar } from "@/components/business/BusinessSidebar";
 import { RecentlyViewedListings } from "@/components/business/RecentlyViewedListings";
 
@@ -191,7 +190,6 @@ const BusinessDetails = () => {
                 isOwner={false} 
                 reviews={business.reviews} 
               />
-              <BusinessHours businessId={business.id} />
             </div>
 
             {/* Sidebar */}
