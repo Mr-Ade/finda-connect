@@ -1,6 +1,7 @@
 import { MapPin, Globe, Mail, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { BusinessHours } from "@/components/business/BusinessHours";
 
 interface BusinessSidebarProps {
   business: {
@@ -40,6 +41,11 @@ export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
           </div>
           <Button className="w-full">Start Your Order</Button>
         </div>
+      </div>
+
+      {/* Business Hours */}
+      <div className="bg-white rounded-lg p-4 shadow-sm">
+        <BusinessHours businessId={business.id} />
       </div>
 
       {/* Author Box */}
