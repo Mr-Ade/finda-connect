@@ -2,7 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface LocationData {
   city: string;
@@ -10,7 +11,7 @@ interface LocationData {
 }
 
 export const DashboardHeader = () => {
-  const { data: profile } = useQuery({
+  const { data: profile, isLoading, error } = useQuery({
     queryKey: ['profile'],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -30,8 +31,33 @@ export const DashboardHeader = () => {
   // First cast to unknown, then to LocationData to satisfy TypeScript
   const locationData = (profile?.location_data as unknown) as LocationData;
 
+  if (isLoading) {
+    return (
+      <section className="relative bg-cover bg-center py-16 flex items-center justify-center" 
+               style={{ backgroundImage: "url('/placeholder.svg')" }}>
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="relative bg-cover bg-center py-16" 
+               style={{ backgroundImage: "url('/placeholder.svg')" }}>
+        <div className="container mx-auto px-4">
+          <Alert variant="destructive">
+            <AlertDescription>
+              Error loading profile: {error instanceof Error ? error.message : 'Unknown error'}
+            </AlertDescription>
+          </Alert>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="relative bg-cover bg-center py-16" style={{ backgroundImage: "url('/placeholder.svg')" }}>
+    <section className="relative bg-cover bg-center py-16" 
+             style={{ backgroundImage: "url('/placeholder.svg')" }}>
       <div className="absolute right-4 top-4">
         <Button asChild>
           <Link to="/dashboard/add-listing" className="flex items-center gap-2">
@@ -52,10 +78,12 @@ export const DashboardHeader = () => {
           </div>
           <div>
             <h4 className="text-2xl font-semibold text-white">{profile?.full_name}</h4>
-            <span className="text-gray-200">
-              <i className="lni lni-map-marker me-1"></i>
-              {locationData?.city}, {locationData?.country}
-            </span>
+            {locationData?.city && locationData?.country && (
+              <span className="text-gray-200">
+                <i className="lni lni-map-marker me-1"></i>
+                {locationData.city}, {locationData.country}
+              </span>
+            )}
           </div>
         </div>
       </div>
