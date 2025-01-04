@@ -1,5 +1,6 @@
 import { Eye, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
+import { MainLayout } from "@/components/layouts/MainLayout";
 
 const Blog = () => {
   const blogPosts = [
@@ -36,7 +37,7 @@ const Blog = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <MainLayout>
       {/* Breadcrumb */}
       <div className="bg-gray-900 py-3">
         <div className="container mx-auto px-4">
@@ -116,7 +117,7 @@ const Blog = () => {
           </div>
         </div>
       </section>
-    </div>
+    </MainLayout>
   );
 };
 

@@ -1,5 +1,4 @@
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { MainLayout } from "@/components/layouts/MainLayout";
 import { ShoppingBasket } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -110,9 +109,7 @@ const Pricing = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      
+    <MainLayout>
       {/* Breadcrumb */}
       <div className="bg-gray-900 py-3">
         <div className="container mx-auto px-4">
@@ -143,9 +140,7 @@ const Pricing = () => {
           </div>
         </div>
       </section>
-
-      <Footer />
-    </div>
+    </MainLayout>
   );
 };
 
