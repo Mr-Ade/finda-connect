@@ -66,7 +66,7 @@ export const Navbar = () => {
         <div className="flex items-center space-x-6">
           <Link to="/" className="flex items-center">
             <img 
-              src="/lovable-uploads/be8ebf48-69b0-4b0e-af17-c4cf8719c926.png" 
+              src="/lovable-uploads/4d0af716-aad5-4a66-a3db-4a158a8037a8.png" 
               alt="Finda Logo" 
               className="h-8"
             />
