@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import Map from "@/components/Map";
+import { Map } from "@/components/Map";
 import { Link } from "react-router-dom";
 
 const Contact = () => {

@@ -1,6 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import Map from "@/components/Map";
+import { Map } from "@/components/Map";
 
 interface MapSectionProps {
   coordinates: {
@@ -34,9 +34,9 @@ export const MapSection = ({ coordinates, onCoordinatesChange }: MapSectionProps
 
       <div className="w-full h-[400px] rounded-lg overflow-hidden">
         <Map 
-          onLocationSelect={(lat, lng) => onCoordinatesChange(lat, lng)}
-          initialLat={coordinates.latitude}
-          initialLng={coordinates.longitude}
+          center={{ lat: coordinates.latitude, lng: coordinates.longitude }}
+          markers={[{ lat: coordinates.latitude, lng: coordinates.longitude }]}
+          onMapClick={(e) => onCoordinatesChange(e.latLng.lat(), e.latLng.lng())}
         />
       </div>
     </>
