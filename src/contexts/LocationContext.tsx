@@ -21,15 +21,15 @@ const LocationContext = createContext<LocationContextType | undefined>(undefined
 export function LocationProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
   const [locationData, setLocationData] = useState<LocationContextType>({
-    country: "",
+    country: "Nigeria", // Default to Nigeria
     state: "",
     city: "",
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    currency: "USD",
+    currency: "NGN", // Set to Nigerian Naira
     language: navigator.language,
     coordinates: {
-      latitude: null,
-      longitude: null,
+      latitude: 9.0820, // Nigeria's approximate center
+      longitude: 8.6753
     },
     isLoading: true,
   });
@@ -40,85 +40,75 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
         // First try to get precise location using browser geolocation
         if ("geolocation" in navigator) {
           const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject);
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              timeout: 5000,
+              maximumAge: 0,
+              enableHighAccuracy: true
+            });
           });
 
           const { latitude, longitude } = position.coords;
+          console.log("Got coordinates:", latitude, longitude);
           
           // Use reverse geocoding to get location details
           const response = await fetch(
-            `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=155e6c1220b94de0a87f628b659b430b`
+            `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=155e6c1220b94de0a87f628b659b430b&countrycode=ng`
           );
+          
+          if (!response.ok) {
+            throw new Error('Geocoding API request failed');
+          }
+
           const data = await response.json();
+          console.log("Geocoding response:", data);
 
           if (data.results && data.results[0]) {
             const result = data.results[0].components;
-            console.log("Location data received:", result);
+            console.log("Location components:", result);
             
-            setLocationData(prev => ({
-              ...prev,
-              country: result.country || "",
-              state: result.state || "",
-              city: result.city || "",
-              coordinates: {
-                latitude,
-                longitude,
-              },
-              isLoading: false,
-            }));
+            // Only update if the location is in Nigeria
+            if (result.country === "Nigeria") {
+              setLocationData(prev => ({
+                ...prev,
+                state: result.state || "",
+                city: result.city || "",
+                coordinates: {
+                  latitude,
+                  longitude,
+                },
+                isLoading: false,
+              }));
 
-            // Store location in user profile if authenticated
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.user) {
-              const { error } = await supabase
-                .from('profiles')
-                .update({
-                  location_data: {
-                    latitude,
-                    longitude,
-                    country: result.country,
-                    state: result.state,
-                    city: result.city,
-                  }
-                })
-                .eq('id', session.user.id);
+              // Store location in user profile if authenticated
+              const { data: { session } } = await supabase.auth.getSession();
+              if (session?.user) {
+                const { error } = await supabase
+                  .from('profiles')
+                  .update({
+                    location_data: {
+                      latitude,
+                      longitude,
+                      state: result.state,
+                      city: result.city,
+                    }
+                  })
+                  .eq('id', session.user.id);
 
-              if (error) {
-                console.error("Error updating profile location:", error);
+                if (error) {
+                  console.error("Error updating profile location:", error);
+                }
               }
             }
           }
-        } else {
-          throw new Error("Geolocation is not supported");
         }
       } catch (error) {
         console.error("Error detecting location:", error);
-        // Fallback to IP-based location
-        try {
-          const response = await fetch("https://ipapi.co/json/");
-          const data = await response.json();
-          console.log("IP-based location data:", data);
-          
-          setLocationData(prev => ({
-            ...prev,
-            country: data.country_name || "",
-            state: data.region || "",
-            city: data.city || "",
-            coordinates: {
-              latitude: data.latitude || null,
-              longitude: data.longitude || null,
-            },
-            isLoading: false,
-          }));
-        } catch (fallbackError) {
-          console.error("Error with fallback location detection:", fallbackError);
-          toast({
-            title: "Location Detection Failed",
-            description: "Unable to detect your location. Using default settings.",
-            variant: "destructive",
-          });
-          setLocationData(prev => ({ ...prev, isLoading: false }));
-        }
+        setLocationData(prev => ({ ...prev, isLoading: false }));
+        toast({
+          title: "Location Detection Failed",
+          description: "Using default location settings for Nigeria.",
+          variant: "destructive",
+        });
       }
     };
 
