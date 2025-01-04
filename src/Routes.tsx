@@ -11,6 +11,7 @@ import Messages from "@/pages/dashboard/Messages";
 import Wallet from "@/pages/dashboard/Wallet";
 import NotFound from "@/pages/404";
 import AuthorDetail from "@/pages/AuthorDetail";
+import ExploreListings from "@/pages/ExploreListings";
 
 const Routes = () => {
   return (
@@ -26,6 +27,7 @@ const Routes = () => {
       <Route path="/dashboard/messages" element={<Messages />} />
       <Route path="/dashboard/wallet" element={<Wallet />} />
       <Route path="/author/:username" element={<AuthorDetail />} />
+      <Route path="/explore-listings" element={<ExploreListings />} />
       <Route path="*" element={<NotFound />} />
     </RouterRoutes>
   );

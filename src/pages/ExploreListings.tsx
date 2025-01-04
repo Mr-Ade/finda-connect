@@ -1,33 +1,36 @@
-import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { Newsletter } from "@/components/home/Newsletter";
-import { Footer } from "@/components/Footer";
+import { useState } from "react";
+import { Map } from "@/components/Map";
+import { BusinessSearch } from "@/components/search/BusinessSearch";
+import { SearchFilters } from "@/components/search/SearchFilters";
 
 const ExploreListings = () => {
-  const breadcrumbItems = [
-    { label: "Home", href: "/" },
-    { label: "Explore Listings", href: "#", active: true },
-  ];
+  const [showMap, setShowMap] = useState(true);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-gray-900 py-3">
-        <div className="container mx-auto px-4">
-          <Breadcrumb items={breadcrumbItems} className="text-white" />
+      {/* Map Section */}
+      {showMap && (
+        <div className="h-[400px] w-full relative">
+          <Map className="w-full h-full" />
         </div>
-      </div>
+      )}
 
-      <section className="py-16">
+      {/* Main Content */}
+      <section className="py-8">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-8 text-center">Explore Listings</h1>
-          <p className="text-gray-600 text-center mb-8">
-            Discover amazing places and businesses in your area
-          </p>
-          {/* Add listing grid/content here */}
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Filters Sidebar */}
+            <div className="w-full lg:w-1/4">
+              <SearchFilters />
+            </div>
+
+            {/* Listings Grid */}
+            <div className="w-full lg:w-3/4">
+              <BusinessSearch showMap={showMap} onToggleMap={() => setShowMap(!showMap)} />
+            </div>
+          </div>
         </div>
       </section>
-
-      <Newsletter />
-      <Footer />
     </div>
   );
 };
