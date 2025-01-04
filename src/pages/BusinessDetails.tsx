@@ -11,6 +11,26 @@ import { ReviewSection } from "@/components/business/ReviewSection";
 import { BusinessHours } from "@/components/business/BusinessHours";
 import { BusinessSidebar } from "@/components/business/BusinessSidebar";
 
+interface Review {
+  id: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+  profiles: {
+    username: string;
+    avatar_url: string;
+  };
+  review_responses?: Array<{
+    id: string;
+    response_text: string;
+    created_at: string;
+  }>;
+  review_photos?: Array<{
+    id: string;
+    photo_url: string;
+  }>;
+}
+
 const BusinessDetails = () => {
   const { id } = useParams();
 
@@ -48,8 +68,9 @@ const BusinessDetails = () => {
       if (data) {
         data.reviews = data.reviews.map(review => ({
           ...review,
-          review_responses: review.review_responses ? [review.review_responses] : []
-        }));
+          review_responses: review.review_responses ? [review.review_responses] : [],
+          review_photos: review.review_photos || []
+        })) as Review[];
       }
 
       return data;
