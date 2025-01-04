@@ -1,98 +1,111 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Slider } from "@/components/ui/slider";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Filter, ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
 
 export const SearchFilters = () => {
   const [isOpen, setIsOpen] = useState(true);
-  const [priceRange, setPriceRange] = useState([0]);
+  const [priceRange, setPriceRange] = useState(2); // $$$
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-lg font-semibold">Search Filters</CardTitle>
-        <Button 
-          variant="ghost" 
-          size="sm"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <Filter className="h-4 w-4 mr-2" />
-          {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-        </Button>
-      </CardHeader>
+    <div className="bg-white rounded-lg shadow">
+      <div className="flex items-center justify-between px-4 py-3 border-b">
+        <h4 className="font-medium text-lg">Search Filter</h4>
+        <div className="flex items-center gap-2">
+          <button className="text-sm text-gray-500 hover:text-gray-700">Clear All</button>
+          <button onClick={() => setIsOpen(!isOpen)}>
+            <span className="sr-only">Toggle filters</span>
+            {/* Icon */}
+          </button>
+        </div>
+      </div>
 
       {isOpen && (
-        <CardContent>
+        <div className="p-4">
           {/* Price Range */}
           <div className="mb-6">
-            <h3 className="text-sm font-medium mb-4">Price Range</h3>
-            <div className="space-y-4">
-              <Slider
-                defaultValue={[0]}
-                max={4}
-                step={1}
-                value={priceRange}
-                onValueChange={setPriceRange}
-              />
-              <div className="flex justify-between text-sm text-gray-500">
-                <span>$</span>
-                <span>$$$$</span>
-              </div>
+            <div className="flex justify-around">
+              {[1,2,3,4].map((value) => (
+                <Button 
+                  key={value}
+                  variant={priceRange === value ? "default" : "outline"}
+                  onClick={() => setPriceRange(value)}
+                  className="px-4"
+                >
+                  {"$".repeat(value)}
+                </Button>
+              ))}
             </div>
           </div>
+
+          {/* Suggested */}
+          <FilterSection 
+            title="Suggested"
+            items={[
+              "Open Now",
+              "Reservations",
+              "Mexican",
+              "Seafood",
+              "Takeout"
+            ]}
+          />
 
           {/* Features */}
-          <div className="mb-6">
-            <h3 className="text-sm font-medium mb-4">Features</h3>
-            <div className="space-y-2">
-              {[
-                "Open Now",
-                "Reservations",
-                "Outdoor Seating",
-                "WiFi",
-                "Parking"
-              ].map((feature) => (
-                <div key={feature} className="flex items-center space-x-2">
-                  <Checkbox id={feature} />
-                  <label
-                    htmlFor={feature}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {feature}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
+          <FilterSection 
+            title="Features"
+            items={[
+              "Good for Kids",
+              "Waiter Service", 
+              "Open to All",
+              "Dogs Allowed",
+              "Outdoor Seating",
+              "Hot and New",
+              "Breakfast"
+            ]}
+          />
 
           {/* Distance */}
-          <div className="mb-6">
-            <h3 className="text-sm font-medium mb-4">Distance</h3>
-            <div className="space-y-2">
-              {[
-                "Within 4 blocks",
-                "Walking (1 mi.)",
-                "Biking (2 mi.)",
-                "Driving (5 mi.)"
-              ].map((distance) => (
-                <div key={distance} className="flex items-center space-x-2">
-                  <Checkbox id={distance} />
-                  <label
-                    htmlFor={distance}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {distance}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
+          <FilterSection 
+            title="Bird's-eye View"
+            items={[
+              "Within 4 blocks",
+              "Walking (1 mi.)",
+              "Biking (2 mi.)",
+              "Driving (5 mi.)",
+              "Driving (10 mi.)"
+            ]}
+          />
 
-          <Button className="w-full">Apply Filters</Button>
-        </CardContent>
+          <Button className="w-full mt-4">
+            Show Results
+          </Button>
+        </div>
       )}
-    </Card>
+    </div>
+  );
+};
+
+interface FilterSectionProps {
+  title: string;
+  items: string[];
+}
+
+const FilterSection = ({ title, items }: FilterSectionProps) => {
+  return (
+    <div className="mb-6">
+      <h6 className="font-medium mb-3">{title}</h6>
+      <div className="space-y-2">
+        {items.map((item) => (
+          <div key={item} className="flex items-center space-x-2">
+            <Checkbox id={item} />
+            <label 
+              htmlFor={item}
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              {item}
+            </label>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };

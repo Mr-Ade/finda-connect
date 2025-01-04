@@ -1,22 +1,17 @@
 import { useState } from "react";
 import { Map } from "@/components/Map";
-import { BusinessSearch } from "@/components/search/BusinessSearch";
 import { SearchFilters } from "@/components/search/SearchFilters";
 import { ListingGrid } from "@/components/listings/ListingGrid";
+import { CategoryFilters } from "@/components/search/CategoryFilters";
 
 const ExploreListings = () => {
   const [showMap, setShowMap] = useState(true);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Map Section */}
-      {showMap && (
-        <div className="h-[400px] w-full relative">
-          <Map className="w-full h-full" />
-        </div>
-      )}
+      {/* Category Filters */}
+      <CategoryFilters />
 
-      {/* Main Content */}
       <section className="py-8">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-6">
