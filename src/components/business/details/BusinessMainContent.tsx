@@ -3,6 +3,7 @@ import { MenuItems } from "@/components/business/MenuItems";
 import { Amenities } from "@/components/business/Amenities";
 import { FAQ } from "@/components/business/FAQ";
 import { ReviewSection } from "@/components/business/ReviewSection";
+import { RecentlyViewedListings } from "@/components/business/RecentlyViewedListings";
 import type { Business } from "@/types/business";
 
 interface BusinessMainContentProps {
@@ -80,6 +81,7 @@ export const BusinessMainContent = ({ business }: BusinessMainContentProps) => {
           }
         })) || []}
       />
+      <RecentlyViewedListings />
     </div>
   );
 };
