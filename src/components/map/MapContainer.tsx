@@ -6,7 +6,7 @@ interface MapContainerProps {
   initialLat: number;
   initialLng: number;
   onMapLoad: (map: mapboxgl.Map) => void;
-  children?: React.ReactNode;  // Add this line to accept children
+  children?: React.ReactNode;
 }
 
 export const MapContainer = ({ initialLat, initialLng, onMapLoad, children }: MapContainerProps) => {
@@ -19,29 +19,26 @@ export const MapContainer = ({ initialLat, initialLng, onMapLoad, children }: Ma
     console.log('Initializing Mapbox map');
     mapboxgl.accessToken = 'pk.eyJ1IjoibXItYWRlIiwiYSI6ImNtNWZ2MXZyazAxbDUyaXF2aDk5cnR2cDcifQ.nayeg3Bmwhnz4lkNHxImgg';
     
-    try {
-      const map = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: [initialLng, initialLat],
-        zoom: 13
-      });
+    const map = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [initialLng, initialLat],
+      zoom: 13
+    });
 
-      map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-      
-      map.on('load', () => {
-        onMapLoad(map);
-      });
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
+    map.on('load', () => {
       mapRef.current = map;
+      onMapLoad(map);
+    });
 
-      return () => {
-        map.remove();
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
         mapRef.current = null;
-      };
-    } catch (error) {
-      console.error('Error initializing map:', error);
-    }
+      }
+    };
   }, [initialLat, initialLng, onMapLoad]);
 
   return (

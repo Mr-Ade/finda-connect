@@ -12,34 +12,35 @@ export const MapMarker = ({ map, initialLat, initialLng, onLocationSelect }: Map
   const markerRef = useRef<mapboxgl.Marker | null>(null);
 
   useEffect(() => {
+    if (!map || markerRef.current) return;
+
     const marker = new mapboxgl.Marker({ draggable: true })
       .setLngLat([initialLng, initialLat])
       .addTo(map);
 
     markerRef.current = marker;
 
-    const handleMarkerDragEnd = () => {
-      if (!marker) return;
+    const handleDragEnd = () => {
       const lngLat = marker.getLngLat();
       console.log('Marker dragged to:', lngLat);
       onLocationSelect(lngLat.lat, lngLat.lng);
     };
 
     const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
-      if (!marker) return;
       const { lng, lat } = e.lngLat;
       console.log('Map clicked at:', { lng, lat });
       marker.setLngLat([lng, lat]);
       onLocationSelect(lat, lng);
     };
 
-    marker.on('dragend', handleMarkerDragEnd);
+    marker.on('dragend', handleDragEnd);
     map.on('click', handleMapClick);
 
     return () => {
-      marker.off('dragend', handleMarkerDragEnd);
+      marker.off('dragend', handleDragEnd);
       map.off('click', handleMapClick);
       marker.remove();
+      markerRef.current = null;
     };
   }, [map, initialLat, initialLng, onLocationSelect]);
 
