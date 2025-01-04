@@ -10,10 +10,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <LocationProvider>
-        <BrowserRouter>
-          <Outlet />
-          <Toaster />
-        </BrowserRouter>
+        <Outlet />
+        <Toaster />
       </LocationProvider>
     </QueryClientProvider>
   );
