@@ -7,89 +7,107 @@ import Map from "@/components/Map";
 const Contact = () => {
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section with Gradient */}
-      <div className="relative py-24 bg-gradient-to-r from-primary/90 to-primary">
+      {/* Hero Section */}
+      <div className="relative py-28 bg-gradient-to-r from-primary/90 to-primary">
         <div className="absolute inset-0 bg-grid-white/[0.1] bg-[size:16px_16px]" />
-        <div className="container mx-auto px-4 relative">
-          <div className="text-center">
-            <h1 className="text-5xl font-bold text-white mb-6">Get in Touch</h1>
-            <p className="text-xl text-white/90 max-w-2xl mx-auto">
-              Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+        <div className="container relative">
+          <div className="text-center max-w-2xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Contact Us</h1>
+            <p className="text-white/90 text-lg">
+              Start working with Goodup that can provide everything you need to generate awareness, drive traffic, connect.
             </p>
           </div>
         </div>
       </div>
 
       {/* Contact Info Cards */}
-      <div className="container mx-auto px-4 -mt-20 mb-20">
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-card p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-6">
-              <Phone className="w-8 h-8 text-primary" />
+      <div className="container px-4 -mt-20">
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <Phone className="w-6 h-6 text-primary" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Phone</h3>
+                <p className="text-muted-foreground text-sm mb-1">The phrasal sequence of the is now so that many campaign and benefit</p>
+                <a href="tel:+152534-468-854" className="text-primary hover:text-primary/90">+152 534-468-854</a>
+              </div>
             </div>
-            <h3 className="text-2xl font-semibold mb-4">Phone</h3>
-            <p className="text-muted-foreground">Mon-Fri from 8am to 5pm</p>
-            <a href="tel:+12345678901" className="text-lg text-primary hover:underline mt-2 block">
-              +1 234 567 8901
-            </a>
           </div>
 
-          <div className="bg-card p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-6">
-              <Mail className="w-8 h-8 text-primary" />
+          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <Mail className="w-6 h-6 text-primary" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Email</h3>
+                <p className="text-muted-foreground text-sm mb-1">The phrasal sequence of the is now so that many campaign and benefit</p>
+                <a href="mailto:contact@example.com" className="text-primary hover:text-primary/90">contact@example.com</a>
+              </div>
             </div>
-            <h3 className="text-2xl font-semibold mb-4">Email</h3>
-            <p className="text-muted-foreground">Our friendly team is here to help</p>
-            <a href="mailto:info@example.com" className="text-lg text-primary hover:underline mt-2 block">
-              info@example.com
-            </a>
           </div>
 
-          <div className="bg-card p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-6">
-              <MapPin className="w-8 h-8 text-primary" />
+          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <MapPin className="w-6 h-6 text-primary" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Location</h3>
+                <p className="text-muted-foreground text-sm mb-1">The phrasal sequence of the is now so that many campaign and benefit</p>
+                <span className="text-primary">View on Google Maps</span>
+              </div>
             </div>
-            <h3 className="text-2xl font-semibold mb-4">Office</h3>
-            <p className="text-muted-foreground">Come say hello at our office</p>
-            <p className="text-lg mt-2">123 Business Avenue, NY 10001</p>
           </div>
         </div>
       </div>
 
       {/* Contact Form and Map Section */}
-      <div className="container mx-auto px-4 mb-20">
-        <div className="grid lg:grid-cols-2 gap-12">
-          <div className="bg-card p-8 rounded-xl shadow-lg">
-            <h2 className="text-3xl font-semibold mb-8">Send us a message</h2>
+      <div className="container px-4 py-16">
+        <div className="grid lg:grid-cols-2 gap-8">
+          <div className="bg-white p-8 rounded-xl shadow-lg">
+            <h2 className="text-2xl font-semibold mb-6">Get in touch!</h2>
             <form className="space-y-6">
-              <div className="grid sm:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium">
-                    Your Name
-                  </label>
-                  <Input id="name" placeholder="John Doe" />
+              <div className="grid sm:grid-cols-2 gap-5">
+                <div>
+                  <Input 
+                    placeholder="Name" 
+                    className="bg-gray-50/50 border-0 focus-visible:ring-1"
+                  />
                 </div>
-                <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium">
-                    Your Email
-                  </label>
-                  <Input id="email" type="email" placeholder="john@example.com" />
+                <div>
+                  <Input 
+                    type="email" 
+                    placeholder="Email" 
+                    className="bg-gray-50/50 border-0 focus-visible:ring-1"
+                  />
+                </div>
+                <div>
+                  <Input 
+                    placeholder="Subject" 
+                    className="bg-gray-50/50 border-0 focus-visible:ring-1"
+                  />
+                </div>
+                <div>
+                  <Input 
+                    type="tel" 
+                    placeholder="Phone" 
+                    className="bg-gray-50/50 border-0 focus-visible:ring-1"
+                  />
                 </div>
               </div>
-              <div className="space-y-2">
-                <label htmlFor="subject" className="text-sm font-medium">
-                  Subject
-                </label>
-                <Input id="subject" placeholder="How can we help?" />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="message" className="text-sm font-medium">
-                  Message
-                </label>
+              <div>
                 <Textarea 
-                  id="message"
-                  placeholder="Your message here..." 
-                  className="min-h-[150px] resize-none"
+                  placeholder="Message" 
+                  className="min-h-[150px] bg-gray-50/50 border-0 focus-visible:ring-1"
                 />
               </div>
               <Button type="submit" className="w-full">
@@ -98,7 +116,7 @@ const Contact = () => {
             </form>
           </div>
 
-          <div className="bg-card rounded-xl shadow-lg overflow-hidden h-[600px]">
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <Map />
           </div>
         </div>
