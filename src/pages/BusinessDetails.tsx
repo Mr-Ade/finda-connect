@@ -35,6 +35,12 @@ interface Review {
   review_photos?: ReviewPhoto[];
 }
 
+interface BusinessPhoto {
+  id: string;
+  photo_url: string;
+  caption: string | null;
+}
+
 interface Business {
   id: string;
   name: string;
@@ -52,14 +58,17 @@ interface Business {
     avatar_url: string | null;
     full_name: string | null;
   } | null;
-  business_photos: Array<{
-    id: string;
-    photo_url: string;
-    caption: string | null;
-  }>;
-  menu_items: Array<any>;
-  business_hours: Array<any>;
+  business_photos: BusinessPhoto[];
+  menu_items: any[];
+  business_hours: any[];
   reviews: Review[];
+}
+
+interface SupabaseResponse extends Omit<Business, 'reviews'> {
+  reviews: Array<Omit<Review, 'review_responses' | 'review_photos'> & {
+    review_responses?: ReviewResponse | ReviewResponse[];
+    review_photos?: ReviewPhoto[];
+  }>;
 }
 
 const BusinessDetails = () => {
@@ -96,18 +105,23 @@ const BusinessDetails = () => {
       if (error) throw error;
 
       if (data) {
-        data.reviews = data.reviews.map(review => ({
-          ...review,
-          review_responses: Array.isArray(review.review_responses) 
-            ? review.review_responses 
-            : review.review_responses 
-              ? [review.review_responses] 
-              : [],
-          review_photos: review.review_photos || []
-        })) as Review[];
+        const transformedData: SupabaseResponse = {
+          ...data,
+          reviews: data.reviews.map(review => ({
+            ...review,
+            review_responses: Array.isArray(review.review_responses) 
+              ? review.review_responses 
+              : review.review_responses 
+                ? [review.review_responses] 
+                : [],
+            review_photos: review.review_photos || []
+          }))
+        };
+
+        return transformedData as unknown as Business;
       }
 
-      return data as Business;
+      return null;
     }
   });
 
