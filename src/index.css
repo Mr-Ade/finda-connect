@@ -101,15 +101,19 @@
 }
 
 @layer components {
-  .blog-content {
-    @apply prose max-w-none;
+  .bookmark-card {
+    @apply transition-all duration-300 hover:shadow-lg;
   }
   
-  .blog-comment {
-    @apply flex space-x-4 items-start;
+  .bookmark-rating {
+    @apply flex items-center gap-1;
   }
   
-  .blog-sidebar-widget {
-    @apply bg-white p-6 rounded-lg shadow-sm mb-8;
+  .bookmark-actions {
+    @apply flex gap-2 mt-4;
+  }
+  
+  .bookmark-button {
+    @apply flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium transition-colors;
   }
 }
