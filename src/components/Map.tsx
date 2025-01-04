@@ -11,10 +11,12 @@ interface MapProps {
 
 const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: MapProps) => {
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   const handleMapLoad = useCallback((loadedMap: mapboxgl.Map) => {
     console.log('Map loaded successfully');
     setMap(loadedMap);
+    setIsMapLoaded(true);
   }, []);
 
   return (
@@ -23,7 +25,7 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
       initialLng={initialLng}
       onMapLoad={handleMapLoad}
     >
-      {map && onLocationSelect && (
+      {map && isMapLoaded && onLocationSelect && (
         <MapMarker
           map={map}
           initialLat={initialLat}

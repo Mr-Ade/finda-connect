@@ -12,44 +12,49 @@ export const MapMarker = ({ map, initialLat, initialLng, onLocationSelect }: Map
   const markerRef = useRef<mapboxgl.Marker | null>(null);
 
   useEffect(() => {
-    if (!map || markerRef.current) return;
+    console.log('Initializing marker');
+    
+    // Create marker only if it doesn't exist
+    if (!markerRef.current) {
+      const marker = new mapboxgl.Marker({ draggable: true })
+        .setLngLat([initialLng, initialLat]);
+      
+      try {
+        marker.addTo(map);
+        markerRef.current = marker;
+        console.log('Marker added successfully');
+      } catch (error) {
+        console.error('Error adding marker:', error);
+        return;
+      }
 
-    const marker = new mapboxgl.Marker({ draggable: true })
-      .setLngLat([initialLng, initialLat])
-      .addTo(map);
+      const handleDragEnd = () => {
+        const lngLat = marker.getLngLat();
+        console.log('Marker dragged to:', lngLat);
+        onLocationSelect(lngLat.lat, lngLat.lng);
+      };
 
-    markerRef.current = marker;
+      const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
+        const { lng, lat } = e.lngLat;
+        console.log('Map clicked at:', { lng, lat });
+        marker.setLngLat([lng, lat]);
+        onLocationSelect(lat, lng);
+      };
 
-    const handleDragEnd = () => {
-      const lngLat = marker.getLngLat();
-      console.log('Marker dragged to:', lngLat);
-      onLocationSelect(lngLat.lat, lngLat.lng);
-    };
+      marker.on('dragend', handleDragEnd);
+      map.on('click', handleMapClick);
 
-    const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
-      const { lng, lat } = e.lngLat;
-      console.log('Map clicked at:', { lng, lat });
-      marker.setLngLat([lng, lat]);
-      onLocationSelect(lat, lng);
-    };
-
-    marker.on('dragend', handleDragEnd);
-    map.on('click', handleMapClick);
-
-    return () => {
-      marker.off('dragend', handleDragEnd);
-      map.off('click', handleMapClick);
-      marker.remove();
-      markerRef.current = null;
-    };
+      return () => {
+        console.log('Cleaning up marker');
+        marker.off('dragend', handleDragEnd);
+        map.off('click', handleMapClick);
+        if (markerRef.current) {
+          markerRef.current.remove();
+          markerRef.current = null;
+        }
+      };
+    }
   }, [map, initialLat, initialLng, onLocationSelect]);
-
-  // Update marker position when coordinates change
-  useEffect(() => {
-    if (!markerRef.current) return;
-    console.log('Updating marker position:', { initialLat, initialLng });
-    markerRef.current.setLngLat([initialLng, initialLat]);
-  }, [initialLat, initialLng]);
 
   return null;
 };

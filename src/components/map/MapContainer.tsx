@@ -26,14 +26,16 @@ export const MapContainer = ({ initialLat, initialLng, onMapLoad, children }: Ma
       zoom: 13
     });
 
-    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    mapRef.current = map;
 
     map.on('load', () => {
-      mapRef.current = map;
+      console.log('Map style loaded');
+      map.addControl(new mapboxgl.NavigationControl(), 'top-right');
       onMapLoad(map);
     });
 
     return () => {
+      console.log('Cleaning up map');
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
@@ -44,7 +46,7 @@ export const MapContainer = ({ initialLat, initialLng, onMapLoad, children }: Ma
   return (
     <div className="relative w-full h-[400px] rounded-lg overflow-hidden">
       <div ref={mapContainer} className="absolute inset-0" />
-      {children}
+      {mapRef.current && children}
     </div>
   );
 };
