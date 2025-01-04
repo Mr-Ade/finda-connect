@@ -1,4 +1,6 @@
 import React, { useEffect, useRef } from 'react';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 interface MapProps {
   onLocationSelect?: (lat: number, lng: number) => void;
@@ -8,76 +10,67 @@ interface MapProps {
 
 const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: MapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<google.maps.Map | null>(null);
-  const markerRef = useRef<google.maps.Marker | null>(null);
-
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const markerRef = useRef<mapboxgl.Marker | null>(null);
+  
   // Initialize map only once when component mounts
   useEffect(() => {
     if (!mapContainer.current || mapRef.current) return;
 
-    // Load Google Maps script dynamically
-    const loadGoogleMaps = () => {
-      if (!window.google) {
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDVYLvGDi-_fuY1zd1DlDJPKd-5qCuktDY`;
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-
-        return new Promise<void>((resolve) => {
-          script.onload = () => resolve();
-        });
-      }
-      return Promise.resolve();
-    };
-
-    loadGoogleMaps().then(() => {
-      console.log('Google Maps loaded');
-      
-      const map = new google.maps.Map(mapContainer.current!, {
-        center: { lat: initialLat, lng: initialLng },
-        zoom: 13,
-        mapTypeControl: false,
-        streetViewControl: false,
-        fullscreenControl: false
-      });
-
-      mapRef.current = map;
-
-      const marker = new google.maps.Marker({
-        position: { lat: initialLat, lng: initialLng },
-        map: map,
-        draggable: true
-      });
-
-      markerRef.current = marker;
-
-      // Handle marker drag events
-      marker.addListener('dragend', () => {
-        const position = marker.getPosition();
-        if (position && onLocationSelect) {
-          onLocationSelect(position.lat(), position.lng());
-        }
-      });
-
-      // Handle map click events
-      map.addListener('click', (e: google.maps.MapMouseEvent) => {
-        const position = e.latLng;
-        if (position && onLocationSelect) {
-          marker.setPosition(position);
-          onLocationSelect(position.lat(), position.lng());
-        }
-      });
+    mapboxgl.accessToken = 'pk.eyJ1IjoibXItYWRlIiwiYSI6ImNtNWZ2MXZyazAxbDUyaXF2aDk5cnR2cDcifQ.nayeg3Bmwhnz4lkNHxImgg';
+    
+    const map = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [initialLng, initialLat],
+      zoom: 13
     });
 
+    mapRef.current = map;
+
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    const marker = new mapboxgl.Marker({ draggable: true })
+      .setLngLat([initialLng, initialLat])
+      .addTo(map);
+
+    markerRef.current = marker;
+
+    // Clean up on unmount
     return () => {
-      if (markerRef.current) {
-        markerRef.current.setMap(null);
-      }
+      marker.remove();
+      map.remove();
       mapRef.current = null;
       markerRef.current = null;
     };
   }, []); // Empty dependency array for one-time initialization
+
+  // Handle location updates separately
+  useEffect(() => {
+    const map = mapRef.current;
+    const marker = markerRef.current;
+    
+    if (!map || !marker || !onLocationSelect) return;
+
+    const handleMarkerDragEnd = () => {
+      const lngLat = marker.getLngLat();
+      onLocationSelect(lngLat.lat, lngLat.lng);
+    };
+
+    const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
+      const { lng, lat } = e.lngLat;
+      marker.setLngLat([lng, lat]);
+      onLocationSelect(lat, lng);
+    };
+
+    marker.on('dragend', handleMarkerDragEnd);
+    map.on('click', handleMapClick);
+
+    return () => {
+      marker.off('dragend', handleMarkerDragEnd);
+      map.off('click', handleMapClick);
+    };
+  }, [onLocationSelect]); // Only re-run if onLocationSelect changes
 
   // Update marker position when initialLat/initialLng change
   useEffect(() => {
@@ -86,9 +79,8 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
     
     if (!marker || !map) return;
     
-    const newPosition = { lat: initialLat, lng: initialLng };
-    marker.setPosition(newPosition);
-    map.setCenter(newPosition);
+    marker.setLngLat([initialLng, initialLat]);
+    map.setCenter([initialLng, initialLat]);
   }, [initialLat, initialLng]);
 
   return (
