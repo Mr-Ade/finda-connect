@@ -39,15 +39,17 @@ export const RecentlyViewedListings = () => {
   }
 
   return (
-    <section className="w-full bg-gray-50">
-      <div className="max-w-[1400px] mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h3 className="text-primary text-sm font-semibold uppercase tracking-wide">
-            Related Listings
-          </h3>
-          <h2 className="mt-2 text-3xl font-bold text-gray-900">
-            Recently Viewed Listings
-          </h2>
+    <section className="w-full bg-white">
+      <div className="container mx-auto px-4 py-16">
+        <div className="flex items-center justify-between mb-12">
+          <div>
+            <h3 className="text-primary text-sm font-semibold uppercase tracking-wide">
+              Related Listings
+            </h3>
+            <h2 className="mt-2 text-3xl font-bold text-gray-900">
+              Recently Viewed Listings
+            </h2>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
