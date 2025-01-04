@@ -1,7 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { countries } from "@/lib/countries";
 
 interface AddressFieldsProps {
   address: {
@@ -54,25 +53,34 @@ export const AddressFields = ({ address, availableStates, onAddressChange }: Add
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="city">City</Label>
-          <Input 
-            id="city" 
-            value={address.city}
-            onChange={(e) => onAddressChange('city', e.target.value)}
-            placeholder="Enter city"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="zipCode">Zip Code</Label>
-          <Input 
-            id="zipCode" 
-            value={address.zipCode}
-            onChange={(e) => onAddressChange('zipCode', e.target.value)}
-            placeholder="Enter zip code"
-          />
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="city">City</Label>
+        <Input 
+          id="city" 
+          value={address.city}
+          onChange={(e) => onAddressChange('city', e.target.value)}
+          placeholder="Enter city"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="street">Street Address</Label>
+        <Input 
+          id="street" 
+          value={address.street}
+          onChange={(e) => onAddressChange('street', e.target.value)}
+          placeholder="e.g. 36, Minfa Crescent, Becky Garden Estate"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="zipCode">Zip Code</Label>
+        <Input 
+          id="zipCode" 
+          value={address.zipCode}
+          onChange={(e) => onAddressChange('zipCode', e.target.value)}
+          placeholder="Enter zip code"
+        />
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
