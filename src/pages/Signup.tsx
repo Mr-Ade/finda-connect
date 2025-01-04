@@ -61,6 +61,8 @@ const Signup = () => {
                     label: 'block text-sm font-medium text-gray-700 mb-1',
                     loader: 'text-primary',
                     anchor: 'text-primary hover:text-primary/80',
+                    socialButtonsContainer: 'mt-4',
+                    socialButtons: 'space-y-2',
                   },
                 }}
                 providers={["google"]}

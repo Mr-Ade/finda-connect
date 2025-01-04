@@ -16,7 +16,6 @@ const Login = () => {
         console.log("Auth state changed:", event);
         if (event === "SIGNED_IN") {
           console.log("User signed in, redirecting");
-          // Get the return URL from state or default to home
           const returnUrl = location.state?.returnUrl || "/";
           navigate(returnUrl);
           toast({
@@ -65,6 +64,8 @@ const Login = () => {
                     label: 'block text-sm font-medium text-gray-700 mb-1',
                     loader: 'text-primary',
                     anchor: 'text-primary hover:text-primary/80',
+                    socialButtonsContainer: 'mt-4',
+                    socialButtons: 'space-y-2',
                   },
                 }}
                 providers={["google"]}
