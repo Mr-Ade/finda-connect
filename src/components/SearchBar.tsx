@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, Car, Home } from "lucide-react";
-import { useLocation } from "@/contexts/LocationContext";
+import { Search, Car, Home } from "lucide-react";
 import { useState } from "react";
 import { 
   Select,
@@ -10,10 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { LocationInput } from "@/components/search/LocationInput";
+import { PriceInput } from "@/components/search/PriceInput";
 
 export const SearchBar = () => {
-  const { city, state, country, isLoading } = useLocation();
-  const locationString = [city, state, country].filter(Boolean).join(", ");
   const [searchType, setSearchType] = useState("general");
   const [carMake, setCarMake] = useState("");
   const [carModel, setCarModel] = useState("");
@@ -55,24 +54,16 @@ export const SearchBar = () => {
               </SelectContent>
             </Select>
           </div>
-          <div className="relative flex-1">
-            <Input
-              placeholder="Min Price (₦)"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-              className="h-12"
-              type="number"
-            />
-          </div>
-          <div className="relative flex-1">
-            <Input
-              placeholder="Max Price (₦)"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-              className="h-12"
-              type="number"
-            />
-          </div>
+          <PriceInput
+            value={minPrice}
+            onChange={setMinPrice}
+            placeholder="Min Price"
+          />
+          <PriceInput
+            value={maxPrice}
+            onChange={setMaxPrice}
+            placeholder="Max Price"
+          />
           <div className="relative flex-1">
             <Input
               placeholder="Bedrooms"
@@ -82,14 +73,7 @@ export const SearchBar = () => {
               type="number"
             />
           </div>
-          <div className="relative flex-1">
-            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <Input 
-              placeholder={isLoading ? "Detecting location..." : "Location"} 
-              value={!isLoading ? locationString : ""} 
-              className="pl-10 h-12"
-            />
-          </div>
+          <LocationInput />
           <Button className="h-12 px-8">
             Search
           </Button>
@@ -122,14 +106,7 @@ export const SearchBar = () => {
               type="number"
             />
           </div>
-          <div className="relative flex-1">
-            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <Input 
-              placeholder={isLoading ? "Detecting location..." : "Location"} 
-              value={!isLoading ? locationString : ""} 
-              className="pl-10 h-12"
-            />
-          </div>
+          <LocationInput />
           <Button className="h-12 px-8">
             Search
           </Button>
@@ -143,14 +120,7 @@ export const SearchBar = () => {
               className="pl-10 h-12"
             />
           </div>
-          <div className="relative flex-1">
-            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <Input 
-              placeholder={isLoading ? "Detecting location..." : "Location"} 
-              value={!isLoading ? locationString : ""} 
-              className="pl-10 h-12"
-            />
-          </div>
+          <LocationInput />
           <Button className="h-12 px-8">
             Search
           </Button>
