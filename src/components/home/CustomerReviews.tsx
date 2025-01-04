@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Star } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface Testimonial {
   id: string;
@@ -35,19 +36,22 @@ async function fetchTestimonials() {
 }
 
 export const CustomerReviews = () => {
+  const { toast } = useToast();
   const { data: testimonials, isLoading, error } = useQuery({
     queryKey: ["testimonials"],
     queryFn: fetchTestimonials,
   });
 
-  if (error) {
-    console.error("Error in CustomerReviews:", error);
-    return (
-      <div className="text-center py-16 text-red-500">
-        Failed to load reviews. Please try again later.
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (error) {
+      console.error("Error in CustomerReviews:", error);
+      toast({
+        title: "Error loading reviews",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    }
+  }, [error, toast]);
 
   return (
     <section className="py-16 bg-gray-50">
@@ -71,6 +75,10 @@ export const CustomerReviews = () => {
                 </div>
               </div>
             ))}
+          </div>
+        ) : testimonials?.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            No reviews available yet
           </div>
         ) : (
           <Carousel
