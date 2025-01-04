@@ -19,59 +19,81 @@ const Login = () => {
           // Get the return URL from state or default to home
           const returnUrl = location.state?.returnUrl || "/";
           navigate(returnUrl);
-        } else if (event === "SIGNED_OUT") {
-          console.log("User signed out");
+          toast({
+            title: "Welcome back!",
+            description: "You have successfully signed in.",
+          });
         }
       }
     );
 
-    const handleAuthError = (error: any) => {
-      console.error("Auth error:", error);
-      if (error.message.includes("weak_password")) {
-        toast({
-          title: "Password too weak",
-          description: "Password should be at least 6 characters long.",
-          variant: "destructive",
-        });
-      }
-    };
-
-    window.addEventListener("supabase.auth.error", handleAuthError);
-
     return () => {
       authListener.subscription.unsubscribe();
-      window.removeEventListener("supabase.auth.error", handleAuthError);
     };
   }, [navigate, location.state?.returnUrl, toast]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-2xl font-bold text-center mb-6">Welcome to Finda</h1>
-        <Auth
-          supabaseClient={supabase}
-          appearance={{ 
-            theme: ThemeSupa,
-            variables: {
-              default: {
-                colors: {
-                  brand: 'rgb(var(--primary))',
-                  brandAccent: 'rgb(var(--primary))',
-                },
-              },
-            },
-          }}
-          providers={["google"]}
-          redirectTo={`${window.location.origin}/`}
-          localization={{
-            variables: {
-              sign_up: {
-                password_label: "Password (minimum 6 characters)",
-                password_input_placeholder: "Enter a strong password (min. 6 characters)",
-              },
-            },
-          }}
-        />
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-16">
+        <div className="flex justify-center">
+          <div className="w-full max-w-md">
+            <div className="bg-white rounded-lg shadow-sm p-8">
+              <div className="text-center mb-6">
+                <h1 className="text-2xl font-semibold text-gray-900">
+                  Login Your Account
+                </h1>
+              </div>
+
+              <Auth
+                supabaseClient={supabase}
+                view="sign_in"
+                appearance={{
+                  theme: ThemeSupa,
+                  variables: {
+                    default: {
+                      colors: {
+                        brand: '#FF385C',
+                        brandAccent: '#FF385C',
+                      },
+                    },
+                  },
+                  className: {
+                    container: 'w-full',
+                    button: 'w-full px-4 py-2 rounded-md font-medium',
+                    input: 'w-full px-3 py-2 border rounded-md',
+                    divider: 'my-4',
+                    label: 'block text-sm font-medium text-gray-700 mb-1',
+                  },
+                }}
+                providers={["google"]}
+                redirectTo={`${window.location.origin}/`}
+                localization={{
+                  variables: {
+                    sign_in: {
+                      email_label: "Email",
+                      password_label: "Password",
+                      email_input_placeholder: "Your email address",
+                      password_input_placeholder: "Your password",
+                      button_label: "Sign In",
+                      social_provider_text: "Sign in with {{provider}}",
+                      link_text: "Already have an account? Sign in",
+                    },
+                  },
+                }}
+              />
+
+              <div className="mt-6 text-center text-sm text-gray-600">
+                Don't have an account?{" "}
+                <button
+                  onClick={() => navigate("/signup")}
+                  className="text-primary hover:text-primary/90 font-medium"
+                >
+                  Sign Up
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
