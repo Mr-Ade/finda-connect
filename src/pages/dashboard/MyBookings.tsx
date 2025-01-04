@@ -33,18 +33,16 @@ const MyBookings = () => {
 
       if (error) {
         console.error('Error fetching bookings:', error);
+        toast({
+          title: "Error fetching bookings",
+          description: error.message,
+          variant: "destructive",
+        });
         throw error;
       }
 
       console.log('Fetched bookings:', data);
       return data;
-    },
-    onError: (error) => {
-      toast({
-        title: "Error fetching bookings",
-        description: error.message,
-        variant: "destructive",
-      });
     }
   });
 
