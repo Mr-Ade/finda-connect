@@ -12,6 +12,7 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
   const markerInstanceRef = useRef<mapboxgl.Marker | null>(null);
+  const navigationControlRef = useRef<mapboxgl.NavigationControl | null>(null);
   
   // Initialize map only once when component mounts
   useEffect(() => {
@@ -28,8 +29,8 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
         zoom: 13
       });
 
-      // Add navigation control
-      map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+      const navigationControl = new mapboxgl.NavigationControl();
+      map.addControl(navigationControl, 'top-right');
 
       const marker = new mapboxgl.Marker({ draggable: true })
         .setLngLat([initialLng, initialLat])
@@ -37,20 +38,25 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
 
       mapInstanceRef.current = map;
       markerInstanceRef.current = marker;
+      navigationControlRef.current = navigationControl;
 
       console.log('Map and marker initialized successfully');
 
       // Clean up on unmount
       return () => {
         console.log('Cleaning up map instance');
-        if (map) {
-          // Remove all controls and layers before removing the map
-          map.removeControl(new mapboxgl.NavigationControl());
-          marker.remove();
-          map.remove();
+        if (mapInstanceRef.current) {
+          if (navigationControlRef.current) {
+            mapInstanceRef.current.removeControl(navigationControlRef.current);
+          }
+          if (markerInstanceRef.current) {
+            markerInstanceRef.current.remove();
+          }
+          mapInstanceRef.current.remove();
+          mapInstanceRef.current = null;
+          markerInstanceRef.current = null;
+          navigationControlRef.current = null;
         }
-        mapInstanceRef.current = null;
-        markerInstanceRef.current = null;
       };
     } catch (error) {
       console.error('Error initializing map:', error);
