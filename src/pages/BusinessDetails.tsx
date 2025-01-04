@@ -68,9 +68,13 @@ const BusinessDetails = () => {
 
       <section className="gray py-5 position-relative">
         <div className="container">
-          <div className="row">
-            <BusinessMainContent business={business} />
-            <BusinessRightSidebar business={business} />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-8">
+              <BusinessMainContent business={business} />
+            </div>
+            <div className="lg:col-span-4">
+              <BusinessRightSidebar business={business} />
+            </div>
           </div>
         </div>
       </section>
