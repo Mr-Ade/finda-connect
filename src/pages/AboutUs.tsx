@@ -48,13 +48,13 @@ const workingSteps = [
 
 const AboutUs = () => {
   return (
-    <div className="min-h-screen pt-16">
+    <div className="min-h-screen">
       {/* Hero Section */}
       <section 
         className="relative bg-cover bg-center py-32"
         style={{ backgroundImage: "url('/about-bg.jpg')" }}
       >
-        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-black/50" />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-2xl">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -87,7 +87,7 @@ const AboutUs = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20 bg-white">
+      <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h6 className="text-primary font-medium mb-2">Working Process</h6>
@@ -96,9 +96,9 @@ const AboutUs = () => {
 
           <div className="grid md:grid-cols-3 gap-8">
             {workingSteps.map((step, index) => (
-              <div key={index} className="p-8 rounded-lg hover:shadow-xl transition-shadow bg-white border">
-                <div className="mb-6">{step.icon}</div>
-                <h4 className="text-xl font-semibold mb-4">{step.title}</h4>
+              <div key={index} className="p-6 rounded-lg hover:shadow-lg transition-shadow">
+                <div className="mb-4">{step.icon}</div>
+                <h4 className="text-xl font-semibold mb-3">{step.title}</h4>
                 <p className="text-gray-600">{step.description}</p>
               </div>
             ))}
@@ -107,7 +107,7 @@ const AboutUs = () => {
       </section>
 
       {/* Team Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h6 className="text-primary font-medium mb-2">Our Team</h6>
@@ -116,25 +116,25 @@ const AboutUs = () => {
 
           <div className="grid md:grid-cols-4 gap-6">
             {teamMembers.map((member, index) => (
-              <div key={index} className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow relative">
+              <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 {(member.isNew || member.isPopular) && (
-                  <div className={`px-3 py-1 text-sm text-white ${member.isNew ? 'bg-primary' : 'bg-yellow-500'} absolute top-4 left-0`}>
+                  <div className={`px-3 py-1 text-sm text-white ${member.isNew ? 'bg-primary' : 'bg-yellow-500'} absolute`}>
                     {member.isNew ? 'New' : 'Popular'}
                   </div>
                 )}
-                <div className="p-6">
+                <div className="p-4">
                   <img 
                     src={member.image} 
                     alt={member.name}
-                    className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+                    className="w-24 h-24 rounded-full mx-auto mb-4"
                   />
                   <h4 className="text-lg font-semibold text-center mb-1">{member.name}</h4>
                   <p className="text-gray-600 text-center mb-4">{member.role}</p>
                   <div className="flex justify-center space-x-3">
-                    <a href="#" className="text-gray-400 hover:text-primary transition-colors"><Facebook className="w-5 h-5" /></a>
-                    <a href="#" className="text-gray-400 hover:text-primary transition-colors"><Twitter className="w-5 h-5" /></a>
-                    <a href="#" className="text-gray-400 hover:text-primary transition-colors"><Instagram className="w-5 h-5" /></a>
-                    <a href="#" className="text-gray-400 hover:text-primary transition-colors"><Linkedin className="w-5 h-5" /></a>
+                    <a href="#" className="text-gray-400 hover:text-primary"><Facebook className="w-5 h-5" /></a>
+                    <a href="#" className="text-gray-400 hover:text-primary"><Twitter className="w-5 h-5" /></a>
+                    <a href="#" className="text-gray-400 hover:text-primary"><Instagram className="w-5 h-5" /></a>
+                    <a href="#" className="text-gray-400 hover:text-primary"><Linkedin className="w-5 h-5" /></a>
                   </div>
                 </div>
               </div>
