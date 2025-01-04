@@ -10,59 +10,78 @@ interface MapProps {
 
 const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: MapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  // Store these refs outside of React's state management to avoid cloning issues
-  const mapInstance = useRef<mapboxgl.Map | null>(null);
-  const markerInstance = useRef<mapboxgl.Marker | null>(null);
-
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const markerRef = useRef<mapboxgl.Marker | null>(null);
+  
+  // Initialize map only once when component mounts
   useEffect(() => {
-    if (!mapContainer.current) return;
+    if (!mapContainer.current || mapRef.current) return;
 
-    // Initialize map with the provided token
     mapboxgl.accessToken = 'pk.eyJ1IjoibXItYWRlIiwiYSI6ImNtNWZ2MXZyazAxbDUyaXF2aDk5cnR2cDcifQ.nayeg3Bmwhnz4lkNHxImgg';
     
-    // Create map instance
-    mapInstance.current = new mapboxgl.Map({
+    const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [initialLng, initialLat],
       zoom: 13
     });
 
-    // Add navigation controls
-    mapInstance.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    mapRef.current = map;
 
-    // Add initial marker
-    markerInstance.current = new mapboxgl.Marker({ draggable: true })
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    const marker = new mapboxgl.Marker({ draggable: true })
       .setLngLat([initialLng, initialLat])
-      .addTo(mapInstance.current);
+      .addTo(map);
 
-    // Handle marker drag events
+    markerRef.current = marker;
+
+    // Clean up on unmount
+    return () => {
+      marker.remove();
+      map.remove();
+      mapRef.current = null;
+      markerRef.current = null;
+    };
+  }, []); // Empty dependency array for one-time initialization
+
+  // Handle location updates separately
+  useEffect(() => {
+    const map = mapRef.current;
+    const marker = markerRef.current;
+    
+    if (!map || !marker || !onLocationSelect) return;
+
     const handleMarkerDragEnd = () => {
-      const lngLat = markerInstance.current?.getLngLat();
-      if (lngLat && onLocationSelect) {
-        onLocationSelect(lngLat.lat, lngLat.lng);
-      }
+      const lngLat = marker.getLngLat();
+      onLocationSelect(lngLat.lat, lngLat.lng);
     };
 
-    // Handle map click events
     const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
       const { lng, lat } = e.lngLat;
-      markerInstance.current?.setLngLat([lng, lat]);
-      if (onLocationSelect) {
-        onLocationSelect(lat, lng);
-      }
+      marker.setLngLat([lng, lat]);
+      onLocationSelect(lat, lng);
     };
 
-    markerInstance.current.on('dragend', handleMarkerDragEnd);
-    mapInstance.current.on('click', handleMapClick);
+    marker.on('dragend', handleMarkerDragEnd);
+    map.on('click', handleMapClick);
 
-    // Cleanup function
     return () => {
-      if (mapInstance.current) {
-        mapInstance.current.remove();
-      }
+      marker.off('dragend', handleMarkerDragEnd);
+      map.off('click', handleMapClick);
     };
-  }, [initialLat, initialLng, onLocationSelect]);
+  }, [onLocationSelect]); // Only re-run if onLocationSelect changes
+
+  // Update marker position when initialLat/initialLng change
+  useEffect(() => {
+    const marker = markerRef.current;
+    const map = mapRef.current;
+    
+    if (!marker || !map) return;
+    
+    marker.setLngLat([initialLng, initialLat]);
+    map.setCenter([initialLng, initialLat]);
+  }, [initialLat, initialLng]);
 
   return (
     <div className="relative w-full h-[400px] rounded-lg overflow-hidden">
