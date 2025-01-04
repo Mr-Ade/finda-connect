@@ -39,7 +39,7 @@ export const RecentlyViewedListings = () => {
   }
 
   return (
-    <section className="w-full bg-gray-50 py-16">
+    <section className="w-full bg-gray-50 py-16 -mx-4">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center mb-12 text-center">
           <span className="text-primary text-sm font-semibold uppercase tracking-wide">
