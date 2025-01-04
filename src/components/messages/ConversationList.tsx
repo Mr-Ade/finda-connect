@@ -2,9 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageSquare } from "lucide-react";
-import { Database } from "@/integrations/supabase/types";
-
-type Profile = Database['public']['Tables']['profiles']['Row'];
 
 type Conversation = {
   profile: {

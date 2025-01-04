@@ -69,15 +69,13 @@ export const Hero = () => {
         if (error) throw error;
 
         // Count occurrences of each city
-        const cityCounts: { [key: string]: number } = {};
-        data.forEach(item => {
-          if (item.city) {
-            cityCounts[item.city] = (cityCounts[item.city] || 0) + 1;
-          }
-        });
+        const cityCounts = data.reduce((acc: { [key: string]: number }, curr) => {
+          acc[curr.city] = (acc[curr.city] || 0) + 1;
+          return acc;
+        }, {});
 
         // Convert to array and sort by count
-        const sortedCities: PopularCity[] = Object.entries(cityCounts)
+        const sortedCities = Object.entries(cityCounts)
           .map(([name, count]) => ({ name, count }))
           .sort((a, b) => b.count - a.count)
           .slice(0, 4); // Get top 4 cities

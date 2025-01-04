@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AuthorListings } from "@/components/author/AuthorListings";
 import { Button } from "@/components/ui/button";
 import { Mail, MapPin, Phone, Globe, Heart, FileText, ThumbsUp } from "lucide-react";
-import { LocationData } from "@/types/supabase/common";
+import { LocationData } from "@/integrations/supabase/types";
 
 const AuthorDetail = () => {
   const { username } = useParams();
