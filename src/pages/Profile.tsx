@@ -36,27 +36,15 @@ const Profile = () => {
     }
   });
 
-  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = async (avatarUrl: string) => {
     try {
       setUpdating(true);
-      const file = event.target.files?.[0];
-      if (!file) return;
-
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) throw new Error('No user session found');
 
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${session.user.id}-${Math.random()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ avatar_url: filePath })
+        .update({ avatar_url: avatarUrl })
         .eq('id', session.user.id);
 
       if (updateError) throw updateError;
