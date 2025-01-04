@@ -1,10 +1,10 @@
-import { createBrowserRouter } from "react-router-dom"
+import { RouterProvider, createBrowserRouter } from "react-router-dom"
 import Index from "@/pages/Index"
 import AboutUs from "@/pages/AboutUs"
 import Contact from "@/pages/Contact"
 import Checkout from "@/pages/Checkout"
 
-export const router = createBrowserRouter([
+const router = createBrowserRouter([
   {
     path: "/",
     element: <Index />,
@@ -22,3 +22,7 @@ export const router = createBrowserRouter([
     element: <Checkout />,
   },
 ])
+
+export default function Routes() {
+  return <RouterProvider router={router} />
+}
