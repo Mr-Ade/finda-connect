@@ -37,6 +37,7 @@ export const ProfileForm = ({
       const { error } = await supabase
         .from('profiles')
         .update({
+          id: user.id,
           username,
           full_name: fullName,
           bio,

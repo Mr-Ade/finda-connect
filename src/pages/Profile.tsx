@@ -13,7 +13,6 @@ const Profile = () => {
   const [fullName, setFullName] = useState("");
   const [updating, setUpdating] = useState(false);
 
-  // Fetch profile data
   const { data: profile } = useQuery({
     queryKey: ['profile'],
     queryFn: async () => {
@@ -28,7 +27,6 @@ const Profile = () => {
         
       if (error) throw error;
       
-      // Update local state with profile data
       setUsername(data.username || '');
       setFullName(data.full_name || '');
       
@@ -44,7 +42,10 @@ const Profile = () => {
 
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ avatar_url: avatarUrl })
+        .update({ 
+          id: session.user.id,
+          avatar_url: avatarUrl 
+        })
         .eq('id', session.user.id);
 
       if (updateError) throw updateError;
@@ -68,6 +69,7 @@ const Profile = () => {
       const { error } = await supabase
         .from('profiles')
         .update({
+          id: session.user.id,
           username,
           full_name: fullName,
         })

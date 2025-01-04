@@ -21,14 +21,14 @@ const LocationContext = createContext<LocationContextType | undefined>(undefined
 export function LocationProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
   const [locationData, setLocationData] = useState<LocationContextType>({
-    country: "Nigeria", // Default to Nigeria
+    country: "Nigeria",
     state: "",
     city: "",
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    currency: "NGN", // Set to Nigerian Naira
+    currency: "NGN",
     language: navigator.language,
     coordinates: {
-      latitude: 9.0820, // Nigeria's approximate center
+      latitude: 9.0820,
       longitude: 8.6753
     },
     isLoading: true,
@@ -37,7 +37,6 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const detectLocation = async () => {
       try {
-        // First try to get precise location using browser geolocation
         if ("geolocation" in navigator) {
           const position = await new Promise<GeolocationPosition>((resolve, reject) => {
             navigator.geolocation.getCurrentPosition(resolve, reject, {
@@ -50,7 +49,6 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
           const { latitude, longitude } = position.coords;
           console.log("Got coordinates:", latitude, longitude);
           
-          // Use reverse geocoding to get location details
           const response = await fetch(
             `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=155e6c1220b94de0a87f628b659b430b&countrycode=ng`
           );
@@ -66,7 +64,6 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
             const result = data.results[0].components;
             console.log("Location components:", result);
             
-            // Only update if the location is in Nigeria
             if (result.country === "Nigeria") {
               setLocationData(prev => ({
                 ...prev,
@@ -79,12 +76,12 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
                 isLoading: false,
               }));
 
-              // Store location in user profile if authenticated
               const { data: { session } } = await supabase.auth.getSession();
               if (session?.user) {
                 const { error } = await supabase
                   .from('profiles')
                   .update({
+                    id: session.user.id,
                     location_data: {
                       latitude,
                       longitude,
