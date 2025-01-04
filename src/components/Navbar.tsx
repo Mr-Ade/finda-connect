@@ -11,7 +11,6 @@ export const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Check initial session
     const checkSession = async () => {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) {
@@ -23,7 +22,6 @@ export const Navbar = () => {
     
     checkSession();
 
-    // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log("Auth state changed:", event, session);
       setIsAuthenticated(!!session);
@@ -65,16 +63,38 @@ export const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white border-b z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="text-2xl font-bold text-primary">
-          Finda
-        </Link>
+        <div className="flex items-center space-x-6">
+          <Link to="/" className="text-2xl font-bold text-primary">
+            Finda
+          </Link>
+          
+          <div className="hidden md:flex items-center space-x-4">
+            <Link to="/explore-listings" className="text-gray-600 hover:text-primary">
+              Explore
+            </Link>
+            <Link to="/browse-categories" className="text-gray-600 hover:text-primary">
+              Categories
+            </Link>
+            <Link to="/browse-authors" className="text-gray-600 hover:text-primary">
+              Authors
+            </Link>
+            <Link to="/blog" className="text-gray-600 hover:text-primary">
+              Blog
+            </Link>
+          </div>
+        </div>
 
         <div className="flex items-center space-x-4">
           {isAuthenticated ? (
             <>
-              <Button variant="ghost" size="sm" onClick={() => navigate("/profile")}>
-                Profile
-              </Button>
+              <div className="hidden md:flex items-center space-x-4">
+                <Link to="/dashboard/listings" className="text-gray-600 hover:text-primary">
+                  Dashboard
+                </Link>
+                <Link to="/profile" className="text-gray-600 hover:text-primary">
+                  Profile
+                </Link>
+              </div>
               <Button onClick={handleLogout} variant="ghost" size="sm">
                 Log out
               </Button>
@@ -84,7 +104,7 @@ export const Navbar = () => {
               <Button variant="ghost" size="sm" onClick={() => navigate("/login")}>
                 Log in
               </Button>
-              <Button size="sm" onClick={() => navigate("/login")}>
+              <Button size="sm" onClick={() => navigate("/signup")}>
                 Sign up
               </Button>
             </>
