@@ -12,12 +12,12 @@ export const Footer = () => {
               Finda
             </Link>
             <p className="text-gray-600 mb-4">
-              7742 Sadar Street Range Road, USA<br />
-              United Kingdom GHQ11
+              7 Admiralty Way<br />
+              Lekki Phase 1, Lagos
             </p>
             <p className="text-gray-600 mb-4">
-              40 568 423 6597<br />
-              support@finda.com
+              +234 812 345 6789<br />
+              support@finda.com.ng
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-primary">

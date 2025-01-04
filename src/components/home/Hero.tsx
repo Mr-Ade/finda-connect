@@ -4,23 +4,23 @@ import { useState, useEffect } from "react";
 
 const HERO_IMAGES = [
   {
-    url: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
-    caption: "Remote Work",
+    url: "https://images.unsplash.com/photo-1588960952097-4fd7fc02fe8e",
+    caption: "Lagos Skyline",
     credit: "Unsplash"
   },
   {
-    url: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
-    caption: "Productivity",
+    url: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
+    caption: "Business District",
     credit: "Unsplash"
   },
   {
-    url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-    caption: "Technology",
+    url: "https://images.unsplash.com/photo-1577495508326-19a1b3cf65b7",
+    caption: "Local Markets",
     credit: "Unsplash"
   },
   {
-    url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
-    caption: "Collaboration",
+    url: "https://images.unsplash.com/photo-1587659901518-7020d4413085",
+    caption: "Modern Nigeria",
     credit: "Unsplash"
   }
 ];
@@ -56,7 +56,7 @@ export const Hero = () => {
           <div className="w-full lg:w-1/2 mb-10 lg:mb-0">
             <div className="text-left">
               <h1 className="text-4xl lg:text-6xl font-bold text-white mb-4">
-                Find Your Perfect Place in <span className="text-white">{city || "Your City"}</span>
+                Find Your Perfect Place in <span className="text-white">{city || "Nigeria"}</span>
               </h1>
               <p className="text-lg text-white/90 mb-8">
                 Explore wonderful places to stay, salon, shopping or visit local areas.
@@ -64,10 +64,10 @@ export const Hero = () => {
               <SearchBar />
               <div className="mt-6 text-white">
                 <span className="mr-2">Popular:</span>
-                <button className="text-white/80 hover:text-white mr-4">Las Vegas</button>
-                <button className="text-white/80 hover:text-white mr-4">Houston</button>
-                <button className="text-white/80 hover:text-white mr-4">San Jose</button>
-                <button className="text-white/80 hover:text-white">New York</button>
+                <button className="text-white/80 hover:text-white mr-4">Lagos</button>
+                <button className="text-white/80 hover:text-white mr-4">Abuja</button>
+                <button className="text-white/80 hover:text-white mr-4">Port Harcourt</button>
+                <button className="text-white/80 hover:text-white">Ibadan</button>
               </div>
             </div>
           </div>
