@@ -6,9 +6,10 @@ interface MapContainerProps {
   initialLat: number;
   initialLng: number;
   onMapLoad: (map: mapboxgl.Map) => void;
+  children?: React.ReactNode;  // Add this line to accept children
 }
 
-export const MapContainer = ({ initialLat, initialLng, onMapLoad }: MapContainerProps) => {
+export const MapContainer = ({ initialLat, initialLng, onMapLoad, children }: MapContainerProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
 
@@ -46,6 +47,7 @@ export const MapContainer = ({ initialLat, initialLng, onMapLoad }: MapContainer
   return (
     <div className="relative w-full h-[400px] rounded-lg overflow-hidden">
       <div ref={mapContainer} className="absolute inset-0" />
+      {children}
     </div>
   );
 };
