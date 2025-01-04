@@ -58,21 +58,20 @@ export const LocationCarousel = () => {
 
       console.log('Fetched popular locations:', data);
       return (data || []) as LocationData[];
-    },
-    meta: {
-      errorMessage: "Error loading locations. Using fallback data."
-    },
-    onSettled: (data, error) => {
-      if (error) {
-        console.error('Error in popular locations query:', error);
-        toast({
-          title: "Error loading locations",
-          description: "Using fallback data. Please try again later.",
-          variant: "destructive",
-        });
-      }
     }
   });
+
+  // Handle error state with toast
+  useEffect(() => {
+    if (error) {
+      console.error('Error in popular locations query:', error);
+      toast({
+        title: "Error loading locations",
+        description: "Using fallback data. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  }, [error, toast]);
 
   const displayLocations = locations?.length ? locations : POPULAR_LOCATIONS;
 
