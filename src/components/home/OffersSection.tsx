@@ -16,9 +16,14 @@ export const OffersSection = () => {
                 View Offers
               </Button>
             </div>
-            <div className="absolute right-0 bottom-0 w-1/2 h-full opacity-20">
-              {/* Background pattern or image could be added here */}
-            </div>
+            <div 
+              className="absolute inset-0 w-full h-full opacity-20"
+              style={{
+                backgroundImage: 'url(https://images.unsplash.com/photo-1517248135467-4c7edcad34c4)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            />
           </div>
 
           {/* Delight Offer */}
@@ -32,9 +37,14 @@ export const OffersSection = () => {
                 View Offers
               </Button>
             </div>
-            <div className="absolute right-0 bottom-0 w-1/2 h-full opacity-20">
-              {/* Background pattern or image could be added here */}
-            </div>
+            <div 
+              className="absolute inset-0 w-full h-full opacity-20"
+              style={{
+                backgroundImage: 'url(https://images.unsplash.com/photo-1497366216548-37526070297c)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            />
           </div>
         </div>
       </div>
