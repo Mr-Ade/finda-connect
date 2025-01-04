@@ -2,7 +2,7 @@ import { MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useEffect, useState } from "react";
-import useEmblaCarousel, { EmblaCarouselType } from "embla-carousel-react";
+import useEmblaCarousel, { UseEmblaCarouselType } from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 
 const POPULAR_LOCATIONS = [
@@ -73,7 +73,7 @@ export const LocationCarousel = () => {
     ]
   );
 
-  const [api, setApi] = useState<EmblaCarouselType | null>(null);
+  const [api, setApi] = useState<UseEmblaCarouselType[1] | null>(null);
 
   useEffect(() => {
     if (emblaApi) {
