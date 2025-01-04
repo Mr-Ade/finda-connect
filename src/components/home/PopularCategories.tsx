@@ -1,7 +1,9 @@
 import { 
   Building2, Store, Utensils, Scissors, Wrench, ShoppingBag, 
   Laptop, Stethoscope, Brush, GraduationCap, Car, Hotel,
-  ChevronDown, ChevronUp
+  ChevronDown, ChevronUp, Shirt, Book, Home, Gift,
+  UtensilsCrossed, Coffee, Briefcase, Bath, Car2, Music,
+  FirstAid, School
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +27,18 @@ const INITIAL_CATEGORIES = [
 ];
 
 const ADDITIONAL_CATEGORIES = [
-  // ... Additional categories can be added here when needed
+  { name: "Apparel & Fashion", icon: Shirt, count: 0 },
+  { name: "Books & Media", icon: Book, count: 0 },
+  { name: "Home & Garden", icon: Home, count: 0 },
+  { name: "Gifts & Specialty", icon: Gift, count: 0 },
+  { name: "Restaurants", icon: UtensilsCrossed, count: 0 },
+  { name: "Cafes & Bakeries", icon: Coffee, count: 0 },
+  { name: "Business Services", icon: Briefcase, count: 0 },
+  { name: "Beauty & Wellness", icon: Bath, count: 0 },
+  { name: "Auto Dealers", icon: Car2, count: 0 },
+  { name: "Entertainment Venues", icon: Music, count: 0 },
+  { name: "Medical Services", icon: FirstAid, count: 0 },
+  { name: "Educational Services", icon: School, count: 0 }
 ];
 
 export const PopularCategories = () => {
