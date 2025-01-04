@@ -1,6 +1,6 @@
 import { MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useLocation } from "@/contexts/LocationContext";
+import { useLocation } from "@/contexts/location";
 
 interface LocationInputProps {
   className?: string;
