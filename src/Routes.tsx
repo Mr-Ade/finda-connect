@@ -13,6 +13,7 @@ import Checkout from "@/pages/Checkout";
 import Pricing from "@/pages/Pricing";
 import Privacy from "@/pages/Privacy";
 import FAQ from "@/pages/FAQ";
+import NotFound from "@/pages/NotFound";
 import Listings from "@/pages/dashboard/Listings";
 import AddListing from "@/pages/dashboard/AddListing";
 import Appointments from "@/pages/dashboard/Appointments";
@@ -45,6 +46,7 @@ const Routes = () => {
       <Route path="/dashboard/change-password" element={<ChangePassword />} />
       <Route path="/dashboard/messages" element={<Messages />} />
       <Route path="/dashboard/wallet" element={<Wallet />} />
+      <Route path="*" element={<NotFound />} />
     </RouterRoutes>
   );
 };
