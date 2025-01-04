@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import { supabase } from "@/integrations/supabase/client";
+import { Loader } from '@googlemaps/js-api-loader';
+import { supabase } from '@/integrations/supabase/client';
 
 interface MapViewProps {
   markers?: Array<{
@@ -16,56 +15,64 @@ interface MapViewProps {
 
 export const MapView = ({ markers = [], onMarkerClick, className = '' }: MapViewProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
-  const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const googleMapRef = useRef<google.maps.Map | null>(null);
+  const markersRef = useRef<google.maps.Marker[]>([]);
 
   useEffect(() => {
     const initMap = async () => {
       try {
-        // Get token from Supabase
-        const { data: { MAPBOX_PUBLIC_TOKEN } } = await supabase.functions.invoke('get-config', {
-          body: { keys: ['MAPBOX_PUBLIC_TOKEN'] }
+        // Get API key from Supabase
+        const { data: { GOOGLE_MAPS_API_KEY } } = await supabase.functions.invoke('get-config', {
+          body: { keys: ['GOOGLE_MAPS_API_KEY'] }
         });
 
-        if (!MAPBOX_PUBLIC_TOKEN) {
-          console.error('Mapbox token not found');
+        if (!GOOGLE_MAPS_API_KEY) {
+          console.error('Google Maps API key not found');
           return;
         }
 
-        // Set the token
-        mapboxgl.accessToken = MAPBOX_PUBLIC_TOKEN;
+        const loader = new Loader({
+          apiKey: GOOGLE_MAPS_API_KEY,
+          version: 'weekly',
+        });
+
+        const google = await loader.load();
         
         if (!mapRef.current) return;
 
         // Initialize map
-        const map = new mapboxgl.Map({
-          container: mapRef.current,
-          style: 'mapbox://styles/mapbox/streets-v12',
-          center: [8.6753, 9.0820], // Nigeria center
-          zoom: 6
+        const map = new google.maps.Map(mapRef.current, {
+          center: { lat: 9.0820, lng: 8.6753 }, // Nigeria center
+          zoom: 6,
+          styles: [
+            {
+              featureType: 'poi',
+              elementType: 'labels',
+              stylers: [{ visibility: 'off' }]
+            }
+          ],
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: false
         });
 
-        mapInstanceRef.current = map;
-
-        // Add navigation controls
-        map.addControl(
-          new mapboxgl.NavigationControl(),
-          'top-right'
-        );
+        googleMapRef.current = map;
 
         // Clear existing markers
-        markersRef.current.forEach(marker => marker.remove());
+        markersRef.current.forEach(marker => marker.setMap(null));
         markersRef.current = [];
 
         // Add markers
         markers.forEach(({ id, latitude, longitude, title }) => {
-          const marker = new mapboxgl.Marker()
-            .setLngLat([longitude, latitude])
-            .setPopup(new mapboxgl.Popup().setHTML(title))
-            .addTo(map);
+          const marker = new google.maps.Marker({
+            position: { lat: latitude, lng: longitude },
+            map,
+            title,
+            animation: google.maps.Animation.DROP
+          });
 
           if (onMarkerClick) {
-            marker.getElement().addEventListener('click', () => onMarkerClick(id));
+            marker.addListener('click', () => onMarkerClick(id));
           }
 
           markersRef.current.push(marker);
@@ -73,11 +80,11 @@ export const MapView = ({ markers = [], onMarkerClick, className = '' }: MapView
 
         // Fit bounds if there are markers
         if (markers.length > 0) {
-          const bounds = new mapboxgl.LngLatBounds();
-          markers.forEach(({ longitude, latitude }) => {
-            bounds.extend([longitude, latitude]);
+          const bounds = new google.maps.LatLngBounds();
+          markers.forEach(({ latitude, longitude }) => {
+            bounds.extend({ lat: latitude, lng: longitude });
           });
-          map.fitBounds(bounds, { padding: 50 });
+          map.fitBounds(bounds);
         }
 
       } catch (error) {
@@ -89,8 +96,8 @@ export const MapView = ({ markers = [], onMarkerClick, className = '' }: MapView
 
     return () => {
       // Cleanup markers
-      markersRef.current.forEach(marker => marker.remove());
-      mapInstanceRef.current?.remove();
+      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current = [];
     };
   }, [markers, onMarkerClick]);
 

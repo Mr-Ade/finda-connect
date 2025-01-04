@@ -7,7 +7,7 @@ interface BusinessInfoProps {
   business: {
     id: string;
     name: string;
-    description?: string; // Made optional to match Business type
+    description: string;
     address: string;
     city: string;
     state: string;
@@ -29,9 +29,7 @@ export const BusinessInfo = ({ business, isOwner }: BusinessInfoProps) => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {business.description && (
-              <p className="text-gray-600">{business.description}</p>
-            )}
+            <p className="text-gray-600">{business.description}</p>
             
             <div className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-gray-400" />

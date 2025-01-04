@@ -18,7 +18,7 @@ export const BusinessMainContent = ({ business }: BusinessMainContentProps) => {
           business={{
             id: business.id,
             name: business.name,
-            description: business.description || "", // Provide default empty string
+            description: business.description || "",
             address: business.address,
             city: business.city,
             state: business.state,
