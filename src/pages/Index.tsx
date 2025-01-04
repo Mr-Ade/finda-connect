@@ -6,6 +6,7 @@ import { LocationSearch } from "@/components/home/LocationSearch";
 import { CustomerReviews } from "@/components/home/CustomerReviews";
 import { Newsletter } from "@/components/home/Newsletter";
 import { Footer } from "@/components/Footer";
+import { TopLocations } from "@/components/home/TopLocations";
 
 const Index = () => {
   return (
@@ -14,6 +15,7 @@ const Index = () => {
       <OffersSection />
       <RecentListings />
       <PopularCategories />
+      <TopLocations />
       <LocationSearch />
       <CustomerReviews />
       <Newsletter />
