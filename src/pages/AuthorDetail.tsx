@@ -90,7 +90,7 @@ const AuthorDetail = () => {
                       <FileText className="w-5 h-5 text-blue-600" />
                     </div>
                     <div className="font-semibold text-xl">{author.businesses?.[0]?.count || 0}</div>
-                    <div className="text-sm text-gray-600">Listings</div>
+                    <div className="text-sm text-gray-500">Listings</div>
                   </div>
                   
                   <div className="text-center p-4 bg-yellow-50 rounded-lg">
@@ -98,7 +98,7 @@ const AuthorDetail = () => {
                       <ThumbsUp className="w-5 h-5 text-yellow-600" />
                     </div>
                     <div className="font-semibold text-xl">{author.followers?.[0]?.count || 0}</div>
-                    <div className="text-sm text-gray-600">Followers</div>
+                    <div className="text-sm text-gray-500">Followers</div>
                   </div>
                   
                   <div className="text-center p-4 bg-red-50 rounded-lg">
@@ -106,7 +106,7 @@ const AuthorDetail = () => {
                       <Heart className="w-5 h-5 text-red-600" />
                     </div>
                     <div className="font-semibold text-xl">0</div>
-                    <div className="text-sm text-gray-600">Following</div>
+                    <div className="text-sm text-gray-500">Following</div>
                   </div>
                 </div>
 
