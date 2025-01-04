@@ -42,9 +42,9 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold text-lg mb-4">About Company</h4>
             <ul className="space-y-2">
-              <li><Link to="/about" className="text-gray-600 hover:text-primary">Who We're?</Link></li>
-              <li><Link to="/mission" className="text-gray-600 hover:text-primary">Our Mission</Link></li>
-              <li><Link to="/team" className="text-gray-600 hover:text-primary">Our team</Link></li>
+              <li><Link to="/who-we-are" className="text-gray-600 hover:text-primary">Who We're?</Link></li>
+              <li><Link to="/our-mission" className="text-gray-600 hover:text-primary">Our Mission</Link></li>
+              <li><Link to="/our-team" className="text-gray-600 hover:text-primary">Our team</Link></li>
               <li><Link to="/packages" className="text-gray-600 hover:text-primary">Packages</Link></li>
               <li><Link to="/dashboard" className="text-gray-600 hover:text-primary">Dashboard</Link></li>
             </ul>
@@ -54,9 +54,9 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold text-lg mb-4">Main Navigation</h4>
             <ul className="space-y-2">
-              <li><Link to="/explore" className="text-gray-600 hover:text-primary">Explore Listings</Link></li>
-              <li><Link to="/authors" className="text-gray-600 hover:text-primary">Browse Authors</Link></li>
-              <li><Link to="/submit" className="text-gray-600 hover:text-primary">Submit Listings</Link></li>
+              <li><Link to="/explore-listings" className="text-gray-600 hover:text-primary">Explore Listings</Link></li>
+              <li><Link to="/browse-authors" className="text-gray-600 hover:text-primary">Browse Authors</Link></li>
+              <li><Link to="/submit-listing" className="text-gray-600 hover:text-primary">Submit Listings</Link></li>
               <li><Link to="/shortlisted" className="text-gray-600 hover:text-primary">Shortlisted</Link></li>
               <li><Link to="/dashboard" className="text-gray-600 hover:text-primary">Dashboard</Link></li>
             </ul>
@@ -66,9 +66,9 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold text-lg mb-4">Business Owners</h4>
             <ul className="space-y-2">
-              <li><Link to="/categories" className="text-gray-600 hover:text-primary">Browse Categories</Link></li>
-              <li><Link to="/payments" className="text-gray-600 hover:text-primary">Payment Links</Link></li>
-              <li><Link to="/saved" className="text-gray-600 hover:text-primary">Saved Places</Link></li>
+              <li><Link to="/browse-categories" className="text-gray-600 hover:text-primary">Browse Categories</Link></li>
+              <li><Link to="/payment-links" className="text-gray-600 hover:text-primary">Payment Links</Link></li>
+              <li><Link to="/saved-places" className="text-gray-600 hover:text-primary">Saved Places</Link></li>
               <li><Link to="/dashboard" className="text-gray-600 hover:text-primary">Dashboard</Link></li>
             </ul>
           </div>

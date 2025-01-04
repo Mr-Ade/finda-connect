@@ -21,6 +21,19 @@ import Bookmarks from "@/pages/dashboard/Bookmarks";
 import ChangePassword from "@/pages/dashboard/ChangePassword";
 import Messages from "@/pages/dashboard/Messages";
 import Wallet from "@/pages/dashboard/Wallet";
+import ExploreListings from "@/pages/ExploreListings";
+import BrowseAuthors from "@/pages/BrowseAuthors";
+import SubmitListing from "@/pages/SubmitListing";
+import Shortlisted from "@/pages/Shortlisted";
+import BrowseCategories from "@/pages/BrowseCategories";
+import PaymentLinks from "@/pages/PaymentLinks";
+import SavedPlaces from "@/pages/SavedPlaces";
+import WhoWeAre from "@/pages/WhoWeAre";
+import OurMission from "@/pages/OurMission";
+import OurTeam from "@/pages/OurTeam";
+import Packages from "@/pages/Packages";
+import SiteMap from "@/pages/SiteMap";
+import Security from "@/pages/Security";
 
 const Routes = () => {
   return (
@@ -39,6 +52,19 @@ const Routes = () => {
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/faq" element={<FAQ />} />
+      <Route path="/explore-listings" element={<ExploreListings />} />
+      <Route path="/browse-authors" element={<BrowseAuthors />} />
+      <Route path="/submit-listing" element={<SubmitListing />} />
+      <Route path="/shortlisted" element={<Shortlisted />} />
+      <Route path="/browse-categories" element={<BrowseCategories />} />
+      <Route path="/payment-links" element={<PaymentLinks />} />
+      <Route path="/saved-places" element={<SavedPlaces />} />
+      <Route path="/who-we-are" element={<WhoWeAre />} />
+      <Route path="/our-mission" element={<OurMission />} />
+      <Route path="/our-team" element={<OurTeam />} />
+      <Route path="/packages" element={<Packages />} />
+      <Route path="/sitemap" element={<SiteMap />} />
+      <Route path="/security" element={<Security />} />
       <Route path="/dashboard/listings" element={<Listings />} />
       <Route path="/dashboard/add-listing" element={<AddListing />} />
       <Route path="/dashboard/appointments" element={<Appointments />} />
