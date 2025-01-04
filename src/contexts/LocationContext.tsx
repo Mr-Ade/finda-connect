@@ -14,13 +14,14 @@ interface LocationContextType {
     longitude: number | null;
   };
   isLoading: boolean;
+  setCity: (city: string) => void; // Added this line
 }
 
 const LocationContext = createContext<LocationContextType | undefined>(undefined);
 
 export function LocationProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
-  const [locationData, setLocationData] = useState<LocationContextType>({
+  const [locationData, setLocationData] = useState<Omit<LocationContextType, 'setCity'>>({
     country: "Nigeria",
     state: "",
     city: "",
@@ -33,6 +34,13 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     },
     isLoading: true,
   });
+
+  const setCity = (city: string) => {
+    setLocationData(prev => ({
+      ...prev,
+      city
+    }));
+  };
 
   useEffect(() => {
     const detectLocation = async () => {
@@ -113,7 +121,7 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
   }, [toast]);
 
   return (
-    <LocationContext.Provider value={locationData}>
+    <LocationContext.Provider value={{ ...locationData, setCity }}>
       {children}
     </LocationContext.Provider>
   );
