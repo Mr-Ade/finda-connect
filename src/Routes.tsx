@@ -11,6 +11,7 @@ import AboutUs from "@/pages/AboutUs";
 import Contact from "@/pages/Contact";
 import Checkout from "@/pages/Checkout";
 import Pricing from "@/pages/Pricing";
+import Privacy from "@/pages/Privacy";
 import Listings from "@/pages/dashboard/Listings";
 import AddListing from "@/pages/dashboard/AddListing";
 import Appointments from "@/pages/dashboard/Appointments";
@@ -34,6 +35,7 @@ const Routes = () => {
       <Route path="/contact" element={<Contact />} />
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/pricing" element={<Pricing />} />
+      <Route path="/privacy" element={<Privacy />} />
       <Route path="/dashboard/listings" element={<Listings />} />
       <Route path="/dashboard/add-listing" element={<AddListing />} />
       <Route path="/dashboard/appointments" element={<Appointments />} />
