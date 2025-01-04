@@ -29,21 +29,28 @@ export const PopularCategories = () => {
     queryKey: ['category-counts'],
     queryFn: async () => {
       console.log('Fetching category counts...');
+      
+      // Using select with count to get category counts
       const { data, error } = await supabase
         .from('businesses')
-        .select('category, count(*)', { count: 'exact' })
-        .group('category');
+        .select('category, count', { count: 'exact', head: false })
+        .select('category');
 
       if (error) {
         console.error('Error fetching category counts:', error);
         throw error;
       }
 
-      console.log('Category counts:', data);
-      return data.reduce((acc: Record<string, number>, curr) => {
-        acc[curr.category] = parseInt(curr.count);
-        return acc;
-      }, {});
+      // Process the data to get counts per category
+      const counts: Record<string, number> = {};
+      data.forEach(item => {
+        if (item.category) {
+          counts[item.category] = (counts[item.category] || 0) + 1;
+        }
+      });
+
+      console.log('Category counts:', counts);
+      return counts;
     },
   });
 
