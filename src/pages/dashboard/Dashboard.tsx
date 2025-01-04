@@ -1,4 +1,4 @@
-import { DashboardLayout } from "@/components/layouts/DashboardLayout";
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { DashboardStats } from "@/components/profile/dashboard/DashboardStats";
 import { DashboardChart } from "@/components/profile/dashboard/DashboardChart";
 import { RecentActivities } from "@/components/profile/dashboard/RecentActivities";
