@@ -25,10 +25,13 @@ const BusinessDetails = () => {
           menu_items(*),
           business_hours(*),
           reviews(
-            *,
+            id,
+            rating,
+            comment,
+            created_at,
             profiles:user_id(username, avatar_url),
-            review_responses(*),
-            review_photos(*)
+            review_responses(id, response_text, created_at),
+            review_photos(id, photo_url)
           ),
           owner:owner_id(
             username,
