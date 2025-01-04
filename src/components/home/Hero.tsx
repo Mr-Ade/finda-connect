@@ -39,21 +39,23 @@ export const Hero = () => {
       setCurrentImageIndex((prevIndex) => 
         prevIndex === HERO_IMAGES.length - 1 ? 0 : prevIndex + 1
       );
-    }, 5000); // Change image every 5 seconds
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="relative">
+    <div className="relative h-[600px]">
       {/* Background Image */}
       <div 
         className="absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-1000"
         style={{ 
           backgroundImage: `url(${HERO_IMAGES[currentImageIndex].url})`,
-          opacity: 0.7
         }}
       />
+      
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/50" />
       
       {/* Content */}
       <div className="relative container mx-auto px-4 py-20">
