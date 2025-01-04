@@ -1,59 +1,42 @@
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { SearchBar } from "@/components/SearchBar";
-
-const HERO_SLIDES = [
-  {
-    id: 1,
-    image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81",
-    title: "Discover Local Gems",
-    description: "Find the best local businesses in your area",
-  },
-  {
-    id: 2,
-    image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
-    title: "Share Your Experience",
-    description: "Help others by sharing your honest reviews",
-  },
-  {
-    id: 3,
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
-    title: "Connect with Businesses",
-    description: "Directly engage with your favorite local spots",
-  },
-];
+import { useLocation } from "@/contexts/LocationContext";
 
 export const Hero = () => {
+  const { city } = useLocation();
+
   return (
-    <section className="relative">
-      <Carousel className="w-full" opts={{ loop: true, align: "start" }}>
-        <CarouselContent>
-          {HERO_SLIDES.map((slide) => (
-            <CarouselItem key={slide.id}>
-              <div className="relative h-[600px] w-full">
-                <div 
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${slide.image})` }}
-                >
-                  <div className="absolute inset-0 bg-black/40" />
-                </div>
-                <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
-                  <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white animate-fade-in">
-                    {slide.title}
-                  </h1>
-                  <p className="text-xl text-white/90 mb-12 max-w-2xl mx-auto animate-fade-in">
-                    {slide.description}
-                  </p>
-                  <div className="animate-fade-in">
-                    <SearchBar />
-                  </div>
-                </div>
+    <div className="home-banner relative bg-primary py-20">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-wrap items-center justify-between">
+          <div className="w-full lg:w-1/2 mb-10 lg:mb-0">
+            <div className="text-left">
+              <h1 className="text-4xl lg:text-6xl font-bold text-white mb-4">
+                Find Your Perfect Place in <span className="text-white">{city || "Your City"}</span>
+              </h1>
+              <p className="text-lg text-white/90 mb-8">
+                Explore wonderful places to stay, salon, shopping or visit local areas.
+              </p>
+              <SearchBar />
+              <div className="mt-6 text-white">
+                <span className="mr-2">Popular:</span>
+                <button className="text-white/80 hover:text-white mr-4">Las Vegas</button>
+                <button className="text-white/80 hover:text-white mr-4">Houston</button>
+                <button className="text-white/80 hover:text-white mr-4">San Jose</button>
+                <button className="text-white/80 hover:text-white">New York</button>
               </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="left-4" />
-        <CarouselNext className="right-4" />
-      </Carousel>
-    </section>
+            </div>
+          </div>
+          <div className="w-full lg:w-5/12">
+            <div className="relative">
+              <img 
+                src="/assets/img/hero-image.jpg" 
+                alt="Hero" 
+                className="rounded-lg shadow-xl"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
