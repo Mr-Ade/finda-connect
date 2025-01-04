@@ -70,6 +70,7 @@ const canadianProvinces: State[] = [
 ];
 
 export const getStatesByCountry = (country: string): State[] => {
+  console.log("Getting states for country:", country);
   switch (country) {
     case "United States":
       return usStates;

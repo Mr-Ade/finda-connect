@@ -20,6 +20,10 @@ interface AddressFieldsProps {
 }
 
 export const AddressFields = ({ address, availableStates, onAddressChange }: AddressFieldsProps) => {
+  console.log("Current country:", address.country);
+  console.log("Available states:", availableStates);
+  console.log("Current state:", address.state);
+
   return (
     <>
       <div className="grid md:grid-cols-2 gap-4">
@@ -46,10 +50,16 @@ export const AddressFields = ({ address, availableStates, onAddressChange }: Add
           <Select 
             value={address.state} 
             onValueChange={(value) => onAddressChange('state', value)}
-            disabled={!address.country}
+            disabled={!address.country || availableStates.length === 0}
           >
             <SelectTrigger>
-              <SelectValue placeholder={address.country ? "Select state/province" : "Select country first"} />
+              <SelectValue placeholder={
+                !address.country 
+                  ? "Select country first" 
+                  : availableStates.length === 0 
+                    ? "No states available" 
+                    : "Select state/province"
+              } />
             </SelectTrigger>
             <SelectContent>
               {availableStates.map((state) => (
