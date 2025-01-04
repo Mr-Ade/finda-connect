@@ -3,7 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { BusinessCard } from "@/components/BusinessCard";
 import type { Database } from "@/integrations/supabase/types";
 
-type Business = Database["public"]["Tables"]["businesses"]["Row"];
+type Business = Database["public"]["Tables"]["businesses"]["Row"] & {
+  business_photos?: {
+    photo_url: string;
+  }[];
+};
 
 export const RecentlyViewedListings = () => {
   const { data: businesses, isLoading } = useQuery({
@@ -12,7 +16,12 @@ export const RecentlyViewedListings = () => {
       console.log('Fetching recent listings...');
       const { data, error } = await supabase
         .from('businesses')
-        .select('*')
+        .select(`
+          *,
+          business_photos (
+            photo_url
+          )
+        `)
         .limit(4)
         .order('created_at', { ascending: false });
 
