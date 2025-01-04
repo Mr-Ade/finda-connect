@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AuthorListings } from "@/components/author/AuthorListings";
 import { Button } from "@/components/ui/button";
 import { Mail, MapPin, Phone, Globe, Heart, FileText, ThumbsUp } from "lucide-react";
+import { LocationData } from "@/integrations/supabase/types";
 
 const AuthorDetail = () => {
   const { username } = useParams();
@@ -51,6 +52,8 @@ const AuthorDetail = () => {
     return <div>Author not found</div>;
   }
 
+  const locationData = profile.location_data as LocationData | null;
+
   return (
     <section className="bg-gray-50">
       <div className="container mx-auto px-4 py-8">
@@ -75,7 +78,7 @@ const AuthorDetail = () => {
                     <h5 className="text-xl font-semibold">{profile.full_name}</h5>
                     <div className="text-gray-600 flex items-center gap-1">
                       <MapPin className="w-4 h-4" />
-                      {profile.location_data?.city || 'Location not set'}
+                      {locationData?.city || 'Location not set'}
                     </div>
                   </div>
                 </div>
@@ -136,7 +139,7 @@ const AuthorDetail = () => {
                     <MapPin className="w-5 h-5 text-primary mt-1" />
                     <div>
                       <h5 className="font-medium">Get Direction</h5>
-                      <p className="text-gray-600">{profile.location_data?.address || 'Address not set'}</p>
+                      <p className="text-gray-600">{locationData?.address || 'Address not set'}</p>
                     </div>
                   </div>
 

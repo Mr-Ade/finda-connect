@@ -6,6 +6,16 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+export interface LocationData {
+  city?: string;
+  address?: string;
+  country?: string;
+  state?: string;
+  zip?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
 export type Database = {
   public: {
     Tables: {
@@ -553,12 +563,13 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
-          location_data: Json | null
+          location_data: LocationData | null
           preferred_currency: string | null
           preferred_language: string | null
           timezone: string | null
           updated_at: string
           username: string | null
+          email: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -567,12 +578,13 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
-          location_data?: Json | null
+          location_data?: LocationData | null
           preferred_currency?: string | null
           preferred_language?: string | null
           timezone?: string | null
           updated_at?: string
           username?: string | null
+          email?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -581,12 +593,13 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
-          location_data?: Json | null
+          location_data?: LocationData | null
           preferred_currency?: string | null
           preferred_language?: string | null
           timezone?: string | null
           updated_at?: string
           username?: string | null
+          email?: string | null
         }
         Relationships: []
       }
@@ -1325,6 +1338,7 @@ export type Database = {
             }
             Returns: unknown
           }
+        
         | {
             Args: {
               "": unknown
@@ -2844,7 +2858,7 @@ export type Database = {
       st_geomfromgeojson:
         | {
             Args: {
-              "": Json
+              "":Json
             }
             Returns: unknown
           }
