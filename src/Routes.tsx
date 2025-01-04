@@ -1,36 +1,21 @@
-import { Routes as RouterRoutes, Route } from "react-router-dom";
-import Index from "@/pages/Index";
-import Profile from "@/pages/Profile";
-import BusinessDetails from "@/pages/BusinessDetails";
-import JobListing from "@/pages/JobListing";
-import Login from "@/pages/Login";
+import { createBrowserRouter } from "react-router-dom";
+import App from "@/App";
 import Blog from "@/pages/Blog";
-import Listings from "@/pages/dashboard/Listings";
-import AddListing from "@/pages/dashboard/AddListing";
-import Appointments from "@/pages/dashboard/Appointments";
-import Bookmarks from "@/pages/dashboard/Bookmarks";
-import ChangePassword from "@/pages/dashboard/ChangePassword";
-import Messages from "@/pages/dashboard/Messages";
-import Wallet from "@/pages/dashboard/Wallet";
+import BlogDetail from "@/pages/BlogDetail";
 
-const Routes = () => {
-  return (
-    <RouterRoutes>
-      <Route path="/" element={<Index />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/business/:id" element={<BusinessDetails />} />
-      <Route path="/job/:id" element={<JobListing />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/blog" element={<Blog />} />
-      <Route path="/dashboard/listings" element={<Listings />} />
-      <Route path="/dashboard/add-listing" element={<AddListing />} />
-      <Route path="/dashboard/appointments" element={<Appointments />} />
-      <Route path="/dashboard/bookmarks" element={<Bookmarks />} />
-      <Route path="/dashboard/change-password" element={<ChangePassword />} />
-      <Route path="/dashboard/messages" element={<Messages />} />
-      <Route path="/dashboard/wallet" element={<Wallet />} />
-    </RouterRoutes>
-  );
-};
-
-export default Routes;
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "blog",
+        element: <Blog />,
+      },
+      {
+        path: "blog/:id",
+        element: <BlogDetail />,
+      },
+    ],
+  },
+]);
