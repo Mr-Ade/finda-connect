@@ -51,7 +51,13 @@ const AuthorDetail = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('businesses')
-        .select('*')
+        .select(`
+          *,
+          business_photos (
+            id,
+            photo_url
+          )
+        `)
         .eq('owner_id', author?.id);
 
       if (error) {

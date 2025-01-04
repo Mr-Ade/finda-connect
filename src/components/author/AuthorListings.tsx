@@ -4,7 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { MapPin, Phone, Star } from "lucide-react";
 
-type Business = Database["public"]["Tables"]["businesses"]["Row"];
+type Business = Database["public"]["Tables"]["businesses"]["Row"] & {
+  business_photos?: Database["public"]["Tables"]["business_photos"]["Row"][];
+};
 
 interface AuthorListingsProps {
   data: Business[];
@@ -20,7 +22,7 @@ export const AuthorListings = ({ data }: AuthorListingsProps) => {
           <Link to={`/business/${business.id}`}>
             <div className="relative">
               <img 
-                src={business.photo_url || "/placeholder.svg"}
+                src={business.business_photos?.[0]?.photo_url || "/placeholder.svg"}
                 alt={business.name}
                 className="w-full h-48 object-cover"
               />
