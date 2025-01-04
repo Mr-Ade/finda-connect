@@ -18,7 +18,7 @@ import { useLocation } from "@/contexts/LocationContext";
 export const BusinessSearch = () => {
   const { city, state } = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
-  const [category, setCategory] = useState<string>("");
+  const [category, setCategory] = useState<string>("all");
   const [priceRange, setPriceRange] = useState([0]);
   const [showFilters, setShowFilters] = useState(false);
 
@@ -39,7 +39,7 @@ export const BusinessSearch = () => {
         query = query.ilike('name', `%${searchTerm}%`);
       }
 
-      if (category) {
+      if (category && category !== 'all') {
         query = query.eq('category', category);
       }
 
@@ -102,7 +102,7 @@ export const BusinessSearch = () => {
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Categories</SelectItem>
+                  <SelectItem value="all">All Categories</SelectItem>
                   <SelectItem value="restaurant">Restaurants</SelectItem>
                   <SelectItem value="retail">Retail</SelectItem>
                   <SelectItem value="service">Services</SelectItem>
