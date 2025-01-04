@@ -634,6 +634,42 @@ export type Database = {
         }
         Relationships: []
       }
+      testimonials: {
+        Row: {
+          comment: string
+          created_at: string
+          id: string
+          image_url: string | null
+          is_featured: boolean | null
+          name: string
+          rating: number | null
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          comment: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          name: string
+          rating?: number | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          name?: string
+          rating?: number | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       geography_columns: {
