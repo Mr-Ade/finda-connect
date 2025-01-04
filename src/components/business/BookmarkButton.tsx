@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,33 @@ interface BookmarkButtonProps {
 
 export const BookmarkButton = ({ businessId }: BookmarkButtonProps) => {
   const [isBookmarking, setIsBookmarking] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Check if business is already bookmarked on component mount
+  useEffect(() => {
+    const checkBookmarkStatus = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from("bookmarks")
+        .select()
+        .eq('business_id', businessId)
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error checking bookmark status:", error);
+        return;
+      }
+
+      setIsBookmarked(!!data);
+    };
+
+    checkBookmarkStatus();
+  }, [businessId]);
 
   const handleBookmark = async () => {
     setIsBookmarking(true);
@@ -29,26 +54,50 @@ export const BookmarkButton = ({ businessId }: BookmarkButtonProps) => {
       return;
     }
 
-    const { error } = await supabase
-      .from("bookmarks")
-      .insert({
-        business_id: businessId,
-        user_id: user.id
-      });
+    try {
+      if (isBookmarked) {
+        // Remove bookmark
+        const { error } = await supabase
+          .from("bookmarks")
+          .delete()
+          .eq('business_id', businessId)
+          .eq('user_id', user.id);
 
-    if (error) {
+        if (error) throw error;
+
+        setIsBookmarked(false);
+        toast({
+          title: "Success",
+          description: "Bookmark removed!",
+        });
+      } else {
+        // Add bookmark
+        const { error } = await supabase
+          .from("bookmarks")
+          .insert({
+            business_id: businessId,
+            user_id: user.id
+          });
+
+        if (error) throw error;
+
+        setIsBookmarked(true);
+        toast({
+          title: "Success",
+          description: "Business bookmarked!",
+        });
+      }
+
+      // Refresh business data
+      queryClient.invalidateQueries({ queryKey: ["business", businessId] });
+      queryClient.invalidateQueries({ queryKey: ["userBookmarks"] });
+    } catch (error) {
       console.error("Bookmark error:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to bookmark. Please try again.",
+        description: "Failed to update bookmark. Please try again.",
       });
-    } else {
-      toast({
-        title: "Success",
-        description: "Business bookmarked!",
-      });
-      queryClient.invalidateQueries({ queryKey: ["business", businessId] });
     }
 
     setIsBookmarking(false);
@@ -59,10 +108,10 @@ export const BookmarkButton = ({ businessId }: BookmarkButtonProps) => {
       onClick={handleBookmark}
       disabled={isBookmarking}
       className="w-full"
-      variant="outline"
+      variant={isBookmarked ? "default" : "outline"}
     >
-      <Bookmark className="w-4 h-4 mr-2" />
-      Bookmark
+      <Bookmark className={`w-4 h-4 mr-2 ${isBookmarked ? "fill-current" : ""}`} />
+      {isBookmarked ? "Bookmarked" : "Bookmark"}
     </Button>
   );
 };
