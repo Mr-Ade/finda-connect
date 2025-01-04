@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Instagram, Linkedin, MapPin, User, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { MainLayout } from "@/components/layouts/MainLayout";
+import { Newsletter } from "@/components/home/Newsletter";
 
 const teamMembers = [
   {
@@ -48,7 +48,7 @@ const workingSteps = [
 
 const AboutUs = () => {
   return (
-    <MainLayout>
+    <div className="min-h-screen">
       {/* Hero Section */}
       <section 
         className="relative bg-cover bg-center py-32"
@@ -142,7 +142,10 @@ const AboutUs = () => {
           </div>
         </div>
       </section>
-    </MainLayout>
+
+      {/* Newsletter Section */}
+      <Newsletter />
+    </div>
   );
 };
 

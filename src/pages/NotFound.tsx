@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { MainLayout } from "@/components/layouts/MainLayout";
+import { Newsletter } from "@/components/home/Newsletter";
+import { Footer } from "@/components/Footer";
 import { useNavigate } from "react-router-dom";
 
 const NotFound = () => {
@@ -13,7 +14,7 @@ const NotFound = () => {
   ];
 
   return (
-    <MainLayout>
+    <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb */}
       <div className="bg-gray-900 py-3">
         <div className="container mx-auto px-4">
@@ -54,7 +55,13 @@ const NotFound = () => {
           </div>
         </div>
       </section>
-    </MainLayout>
+
+      {/* Newsletter Section */}
+      <Newsletter />
+
+      {/* Footer */}
+      <Footer />
+    </div>
   );
 };
 

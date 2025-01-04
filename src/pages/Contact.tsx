@@ -8,10 +8,28 @@ import { Link } from "react-router-dom";
 
 const Contact = () => {
   const { toast } = useToast();
+  const [email, setEmail] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission logic here
+  };
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast({
+        title: "Error",
+        description: "Please enter your email address",
+        variant: "destructive",
+      });
+      return;
+    }
+    toast({
+      title: "Success",
+      description: "Thank you for subscribing to our newsletter!",
+    });
+    setEmail("");
   };
 
   return (
@@ -96,6 +114,31 @@ const Contact = () => {
                 <p className="text-gray-900">support@finda.com</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="bg-[#03343b] bg-[url('/landing-bg.png')] bg-cover py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h6 className="text-white mb-2">Subscribe Now</h6>
+            <h2 className="text-3xl font-bold text-white">Get All Updates & Advance Offers</h2>
+          </div>
+
+          <div className="max-w-3xl mx-auto">
+            <form onSubmit={handleSubscribe} className="bg-white rounded-lg p-1 flex">
+              <Input
+                type="email"
+                placeholder="Enter Your Email Address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="border-0 focus-visible:ring-0"
+              />
+              <Button type="submit" className="ml-2">
+                Subscribe
+              </Button>
+            </form>
           </div>
         </div>
       </section>

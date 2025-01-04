@@ -1,5 +1,7 @@
-import { MainLayout } from "@/components/layouts/MainLayout";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { Newsletter } from "@/components/home/Newsletter";
 
 const Privacy = () => {
   const breadcrumbItems = [
@@ -9,7 +11,9 @@ const Privacy = () => {
   ];
 
   return (
-    <MainLayout>
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      
       {/* Breadcrumb */}
       <div className="bg-gray-100 py-3">
         <div className="container mx-auto px-4">
@@ -62,7 +66,10 @@ const Privacy = () => {
           </div>
         </div>
       </section>
-    </MainLayout>
+
+      <Newsletter />
+      <Footer />
+    </div>
   );
 };
 
