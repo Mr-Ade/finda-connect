@@ -1,178 +1,256 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { AuthorListings } from "@/components/author/AuthorListings";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Mail, MapPin, Phone, Globe, Heart, FileText, ThumbsUp } from "lucide-react";
-import { LocationData } from "@/integrations/supabase/types";
+import { Mail, MapPin, Phone, Globe, FileText, ThumbsUp, Heart } from "lucide-react";
+import { AuthorListings } from "@/components/author/AuthorListings";
+import { useToast } from "@/hooks/use-toast";
+import type { Database } from "@/integrations/supabase/types";
+
+type Profile = Database["public"]["Tables"]["profiles"]["Row"] & {
+  businesses: { count: number }[];
+  followers: { count: number }[];
+  email?: string;
+  phone?: string;
+  website?: string;
+};
 
 const AuthorDetail = () => {
   const { username } = useParams();
+  const { toast } = useToast();
 
-  const { data: profile, isLoading } = useQuery({
-    queryKey: ['profile', username],
+  const { data: author, isLoading } = useQuery({
+    queryKey: ['author', username],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: profile, error } = await supabase
         .from('profiles')
         .select(`
           *,
-          businesses:businesses(*)
+          businesses:businesses(count),
+          followers:follows(count)
         `)
         .eq('username', username)
         .single();
 
-      if (error) throw error;
-      return data;
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load author profile",
+          variant: "destructive",
+        });
+        throw error;
+      }
+
+      return profile as Profile;
     }
   });
 
-  const { data: stats } = useQuery({
-    queryKey: ['author-stats', username],
+  const { data: listings } = useQuery({
+    queryKey: ['author-listings', username],
     queryFn: async () => {
-      const [listings, followers, following] = await Promise.all([
-        supabase.from('businesses').select('id', { count: 'exact' }).eq('owner_id', profile?.id),
-        supabase.from('follows').select('id', { count: 'exact' }).eq('following_id', profile?.id),
-        supabase.from('follows').select('id', { count: 'exact' }).eq('follower_id', profile?.id)
-      ]);
+      const { data, error } = await supabase
+        .from('businesses')
+        .select(`
+          *,
+          business_photos (
+            id,
+            photo_url
+          )
+        `)
+        .eq('owner_id', author?.id);
 
-      return {
-        listings: listings.count || 0,
-        followers: followers.count || 0,
-        following: following.count || 0
-      };
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load listings",
+          variant: "destructive",
+        });
+        throw error;
+      }
+
+      return data;
     },
-    enabled: !!profile?.id
+    enabled: !!author?.id
   });
+
+  const handleFollow = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to follow users",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { error } = await supabase
+      .from('follows')
+      .insert({
+        follower_id: session.user.id,
+        following_id: author?.id,
+      });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to follow user",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Success",
+      description: "You are now following this user",
+    });
+  };
+
+  const handleMessage = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to send messages",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Navigate to messages page with pre-selected user
+    window.location.href = `/dashboard/messages?user=${author?.id}`;
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (!profile) {
+  if (!author) {
     return <div>Author not found</div>;
   }
 
-  const locationData = profile.location_data as LocationData | null;
+  const locationData = author.location_data as { city?: string; address?: string } | null;
 
   return (
-    <section className="bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div className="bg-gray-50 py-16">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          
           {/* Author Info Card */}
-          <div className="lg:col-span-4">
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+          <div className="md:col-span-4">
+            <Card className="p-6">
               <div className="relative">
-                <div className="absolute top-4 right-4 px-2 py-1 bg-green-500 text-white text-sm rounded">
+                <div className="absolute top-0 right-0 bg-green-500 text-white px-3 py-1 rounded-full text-sm">
                   Online Now
                 </div>
-              </div>
-
-              <div className="p-6">
                 <div className="flex items-center gap-4 mb-6">
                   <img 
-                    src={profile.avatar_url || "/placeholder.svg"}
-                    alt={profile.full_name}
-                    className="w-16 h-16 rounded-full"
+                    src={author.avatar_url || "/placeholder.svg"} 
+                    alt={author.full_name}
+                    className="w-20 h-20 rounded-full object-cover"
                   />
                   <div>
-                    <h5 className="text-xl font-semibold">{profile.full_name}</h5>
-                    <div className="text-gray-600 flex items-center gap-1">
+                    <h3 className="text-xl font-semibold">{author.full_name}</h3>
+                    <p className="text-gray-600 flex items-center gap-1">
                       <MapPin className="w-4 h-4" />
-                      {locationData?.city || 'Location not set'}
-                    </div>
+                      {locationData?.city || "Location not set"}
+                    </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 mb-8">
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <FileText className="w-5 h-5" />
+                  <div className="text-center p-4 bg-blue-50 rounded-lg">
+                    <div className="bg-blue-100 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <FileText className="w-5 h-5 text-blue-600" />
                     </div>
-                    <div className="font-semibold">{stats?.listings}</div>
-                    <div className="text-sm text-gray-600">Listings</div>
+                    <div className="font-semibold text-xl">{author.businesses?.[0]?.count || 0}</div>
+                    <div className="text-sm text-gray-500">Listings</div>
                   </div>
-
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="w-10 h-10 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <ThumbsUp className="w-5 h-5" />
+                  
+                  <div className="text-center p-4 bg-yellow-50 rounded-lg">
+                    <div className="bg-yellow-100 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <ThumbsUp className="w-5 h-5 text-yellow-600" />
                     </div>
-                    <div className="font-semibold">{stats?.followers}</div>
-                    <div className="text-sm text-gray-600">Followers</div>
+                    <div className="font-semibold text-xl">{author.followers?.[0]?.count || 0}</div>
+                    <div className="text-sm text-gray-500">Followers</div>
                   </div>
-
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="w-10 h-10 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <Heart className="w-5 h-5" />
+                  
+                  <div className="text-center p-4 bg-red-50 rounded-lg">
+                    <div className="bg-red-100 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <Heart className="w-5 h-5 text-red-600" />
                     </div>
-                    <div className="font-semibold">{stats?.following}</div>
-                    <div className="text-sm text-gray-600">Following</div>
+                    <div className="font-semibold text-xl">0</div>
+                    <div className="text-sm text-gray-500">Following</div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mb-8">
-                  <Button variant="outline" className="w-full">
-                    Follow
-                  </Button>
-                  <Button className="w-full">
-                    Message
-                  </Button>
+                  <Button onClick={handleFollow} variant="outline" className="w-full">Follow</Button>
+                  <Button onClick={handleMessage} className="w-full">Message</Button>
                 </div>
 
                 <div className="space-y-6">
-                  <div className="flex items-start gap-3">
-                    <Mail className="w-5 h-5 text-primary mt-1" />
+                  <div className="flex items-center gap-4">
+                    <div className="bg-gray-100 p-3 rounded-full">
+                      <Mail className="w-5 h-5 text-gray-600" />
+                    </div>
                     <div>
                       <h5 className="font-medium">Mail Us</h5>
-                      <p className="text-gray-600">{profile.email || 'Email not set'}</p>
+                      <p className="text-gray-600 text-sm">{author.email || "Not provided"}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3">
-                    <Phone className="w-5 h-5 text-primary mt-1" />
+                  <div className="flex items-center gap-4">
+                    <div className="bg-gray-100 p-3 rounded-full">
+                      <Phone className="w-5 h-5 text-gray-600" />
+                    </div>
                     <div>
-                      <h5 className="font-medium">Make Call</h5>
-                      <p className="text-gray-600">Phone not set</p>
+                      <h5 className="font-medium">Phone</h5>
+                      <p className="text-gray-600 text-sm">{author.phone || "Not provided"}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-primary mt-1" />
+                  <div className="flex items-center gap-4">
+                    <div className="bg-gray-100 p-3 rounded-full">
+                      <MapPin className="w-5 h-5 text-gray-600" />
+                    </div>
                     <div>
-                      <h5 className="font-medium">Get Direction</h5>
-                      <p className="text-gray-600">{locationData?.address || 'Address not set'}</p>
+                      <h5 className="font-medium">Location</h5>
+                      <p className="text-gray-600 text-sm">{locationData?.address || "Not provided"}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3">
-                    <Globe className="w-5 h-5 text-primary mt-1" />
+                  <div className="flex items-center gap-4">
+                    <div className="bg-gray-100 p-3 rounded-full">
+                      <Globe className="w-5 h-5 text-gray-600" />
+                    </div>
                     <div>
-                      <h5 className="font-medium">Live Web</h5>
-                      <p className="text-gray-600">Website not set</p>
+                      <h5 className="font-medium">Website</h5>
+                      <p className="text-gray-600 text-sm">{author.website || "Not provided"}</p>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
           </div>
 
-          {/* Author Listings */}
-          <div className="lg:col-span-8">
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          {/* Listings Section */}
+          <div className="md:col-span-8">
+            <div className="bg-white rounded-lg p-6 mb-6">
               <div className="flex justify-between items-center mb-6">
-                <h5 className="text-lg font-semibold">
-                  You have total <span className="text-primary px-2">{stats?.listings}</span> Listings
-                </h5>
-                <div className="flex gap-4">
-                  {/* Add filter buttons here if needed */}
-                </div>
+                <h4 className="text-lg font-semibold">
+                  You have total <span className="text-primary px-2">{author.businesses?.[0]?.count || 0}</span> Listings
+                </h4>
               </div>
-
-              <AuthorListings data={profile.businesses} />
             </div>
+
+            {/* Display author's listings */}
+            {listings && <AuthorListings data={listings} />}
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
