@@ -1,10 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import { Loader } from '@googlemaps/js-api-loader';
 import { useToast } from '@/hooks/use-toast';
-
-// Initialize Mapbox
-mapboxgl.accessToken = 'pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbHJxYnB5Y2gwMGx1MnFsYzB0Z3J0NXpwIn0.HP3Qr7W5qVqkqbL6RFzs_A';
 
 interface MapViewProps {
   center?: [number, number];
@@ -27,38 +23,49 @@ export const MapView = ({
   className = "w-full h-[400px]"
 }: MapViewProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
+  const map = useRef<google.maps.Map | null>(null);
+  const markersRef = useRef<{ [key: string]: google.maps.Marker }>({});
   const { toast } = useToast();
 
   useEffect(() => {
     if (!mapContainer.current) return;
 
-    try {
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v12',
-        center: center,
-        zoom: zoom
-      });
+    const initMap = async () => {
+      try {
+        const loader = new Loader({
+          apiKey: 'AIzaSyDVYLvGDi-_fuY1zd1DlDJPKd-5qCuktDY', // We'll move this to Supabase secrets
+          version: 'weekly',
+        });
 
-      // Add navigation controls
-      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+        const google = await loader.load();
+        map.current = new google.maps.Map(mapContainer.current, {
+          center: { lat: center[1], lng: center[0] },
+          zoom: zoom,
+          styles: [
+            {
+              featureType: 'poi',
+              elementType: 'labels',
+              stylers: [{ visibility: 'off' }]
+            }
+          ]
+        });
+      } catch (error) {
+        console.error('Error initializing map:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load map. Please try again later.",
+          variant: "destructive",
+        });
+      }
+    };
 
+    initMap();
+
+    return () => {
       // Cleanup
-      return () => {
-        if (map.current) {
-          map.current.remove();
-        }
-      };
-    } catch (error) {
-      console.error('Error initializing map:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load map. Please try again later.",
-        variant: "destructive",
-      });
-    }
+      Object.values(markersRef.current).forEach(marker => marker.setMap(null));
+      markersRef.current = {};
+    };
   }, []);
 
   // Handle markers
@@ -66,30 +73,34 @@ export const MapView = ({
     if (!map.current) return;
 
     // Remove existing markers
-    Object.values(markersRef.current).forEach(marker => marker.remove());
+    Object.values(markersRef.current).forEach(marker => marker.setMap(null));
     markersRef.current = {};
 
     // Add new markers
     markers.forEach(({ id, longitude, latitude, title }) => {
-      const el = document.createElement('div');
-      el.className = 'marker';
-      el.style.backgroundImage = 'url(https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png)';
-      el.style.width = '32px';
-      el.style.height = '32px';
-      el.style.backgroundSize = '100%';
-      el.style.cursor = 'pointer';
-
-      const marker = new mapboxgl.Marker(el)
-        .setLngLat([longitude, latitude])
-        .setPopup(new mapboxgl.Popup({ offset: 25 })
-          .setHTML(`<h3>${title}</h3>`))
-        .addTo(map.current!);
+      const marker = new google.maps.Marker({
+        position: { lat: latitude, lng: longitude },
+        map: map.current,
+        title: title
+      });
 
       if (onMarkerClick) {
-        el.addEventListener('click', () => {
+        marker.addListener('click', () => {
           onMarkerClick(id);
         });
       }
+
+      const infoWindow = new google.maps.InfoWindow({
+        content: `<div><strong>${title}</strong></div>`
+      });
+
+      marker.addListener('mouseover', () => {
+        infoWindow.open(map.current, marker);
+      });
+
+      marker.addListener('mouseout', () => {
+        infoWindow.close();
+      });
 
       markersRef.current[id] = marker;
     });

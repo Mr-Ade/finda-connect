@@ -1,55 +1,37 @@
 import { useEffect, useRef } from 'react';
-import mapboxgl from 'mapbox-gl';
 
 interface MapMarkerProps {
-  map: mapboxgl.Map;
+  map: google.maps.Map;
   initialLat: number;
   initialLng: number;
   onLocationSelect: (lat: number, lng: number) => void;
 }
 
 export const MapMarker = ({ map, initialLat, initialLng, onLocationSelect }: MapMarkerProps) => {
-  const markerRef = useRef<mapboxgl.Marker | null>(null);
+  const markerRef = useRef<google.maps.Marker | null>(null);
 
   useEffect(() => {
     console.log('Initializing marker');
     
-    // Create marker only if it doesn't exist
     if (!markerRef.current) {
-      const marker = new mapboxgl.Marker({ draggable: true })
-        .setLngLat([initialLng, initialLat]);
+      const marker = new google.maps.Marker({
+        position: { lat: initialLat, lng: initialLng },
+        map: map,
+        draggable: true
+      });
       
-      try {
-        marker.addTo(map);
-        markerRef.current = marker;
-        console.log('Marker added successfully');
-      } catch (error) {
-        console.error('Error adding marker:', error);
-        return;
-      }
+      markerRef.current = marker;
 
-      const handleDragEnd = () => {
-        const lngLat = marker.getLngLat();
-        console.log('Marker dragged to:', lngLat);
-        onLocationSelect(lngLat.lat, lngLat.lng);
-      };
-
-      const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
-        const { lng, lat } = e.lngLat;
-        console.log('Map clicked at:', { lng, lat });
-        marker.setLngLat([lng, lat]);
-        onLocationSelect(lat, lng);
-      };
-
-      marker.on('dragend', handleDragEnd);
-      map.on('click', handleMapClick);
+      marker.addListener('dragend', () => {
+        const position = marker.getPosition();
+        if (position) {
+          onLocationSelect(position.lat(), position.lng());
+        }
+      });
 
       return () => {
-        console.log('Cleaning up marker');
-        marker.off('dragend', handleDragEnd);
-        map.off('click', handleMapClick);
         if (markerRef.current) {
-          markerRef.current.remove();
+          markerRef.current.setMap(null);
           markerRef.current = null;
         }
       };

@@ -1,52 +1,13 @@
-import { useEffect, useRef } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import { ReactNode } from 'react';
 
 interface MapContainerProps {
-  initialLat: number;
-  initialLng: number;
-  onMapLoad: (map: mapboxgl.Map) => void;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
-export const MapContainer = ({ initialLat, initialLng, onMapLoad, children }: MapContainerProps) => {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<mapboxgl.Map | null>(null);
-
-  useEffect(() => {
-    if (!mapContainer.current || mapRef.current) return;
-
-    console.log('Initializing Mapbox map');
-    mapboxgl.accessToken = 'pk.eyJ1IjoibXItYWRlIiwiYSI6ImNtNWZ2MXZyazAxbDUyaXF2aDk5cnR2cDcifQ.nayeg3Bmwhnz4lkNHxImgg';
-    
-    const map = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [initialLng, initialLat],
-      zoom: 13
-    });
-
-    mapRef.current = map;
-
-    map.on('load', () => {
-      console.log('Map style loaded');
-      map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-      onMapLoad(map);
-    });
-
-    return () => {
-      console.log('Cleaning up map');
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
-    };
-  }, [initialLat, initialLng, onMapLoad]);
-
+export const MapContainer = ({ children }: MapContainerProps) => {
   return (
     <div className="relative w-full h-[400px] rounded-lg overflow-hidden">
-      <div ref={mapContainer} className="absolute inset-0" />
-      {mapRef.current && children}
+      {children}
     </div>
   );
 };
