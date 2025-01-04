@@ -13,30 +13,39 @@ interface MapSectionProps {
 export const MapSection = ({ coordinates, onCoordinatesChange }: MapSectionProps) => {
   return (
     <>
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div>
           <Label htmlFor="latitude">Latitude</Label>
-          <Input 
-            id="latitude" 
-            value={coordinates.latitude} 
-            onChange={(e) => onCoordinatesChange(parseFloat(e.target.value), coordinates.longitude)}
+          <Input
+            id="latitude"
+            value={coordinates.latitude}
+            onChange={(e) => {
+              const lat = parseFloat(e.target.value);
+              if (!isNaN(lat)) onCoordinatesChange(lat, coordinates.longitude);
+            }}
           />
         </div>
-        <div className="space-y-2">
+        <div>
           <Label htmlFor="longitude">Longitude</Label>
-          <Input 
-            id="longitude" 
-            value={coordinates.longitude} 
-            onChange={(e) => onCoordinatesChange(coordinates.latitude, parseFloat(e.target.value))}
+          <Input
+            id="longitude"
+            value={coordinates.longitude}
+            onChange={(e) => {
+              const lng = parseFloat(e.target.value);
+              if (!isNaN(lng)) onCoordinatesChange(coordinates.latitude, lng);
+            }}
           />
         </div>
       </div>
-
       <div className="w-full h-[400px] rounded-lg overflow-hidden">
         <Map 
           center={{ lat: coordinates.latitude, lng: coordinates.longitude }}
           markers={[{ lat: coordinates.latitude, lng: coordinates.longitude }]}
-          onMapClick={(e) => onCoordinatesChange(e.latLng.lat(), e.latLng.lng())}
+          onMapClick={(e) => {
+            if (e.latLng) {
+              onCoordinatesChange(e.latLng.lat(), e.latLng.lng());
+            }
+          }}
         />
       </div>
     </>
