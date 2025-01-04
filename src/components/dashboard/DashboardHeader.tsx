@@ -27,7 +27,8 @@ export const DashboardHeader = () => {
     }
   });
 
-  const locationData = profile?.location_data as LocationData;
+  // First cast to unknown, then to LocationData to satisfy TypeScript
+  const locationData = (profile?.location_data as unknown) as LocationData;
 
   return (
     <section className="relative bg-cover bg-center py-16" style={{ backgroundImage: "url('/placeholder.svg')" }}>
