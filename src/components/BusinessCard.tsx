@@ -1,6 +1,10 @@
 import { Heart, MapPin, Mail, Star, Wifi, Car, Dog, Fan } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { isBusinessOpen } from "@/lib/utils/businessHours";
+import type { BusinessHour } from "@/lib/utils/businessHours";
 
 interface BusinessCardProps {
   id: string;
@@ -10,7 +14,6 @@ interface BusinessCardProps {
   rating: number;
   reviewCount: number;
   location: string;
-  isOpen?: boolean;
   isFeatured?: boolean;
 }
 
@@ -22,9 +25,29 @@ export const BusinessCard = ({
   rating,
   reviewCount,
   location,
-  isOpen,
   isFeatured,
 }: BusinessCardProps) => {
+  const { data: hours } = useQuery({
+    queryKey: ['business-hours', id],
+    queryFn: async () => {
+      console.log('Fetching business hours for:', id);
+      const { data, error } = await supabase
+        .from('business_hours')
+        .select('*')
+        .eq('business_id', id)
+        .order('day_of_week');
+
+      if (error) {
+        console.error('Error fetching business hours:', error);
+        throw error;
+      }
+
+      return data as BusinessHour[];
+    },
+  });
+
+  const isOpen = isBusinessOpen(hours || null);
+
   return (
     <Link to={`/business/${id}`}>
       <Card className="overflow-hidden group">
@@ -38,11 +61,9 @@ export const BusinessCard = ({
             <Heart className="w-5 h-5 text-gray-600" />
           </button>
           <div className="absolute top-3 left-3 flex gap-2">
-            {isOpen !== undefined && (
-              <span className={`px-2 py-1 text-xs text-white rounded ${isOpen ? 'bg-green-500' : 'bg-blue-500'}`}>
-                {isOpen ? 'OPEN' : 'CLOSED'}
-              </span>
-            )}
+            <span className={`px-2 py-1 text-xs text-white rounded ${isOpen ? 'bg-green-500' : 'bg-blue-500'}`}>
+              {isOpen ? 'OPEN' : 'CLOSED'}
+            </span>
             {isFeatured && (
               <span className="px-2 py-1 text-xs bg-red-500 text-white rounded">
                 FEATURED
