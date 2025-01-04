@@ -1,6 +1,7 @@
 import { MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { LocationData } from "@/data/popularLocations";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface LocationCardProps {
   location: LocationData;
@@ -23,5 +24,13 @@ export const LocationCard = ({ location }: LocationCardProps) => {
         <p className="text-sm opacity-90">{location.businesses} Businesses</p>
       </div>
     </Link>
+  );
+};
+
+export const LocationCardSkeleton = () => {
+  return (
+    <div className="relative block overflow-hidden rounded-lg">
+      <Skeleton className="w-full h-48" />
+    </div>
   );
 };

@@ -515,6 +515,36 @@ export type Database = {
         }
         Relationships: []
       }
+      popular_locations: {
+        Row: {
+          businesses: number
+          created_at: string
+          id: string
+          image: string
+          is_active: boolean | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          businesses?: number
+          created_at?: string
+          id?: string
+          image: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          businesses?: number
+          created_at?: string
+          id?: string
+          image?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

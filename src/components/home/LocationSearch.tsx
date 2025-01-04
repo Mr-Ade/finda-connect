@@ -1,6 +1,9 @@
+import { useToast } from "@/hooks/use-toast";
 import { LocationCarousel } from "./LocationCarousel";
 
 export const LocationSearch = () => {
+  const { toast } = useToast();
+
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
