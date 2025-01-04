@@ -7,6 +7,7 @@ import Login from "@/pages/Login";
 import Blog from "@/pages/Blog";
 import BlogDetail from "@/pages/BlogDetail";
 import AboutUs from "@/pages/AboutUs";
+import Contact from "@/pages/Contact";
 import Listings from "@/pages/dashboard/Listings";
 import AddListing from "@/pages/dashboard/AddListing";
 import Appointments from "@/pages/dashboard/Appointments";
@@ -26,6 +27,7 @@ const Routes = () => {
       <Route path="/blog" element={<Blog />} />
       <Route path="/blog/:id" element={<BlogDetail />} />
       <Route path="/about" element={<AboutUs />} />
+      <Route path="/contact" element={<Contact />} />
       <Route path="/dashboard/listings" element={<Listings />} />
       <Route path="/dashboard/add-listing" element={<AddListing />} />
       <Route path="/dashboard/appointments" element={<Appointments />} />
