@@ -62,7 +62,7 @@ export const RecentListings = () => {
                 {/* Main Image */}
                 <Link to={`/business/${business.id}`}>
                   <img 
-                    src={business.image_url || '/placeholder.svg'} 
+                    src="/placeholder.svg"
                     alt={business.name}
                     className="w-full h-48 object-cover"
                   />
