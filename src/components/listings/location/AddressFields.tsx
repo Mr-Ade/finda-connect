@@ -64,7 +64,7 @@ export const AddressFields = ({ address, availableStates, onAddressChange }: Add
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="street">Street Address</Label>
+        <Label htmlFor="street">Business Address</Label>
         <Input 
           id="street" 
           value={address.street}
