@@ -1,36 +1,42 @@
 import { 
-  Building2, Utensils, Scissors, Wrench, ShoppingBag, 
-  Laptop, Stethoscope, Brush, GraduationCap, Car, 
-  Dumbbell, Hotel
+  Building2, Store, Utensils, Scissors, Wrench, ShoppingBag, 
+  Laptop, Stethoscope, Brush, GraduationCap, Car, Hotel,
+  ChevronDown, ChevronUp
 } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
-const CATEGORIES = [
-  { name: "Real Estate", icon: Building2, count: 0 },
-  { name: "Restaurants", icon: Utensils, count: 0 },
-  { name: "Fashion & Tailoring", icon: Scissors, count: 0 },
-  { name: "Artisans & Repairs", icon: Wrench, count: 0 },
-  { name: "Markets & Shops", icon: ShoppingBag, count: 0 },
+const INITIAL_CATEGORIES = [
+  { name: "Retail & Shopping", icon: Store, count: 0 },
+  { name: "Food & Drink", icon: Utensils, count: 0 },
+  { name: "Professional Services", icon: Building2, count: 0 },
+  { name: "Personal Services", icon: Scissors, count: 0 },
+  { name: "Home Services", icon: Wrench, count: 0 },
+  { name: "Automotive Services", icon: Car, count: 0 },
   { name: "Technology", icon: Laptop, count: 0 },
   { name: "Healthcare", icon: Stethoscope, count: 0 },
-  { name: "Arts & Culture", icon: Brush, count: 0 },
+  { name: "Arts & Entertainment", icon: Brush, count: 0 },
   { name: "Education", icon: GraduationCap, count: 0 },
-  { name: "Automotive", icon: Car, count: 0 },
-  { name: "Sports & Fitness", icon: Dumbbell, count: 0 },
-  { name: "Hotels & Lodging", icon: Hotel, count: 0 }
+  { name: "Travel & Transportation", icon: Hotel, count: 0 },
+  { name: "Shopping", icon: ShoppingBag, count: 0 }
+];
+
+const ADDITIONAL_CATEGORIES = [
+  // ... Additional categories can be added here when needed
 ];
 
 export const PopularCategories = () => {
   const navigate = useNavigate();
+  const [showAll, setShowAll] = useState(false);
   
   const { data: categoryCounts } = useQuery({
     queryKey: ['category-counts'],
     queryFn: async () => {
       console.log('Fetching category counts...');
       
-      // Using select with count to get category counts
       const { data, error } = await supabase
         .from('businesses')
         .select('category, count', { count: 'exact', head: false })
@@ -41,7 +47,6 @@ export const PopularCategories = () => {
         throw error;
       }
 
-      // Process the data to get counts per category
       const counts: Record<string, number> = {};
       data.forEach(item => {
         if (item.category) {
@@ -58,6 +63,10 @@ export const PopularCategories = () => {
     navigate(`/search?category=${encodeURIComponent(categoryName)}`);
   };
 
+  const displayedCategories = showAll 
+    ? [...INITIAL_CATEGORIES, ...ADDITIONAL_CATEGORIES]
+    : INITIAL_CATEGORIES;
+
   return (
     <section className="py-16 px-4 bg-gray-50">
       <div className="container mx-auto">
@@ -68,7 +77,7 @@ export const PopularCategories = () => {
           </p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {CATEGORIES.map((category) => {
+          {displayedCategories.map((category) => {
             const Icon = category.icon;
             const count = categoryCounts?.[category.name] || 0;
             
@@ -87,6 +96,26 @@ export const PopularCategories = () => {
             );
           })}
         </div>
+        
+        {ADDITIONAL_CATEGORIES.length > 0 && (
+          <div className="mt-8 text-center">
+            <Button
+              variant="outline"
+              onClick={() => setShowAll(!showAll)}
+              className="inline-flex items-center gap-2"
+            >
+              {showAll ? (
+                <>
+                  Show Less <ChevronUp className="h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  Show More Categories <ChevronDown className="h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );
