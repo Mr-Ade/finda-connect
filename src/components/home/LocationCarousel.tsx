@@ -2,7 +2,7 @@ import { MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useEffect, useState } from "react";
-import useEmblaCarousel from "embla-carousel-react";
+import useEmblaCarousel, { EmblaCarouselType } from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 
 const POPULAR_LOCATIONS = [
@@ -59,7 +59,7 @@ const POPULAR_LOCATIONS = [
 ];
 
 export const LocationCarousel = () => {
-  const [api] = useEmblaCarousel(
+  const [emblaRef, emblaApi] = useEmblaCarousel(
     { 
       loop: true,
       duration: 50
@@ -73,6 +73,14 @@ export const LocationCarousel = () => {
     ]
   );
 
+  const [api, setApi] = useState<EmblaCarouselType | null>(null);
+
+  useEffect(() => {
+    if (emblaApi) {
+      setApi(emblaApi);
+    }
+  }, [emblaApi]);
+
   return (
     <Carousel 
       opts={{
@@ -80,9 +88,8 @@ export const LocationCarousel = () => {
         loop: true
       }}
       className="w-full max-w-5xl mx-auto"
-      setApi={api}
     >
-      <CarouselContent>
+      <CarouselContent ref={emblaRef}>
         {POPULAR_LOCATIONS.map((location, index) => (
           <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
             <Link 
