@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Mail, MapPin, Phone, Globe, FileText, ThumbsUp, Heart } from "lucide-react";
-import { RecentListings } from "@/components/home/RecentListings";
+import { AuthorListings } from "@/components/author/AuthorListings";
 import type { Database } from "@/integrations/supabase/types";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"] & {
@@ -171,11 +171,7 @@ const AuthorDetail = () => {
             </div>
 
             {/* Display author's listings */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {listings?.map((listing) => (
-                <RecentListings key={listing.id} data={listing} />
-              ))}
-            </div>
+            {listings && <AuthorListings data={listings} />}
           </div>
         </div>
       </div>
