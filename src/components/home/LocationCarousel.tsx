@@ -23,7 +23,8 @@ export const LocationCarousel = () => {
     { 
       loop: true,
       align: "start",
-      skipSnaps: false
+      skipSnaps: false,
+      slidesToScroll: 4
     },
     [autoplay]
   );
@@ -42,11 +43,11 @@ export const LocationCarousel = () => {
         align: "start",
         loop: true
       }}
-      className="w-full max-w-5xl mx-auto"
+      className="w-full max-w-7xl mx-auto"
     >
       <CarouselContent ref={emblaRef}>
         {POPULAR_LOCATIONS.map((location, index) => (
-          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+          <CarouselItem key={index} className="md:basis-1/4 lg:basis-1/4">
             <LocationCard location={location} />
           </CarouselItem>
         ))}
