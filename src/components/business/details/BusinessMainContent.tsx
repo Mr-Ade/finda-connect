@@ -83,7 +83,9 @@ export const BusinessMainContent = ({ business }: BusinessMainContentProps) => {
           })) || []}
         />
       </div>
-      <RecentlyViewedListings />
+      <div className="w-full">
+        <RecentlyViewedListings />
+      </div>
     </>
   );
 };
