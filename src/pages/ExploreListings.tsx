@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Map } from "@/components/Map";
 import { BusinessSearch } from "@/components/search/BusinessSearch";
 import { SearchFilters } from "@/components/search/SearchFilters";
+import { ListingGrid } from "@/components/listings/ListingGrid";
 
 const ExploreListings = () => {
   const [showMap, setShowMap] = useState(true);
@@ -26,7 +27,10 @@ const ExploreListings = () => {
 
             {/* Listings Grid */}
             <div className="w-full lg:w-3/4">
-              <BusinessSearch showMap={showMap} onToggleMap={() => setShowMap(!showMap)} />
+              <ListingGrid 
+                showMap={showMap} 
+                onToggleMap={() => setShowMap(!showMap)} 
+              />
             </div>
           </div>
         </div>
