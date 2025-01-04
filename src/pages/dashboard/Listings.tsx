@@ -25,9 +25,14 @@ const Listings = () => {
   const { data: listings, isLoading, error } = useQuery({
     queryKey: ['userListings'],
     queryFn: async () => {
+      console.log('Fetching user listings...');
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) throw new Error('No user session');
+      if (!session?.user) {
+        console.error('No user session found');
+        throw new Error('No user session');
+      }
 
+      console.log('User ID:', session.user.id);
       const { data, error } = await supabase
         .from('businesses')
         .select(`
@@ -37,7 +42,12 @@ const Listings = () => {
         `)
         .eq('owner_id', session.user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching listings:', error);
+        throw error;
+      }
+
+      console.log('Fetched listings:', data);
       return data as Business[];
     },
   });
