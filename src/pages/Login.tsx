@@ -59,10 +59,12 @@ const Login = () => {
                   },
                   className: {
                     container: 'w-full',
-                    button: 'w-full px-4 py-2 rounded-md font-medium',
-                    input: 'w-full px-3 py-2 border rounded-md',
+                    button: 'w-full px-4 py-2 rounded-md font-medium bg-primary text-white hover:bg-primary/90',
+                    input: 'w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary/20 focus:border-primary',
                     divider: 'my-4',
                     label: 'block text-sm font-medium text-gray-700 mb-1',
+                    loader: 'text-primary',
+                    anchor: 'text-primary hover:text-primary/80',
                   },
                 }}
                 providers={["google"]}
