@@ -116,7 +116,11 @@ export default function BusinessDetails() {
           <div className="md:col-span-2 space-y-6">
             <BusinessInfo business={business} isOwner={isOwner} />
             <PhotoGallery businessId={business.id} isOwner={isOwner} />
-            <ReviewSection businessId={business.id} reviews={business.reviews} />
+            <ReviewSection 
+              businessId={business.id} 
+              reviews={business.reviews} 
+              isOwner={isOwner}
+            />
           </div>
           <div className="space-y-4">
             <div className="bg-white p-4 rounded-lg shadow">

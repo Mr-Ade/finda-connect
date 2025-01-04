@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface ReviewSectionProps {
   businessId: string;
+  isOwner?: boolean;
   reviews: Array<{
     id: string;
     rating: number;
@@ -17,12 +18,19 @@ interface ReviewSectionProps {
       username: string;
       avatar_url: string;
     };
+    review_responses?: Array<{
+      id: string;
+      response_text: string;
+      created_at: string;
+    }>;
   }>;
 }
 
-export const ReviewSection = ({ businessId, reviews }: ReviewSectionProps) => {
+export const ReviewSection = ({ businessId, isOwner = false, reviews }: ReviewSectionProps) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [responseText, setResponseText] = useState("");
+  const [respondingToReviewId, setRespondingToReviewId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -70,6 +78,35 @@ export const ReviewSection = ({ businessId, reviews }: ReviewSectionProps) => {
     }
 
     setIsSubmitting(false);
+  };
+
+  const handleSubmitResponse = async (reviewId: string) => {
+    if (!responseText.trim()) return;
+
+    const { error } = await supabase
+      .from("review_responses")
+      .insert({
+        review_id: reviewId,
+        business_id: businessId,
+        response_text: responseText
+      });
+
+    if (error) {
+      console.error("Response submission error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to submit response. Please try again.",
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Your response has been submitted.",
+      });
+      setResponseText("");
+      setRespondingToReviewId(null);
+      queryClient.invalidateQueries({ queryKey: ["business", businessId] });
+    }
   };
 
   return (
@@ -130,7 +167,56 @@ export const ReviewSection = ({ businessId, reviews }: ReviewSectionProps) => {
                 </div>
               </div>
             </div>
-            <p className="text-gray-700">{review.comment}</p>
+            <p className="text-gray-700 mb-4">{review.comment}</p>
+
+            {review.review_responses?.map((response) => (
+              <div key={response.id} className="ml-8 mt-4 p-4 bg-gray-50 rounded-lg">
+                <p className="font-medium text-sm text-gray-600 mb-2">Business Owner Response:</p>
+                <p className="text-gray-700">{response.response_text}</p>
+                <p className="text-xs text-gray-500 mt-2">
+                  {new Date(response.created_at).toLocaleDateString()}
+                </p>
+              </div>
+            ))}
+
+            {isOwner && !review.review_responses?.length && (
+              <div className="mt-4">
+                {respondingToReviewId === review.id ? (
+                  <div className="space-y-2">
+                    <Textarea
+                      value={responseText}
+                      onChange={(e) => setResponseText(e.target.value)}
+                      placeholder="Write your response..."
+                      className="mb-2"
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleSubmitResponse(review.id)}
+                        disabled={!responseText.trim()}
+                      >
+                        Submit Response
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setRespondingToReviewId(null);
+                          setResponseText("");
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Button
+                    variant="outline"
+                    onClick={() => setRespondingToReviewId(review.id)}
+                  >
+                    Respond to Review
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         ))}
       </div>
