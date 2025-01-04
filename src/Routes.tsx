@@ -1,81 +1,41 @@
-import { Routes as RouterRoutes, Route } from "react-router-dom";
-import Index from "@/pages/Index";
-import Profile from "@/pages/Profile";
-import BusinessDetails from "@/pages/BusinessDetails";
-import JobListing from "@/pages/JobListing";
-import Login from "@/pages/Login";
-import Signup from "@/pages/Signup";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+import Home from "@/pages/Index";
+import About from "@/pages/About";
 import Blog from "@/pages/Blog";
-import BlogDetail from "@/pages/BlogDetail";
-import AboutUs from "@/pages/AboutUs";
 import Contact from "@/pages/Contact";
-import Checkout from "@/pages/Checkout";
-import Pricing from "@/pages/Pricing";
-import Privacy from "@/pages/Privacy";
 import FAQ from "@/pages/FAQ";
-import NotFound from "@/pages/NotFound";
-import Listings from "@/pages/dashboard/Listings";
+import Login from "@/pages/auth/Login";
+import Signup from "@/pages/auth/Signup";
+import Dashboard from "@/pages/dashboard/Dashboard";
+import MyBookings from "@/pages/dashboard/MyBookings";
 import AddListing from "@/pages/dashboard/AddListing";
-import Appointments from "@/pages/dashboard/Appointments";
-import Bookmarks from "@/pages/dashboard/Bookmarks";
-import ChangePassword from "@/pages/dashboard/ChangePassword";
+import Listings from "@/pages/dashboard/Listings";
 import Messages from "@/pages/dashboard/Messages";
 import Wallet from "@/pages/dashboard/Wallet";
-import ExploreListings from "@/pages/ExploreListings";
-import BrowseAuthors from "@/pages/BrowseAuthors";
-import SubmitListing from "@/pages/SubmitListing";
-import Shortlisted from "@/pages/Shortlisted";
-import BrowseCategories from "@/pages/BrowseCategories";
-import PaymentLinks from "@/pages/PaymentLinks";
-import SavedPlaces from "@/pages/SavedPlaces";
-import WhoWeAre from "@/pages/WhoWeAre";
-import OurMission from "@/pages/OurMission";
-import OurTeam from "@/pages/OurTeam";
-import Packages from "@/pages/Packages";
-import SiteMap from "@/pages/SiteMap";
-import Security from "@/pages/Security";
-import { MapSearch } from "@/components/search/MapSearch";
+import NotFound from "@/pages/404";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
 
 const Routes = () => {
   return (
-    <RouterRoutes>
-      <Route path="/" element={<Index />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/business/:id" element={<BusinessDetails />} />
-      <Route path="/job/:id" element={<JobListing />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/blog" element={<Blog />} />
-      <Route path="/blog/:id" element={<BlogDetail />} />
-      <Route path="/about" element={<AboutUs />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/checkout" element={<Checkout />} />
-      <Route path="/pricing" element={<Pricing />} />
-      <Route path="/privacy" element={<Privacy />} />
-      <Route path="/faq" element={<FAQ />} />
-      <Route path="/explore-listings" element={<ExploreListings />} />
-      <Route path="/browse-authors" element={<BrowseAuthors />} />
-      <Route path="/submit-listing" element={<SubmitListing />} />
-      <Route path="/shortlisted" element={<Shortlisted />} />
-      <Route path="/browse-categories" element={<BrowseCategories />} />
-      <Route path="/payment-links" element={<PaymentLinks />} />
-      <Route path="/saved-places" element={<SavedPlaces />} />
-      <Route path="/who-we-are" element={<WhoWeAre />} />
-      <Route path="/our-mission" element={<OurMission />} />
-      <Route path="/our-team" element={<OurTeam />} />
-      <Route path="/packages" element={<Packages />} />
-      <Route path="/sitemap" element={<SiteMap />} />
-      <Route path="/security" element={<Security />} />
-      <Route path="/dashboard/listings" element={<Listings />} />
-      <Route path="/dashboard/add-listing" element={<AddListing />} />
-      <Route path="/dashboard/appointments" element={<Appointments />} />
-      <Route path="/dashboard/bookmarks" element={<Bookmarks />} />
-      <Route path="/dashboard/change-password" element={<ChangePassword />} />
-      <Route path="/dashboard/messages" element={<Messages />} />
-      <Route path="/dashboard/wallet" element={<Wallet />} />
-      <Route path="/map-search" element={<MapSearch />} />
-      <Route path="*" element={<NotFound />} />
-    </RouterRoutes>
+    <BrowserRouter>
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <Route path="/about" component={About} />
+        <Route path="/blog" component={Blog} />
+        <Route path="/contact" component={Contact} />
+        <Route path="/faq" component={FAQ} />
+        <Route path="/login" component={Login} />
+        <Route path="/signup" component={Signup} />
+        <Route path="/dashboard" exact component={Dashboard} />
+        <Route path="/dashboard/my-bookings" element={<MyBookings />} />
+        <Route path="/dashboard/add-listing" component={AddListing} />
+        <Route path="/dashboard/listings" component={Listings} />
+        <Route path="/dashboard/messages" component={Messages} />
+        <Route path="/dashboard/wallet" component={Wallet} />
+        <Route path="/privacy-policy" component={PrivacyPolicy} />
+        <Route component={NotFound} />
+      </Switch>
+    </BrowserRouter>
   );
 };
 
