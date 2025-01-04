@@ -43,6 +43,15 @@ const BusinessDetails = () => {
         .single();
 
       if (error) throw error;
+
+      // Transform the review_responses to ensure it's always an array
+      if (data) {
+        data.reviews = data.reviews.map(review => ({
+          ...review,
+          review_responses: review.review_responses ? [review.review_responses] : []
+        }));
+      }
+
       return data;
     }
   });
