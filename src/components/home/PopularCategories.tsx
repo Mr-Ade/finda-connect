@@ -1,9 +1,7 @@
 import { 
   Building2, Utensils, Scissors, Wrench, ShoppingBag, 
   Laptop, Stethoscope, Brush, GraduationCap, Car, 
-  Dumbbell, Hotel, Music2, Shirt, BookOpen, 
-  UtensilsCrossed, Church, Briefcase, Camera, Store, 
-  Warehouse, Palmtree
+  Dumbbell, Hotel
 } from "lucide-react";
 
 const CATEGORIES = [
@@ -14,21 +12,11 @@ const CATEGORIES = [
   { name: "Markets & Shops", icon: ShoppingBag, count: 289 },
   { name: "Technology", icon: Laptop, count: 82 },
   { name: "Healthcare", icon: Stethoscope, count: 66 },
-  { name: "Events & Entertainment", icon: Music2, count: 128 },
+  { name: "Arts & Culture", icon: Brush, count: 72 },
   { name: "Education", icon: GraduationCap, count: 95 },
   { name: "Automotive", icon: Car, count: 73 },
   { name: "Sports & Fitness", icon: Dumbbell, count: 51 },
-  { name: "Hotels & Lodging", icon: Hotel, count: 87 },
-  { name: "Traditional Wear", icon: Shirt, count: 112 },
-  { name: "Religious Centers", icon: Church, count: 156 },
-  { name: "Professional Services", icon: Briefcase, count: 94 },
-  { name: "Photography & Arts", icon: Camera, count: 68 },
-  { name: "Supermarkets", icon: Store, count: 77 },
-  { name: "Wholesale & Distribution", icon: Warehouse, count: 83 },
-  { name: "Local Cuisine", icon: UtensilsCrossed, count: 167 },
-  { name: "Books & Stationery", icon: BookOpen, count: 45 },
-  { name: "Tourism & Travel", icon: Palmtree, count: 58 },
-  { name: "Art & Culture", icon: Brush, count: 72 }
+  { name: "Hotels & Lodging", icon: Hotel, count: 87 }
 ];
 
 export const PopularCategories = () => {
@@ -38,7 +26,7 @@ export const PopularCategories = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Popular Categories</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Explore some of the most searched business categories across Nigeria
+            Explore some of the most searched business categories
           </p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
