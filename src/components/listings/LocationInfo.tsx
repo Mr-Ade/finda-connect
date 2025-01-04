@@ -7,6 +7,8 @@ import Map from "@/components/Map";
 import { useState, useEffect } from "react";
 import { useLocation } from "@/contexts/LocationContext";
 import { useToast } from "@/hooks/use-toast";
+import { countries } from "@/lib/countries";
+import { getStatesByCountry } from "@/lib/states";
 
 export const LocationInfo = () => {
   const { toast } = useToast();
@@ -26,6 +28,8 @@ export const LocationInfo = () => {
     website: ""
   });
 
+  const [availableStates, setAvailableStates] = useState<{ name: string; code: string }[]>([]);
+
   useEffect(() => {
     // Update coordinates when location context changes
     if (locationContext.coordinates.latitude && locationContext.coordinates.longitude) {
@@ -43,6 +47,18 @@ export const LocationInfo = () => {
       city: locationContext.city || prev.city
     }));
   }, [locationContext]);
+
+  useEffect(() => {
+    // Update available states when country changes
+    if (address.country) {
+      const states = getStatesByCountry(address.country);
+      setAvailableStates(states);
+      // Reset state if the current state is not available in the new country
+      if (!states.find(s => s.name === address.state)) {
+        setAddress(prev => ({ ...prev, state: "" }));
+      }
+    }
+  }, [address.country]);
 
   const handleLocationSelect = (lat: number, lng: number) => {
     setCoordinates({
@@ -114,19 +130,40 @@ export const LocationInfo = () => {
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="country">Country</Label>
-            <Input 
-              id="country" 
-              value={address.country}
-              onChange={(e) => setAddress(prev => ({ ...prev, country: e.target.value }))}
-            />
+            <Select 
+              value={address.country} 
+              onValueChange={(value) => setAddress(prev => ({ ...prev, country: value }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select country" />
+              </SelectTrigger>
+              <SelectContent>
+                {countries.map((country) => (
+                  <SelectItem key={country.code} value={country.name}>
+                    {country.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
             <Label htmlFor="state">State</Label>
-            <Input 
-              id="state" 
-              value={address.state}
-              onChange={(e) => setAddress(prev => ({ ...prev, state: e.target.value }))}
-            />
+            <Select 
+              value={address.state} 
+              onValueChange={(value) => setAddress(prev => ({ ...prev, state: value }))}
+              disabled={!address.country}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={address.country ? "Select state" : "Select country first"} />
+              </SelectTrigger>
+              <SelectContent>
+                {availableStates.map((state) => (
+                  <SelectItem key={state.code} value={state.name}>
+                    {state.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
