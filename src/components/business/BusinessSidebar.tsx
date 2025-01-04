@@ -6,7 +6,7 @@ interface BusinessSidebarProps {
   business: {
     id: string;
     name: string;
-    description: string;
+    description?: string; // Made optional to match Business type
     address: string;
     city: string;
     state: string;
@@ -15,9 +15,9 @@ interface BusinessSidebarProps {
     website?: string;
     email?: string;
     owner?: {
-      username: string;
-      avatar_url: string;
-      full_name: string;
+      username?: string;
+      avatar_url?: string;
+      full_name?: string;
     };
   };
 }
