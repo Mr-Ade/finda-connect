@@ -1,13 +1,10 @@
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/home/Hero";
 import { PopularCategories } from "@/components/home/PopularCategories";
-import { FeaturedBusinesses } from "@/components/home/FeaturedBusinesses";
+import { BusinessSearch } from "@/components/search/BusinessSearch";
 import { LocationSearch } from "@/components/home/LocationSearch";
 import { CustomerReviews } from "@/components/home/CustomerReviews";
 import { AppDownload } from "@/components/home/AppDownload";
-import { RoomListings } from "@/components/home/RoomListings";
-import { RecentListings } from "@/components/home/RecentListings";
-import { RecentActivities } from "@/components/home/RecentActivities";
 import { Newsletter } from "@/components/home/Newsletter";
 import { Footer } from "@/components/Footer";
 
@@ -16,13 +13,14 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <Hero />
-      <FeaturedBusinesses />
+      <section className="py-16 px-4">
+        <div className="container mx-auto">
+          <BusinessSearch />
+        </div>
+      </section>
       <PopularCategories />
-      <RoomListings />
       <LocationSearch />
       <CustomerReviews />
-      <RecentListings />
-      <RecentActivities />
       <Newsletter />
       <Footer />
     </div>
