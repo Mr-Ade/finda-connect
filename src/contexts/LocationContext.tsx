@@ -14,14 +14,14 @@ interface LocationContextType {
     longitude: number | null;
   };
   isLoading: boolean;
-  setCity: (city: string) => void; // Added this line
+  setCity: (city: string) => void;
 }
 
 const LocationContext = createContext<LocationContextType | undefined>(undefined);
 
 export function LocationProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
-  const [locationData, setLocationData] = useState<Omit<LocationContextType, 'setCity'>>({
+  const [locationData, setLocationData] = useState({
     country: "Nigeria",
     state: "",
     city: "",
@@ -89,7 +89,6 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
                 const { error } = await supabase
                   .from('profiles')
                   .update({
-                    id: session.user.id,
                     location_data: {
                       latitude,
                       longitude,
