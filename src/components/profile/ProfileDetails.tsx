@@ -9,7 +9,7 @@ interface ProfileDetailsProps {
   fullName: string;
   setFullName: (value: string) => void;
   avatarUrl?: string;
-  onAvatarChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onAvatarChange: (url: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   updating: boolean;
 }
