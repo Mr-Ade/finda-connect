@@ -28,8 +28,8 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
         zoom: 13
       });
 
-      const navigationControl = new mapboxgl.NavigationControl();
-      map.addControl(navigationControl, 'top-right');
+      // Add navigation control
+      map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
       const marker = new mapboxgl.Marker({ draggable: true })
         .setLngLat([initialLng, initialLat])
@@ -43,9 +43,12 @@ const Map = ({ onLocationSelect, initialLat = 40.7128, initialLng = -74.0060 }: 
       // Clean up on unmount
       return () => {
         console.log('Cleaning up map instance');
-        navigationControl.remove();
-        marker.remove();
-        map.remove();
+        if (map) {
+          // Remove all controls and layers before removing the map
+          map.removeControl(new mapboxgl.NavigationControl());
+          marker.remove();
+          map.remove();
+        }
         mapInstanceRef.current = null;
         markerInstanceRef.current = null;
       };
