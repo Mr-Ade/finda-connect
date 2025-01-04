@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
+import { Routes as RouterRoutes, Route } from "react-router-dom";
 import Home from "@/pages/Index";
 import Blog from "@/pages/Blog";
 import Contact from "@/pages/Contact";
@@ -13,21 +13,19 @@ import NotFound from "@/pages/404";
 
 const Routes = () => {
   return (
-    <BrowserRouter>
-      <RouterRoutes>
-        <Route path="/" element={<Home />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard/my-bookings" element={<MyBookings />} />
-        <Route path="/dashboard/add-listing" element={<AddListing />} />
-        <Route path="/dashboard/listings" element={<Listings />} />
-        <Route path="/dashboard/messages" element={<Messages />} />
-        <Route path="/dashboard/wallet" element={<Wallet />} />
-        <Route path="*" element={<NotFound />} />
-      </RouterRoutes>
-    </BrowserRouter>
+    <RouterRoutes>
+      <Route path="/" element={<Home />} />
+      <Route path="/blog" element={<Blog />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/faq" element={<FAQ />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/dashboard/my-bookings" element={<MyBookings />} />
+      <Route path="/dashboard/add-listing" element={<AddListing />} />
+      <Route path="/dashboard/listings" element={<Listings />} />
+      <Route path="/dashboard/messages" element={<Messages />} />
+      <Route path="/dashboard/wallet" element={<Wallet />} />
+      <Route path="*" element={<NotFound />} />
+    </RouterRoutes>
   );
 };
 
