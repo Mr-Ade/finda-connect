@@ -1,11 +1,12 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { BusinessHeader } from "@/components/business/BusinessHeader";
+import { BusinessGallery } from "@/components/business/BusinessGallery";
 import { BusinessInfo } from "@/components/business/BusinessInfo";
 import { MenuItems } from "@/components/business/MenuItems";
 import { Amenities } from "@/components/business/Amenities";
 import { FAQ } from "@/components/business/FAQ";
-import { PhotoGallerySlider } from "@/components/business/PhotoGallerySlider";
 import { BookmarkButton } from "@/components/business/BookmarkButton";
 import { CheckInButton } from "@/components/business/CheckInButton";
 
@@ -53,7 +54,6 @@ const BusinessDetails = () => {
   const amenities = [
     { name: "Health Score 8.7/10", available: true },
     { name: "Offers Delivery", available: true },
-    { name: "Offers Takeout", available: true },
     { name: "Reservations", available: true },
     { name: "Staff wears masks", available: true },
     { name: "Vegan Options", available: true },
@@ -81,7 +81,7 @@ const BusinessDetails = () => {
   const faqs = [
     {
       question: "Can I get GoodUP listing for free?",
-      answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit..."
     },
     {
       question: "How to Permanently Delete Files From Windows?", 
@@ -95,31 +95,25 @@ const BusinessDetails = () => {
 
   return (
     <div>
-      {/* Hero Section with Gallery */}
-      <PhotoGallerySlider businessId={business.id} />
+      <BusinessHeader business={business} />
+      <BusinessGallery photos={business.business_photos} />
 
-      {/* Main Content */}
-      <section className="gray py-5 position-relative">
-        <div className="container">
-          <div className="row">
-            {/* Left Column */}
-            <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12">
+      <section className="py-8 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Main Content */}
+            <div className="lg:col-span-8">
               <BusinessInfo business={business} isOwner={false} />
               <MenuItems businessId={business.id} />
               <Amenities amenities={amenities} />
               <FAQ faqs={faqs} />
             </div>
 
-            {/* Right Column */}
-            <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12">
-              {/* Action Buttons */}
-              <div className="row g-3 mb-3">
-                <div className="col-4">
-                  <BookmarkButton businessId={business.id} />
-                </div>
-                <div className="col-4">
-                  <CheckInButton businessId={business.id} />
-                </div>
+            {/* Sidebar */}
+            <div className="lg:col-span-4">
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <BookmarkButton businessId={business.id} />
+                <CheckInButton businessId={business.id} />
               </div>
             </div>
           </div>
