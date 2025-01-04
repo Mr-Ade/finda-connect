@@ -1,3 +1,4 @@
+import { RouterProvider } from "react-router-dom";
 import { createBrowserRouter } from "react-router-dom";
 import App from "@/App";
 import Blog from "@/pages/Blog";
@@ -19,3 +20,9 @@ export const router = createBrowserRouter([
     ],
   },
 ]);
+
+const Routes = () => {
+  return <RouterProvider router={router} />;
+};
+
+export default Routes;

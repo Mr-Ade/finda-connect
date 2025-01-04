@@ -2,7 +2,7 @@ import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { LocationProvider } from "@/contexts/LocationContext";
-import Routes from "./Routes";
+import { Outlet } from "react-router-dom";
 
 const queryClient = new QueryClient();
 
@@ -11,7 +11,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <LocationProvider>
         <BrowserRouter>
-          <Routes />
+          <Outlet />
           <Toaster />
         </BrowserRouter>
       </LocationProvider>
