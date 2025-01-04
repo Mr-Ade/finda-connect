@@ -4,23 +4,28 @@ import { useState, useEffect } from "react";
 
 const HERO_IMAGES = [
   {
-    url: "https://images.unsplash.com/photo-1588960952097-4fd7fc02fe8e",
-    caption: "Lagos Skyline",
+    url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
+    caption: "Fine Dining Restaurant",
     credit: "Unsplash"
   },
   {
-    url: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
-    caption: "Business District",
+    url: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48",
+    caption: "Modern Fitness Center",
     credit: "Unsplash"
   },
   {
-    url: "https://images.unsplash.com/photo-1577495508326-19a1b3cf65b7",
-    caption: "Local Markets",
+    url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
+    caption: "Gourmet Food",
     credit: "Unsplash"
   },
   {
-    url: "https://images.unsplash.com/photo-1587659901518-7020d4413085",
-    caption: "Modern Nigeria",
+    url: "https://images.unsplash.com/photo-1566665797739-1674de7a421a",
+    caption: "Luxury Hotel",
+    credit: "Unsplash"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
+    caption: "Shopping Mall",
     credit: "Unsplash"
   }
 ];
