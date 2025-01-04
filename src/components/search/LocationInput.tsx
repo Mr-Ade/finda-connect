@@ -1,6 +1,6 @@
 import { MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useLocation } from "@/contexts/location";
+import { useLocation } from "@/contexts/LocationContext";
 
 interface LocationInputProps {
   className?: string;
@@ -17,7 +17,6 @@ export const LocationInput = ({ className = "h-12" }: LocationInputProps) => {
         placeholder={isLoading ? "Detecting location..." : "Location"} 
         value={!isLoading ? locationString : ""} 
         className={`pl-10 ${className}`}
-        readOnly
       />
     </div>
   );
