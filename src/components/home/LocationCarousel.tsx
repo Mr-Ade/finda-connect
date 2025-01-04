@@ -70,9 +70,7 @@ export const LocationCarousel = () => {
     { 
       loop: true,
       align: "start",
-      skipSnaps: false,
-      draggable: true,
-      dragFree: false
+      skipSnaps: false
     },
     [autoplay]
   );
