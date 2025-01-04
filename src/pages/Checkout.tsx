@@ -1,12 +1,89 @@
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 import { OrderSummary } from "@/components/checkout/OrderSummary";
-import { BillingForm } from "@/components/checkout/BillingForm";
+import { BillingForm, type CheckoutFormData } from "@/components/checkout/BillingForm";
+import { supabase } from "@/integrations/supabase/client";
 
 const Checkout = () => {
+  const { toast } = useToast();
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleSubmit = async (values: CheckoutFormData) => {
+    try {
+      setIsProcessing(true);
+      console.log("Processing payment with values:", values);
+
+      const { data: paymentData, error: paymentError } = await supabase.functions.invoke(
+        "process-payment",
+        {
+          body: {
+            amount: 1000,
+            email: values.email,
+            name: `${values.firstName} ${values.lastName}`,
+            phone: values.phone,
+            paymentMethod: values.paymentMethod,
+          },
+        }
+      );
+
+      if (paymentError) {
+        throw new Error(paymentError.message);
+      }
+
+      console.log("Payment response:", paymentData);
+
+      if (values.paymentMethod === "flutterwave") {
+        window.FlutterwaveCheckout({
+          ...paymentData,
+          callback: async (response: any) => {
+            console.log("Payment callback response:", response);
+            if (response.status === "successful") {
+              toast({
+                title: "Payment Successful",
+                description: "Your payment has been processed successfully.",
+              });
+            }
+            window.FlutterwaveCheckout.close();
+          },
+          onclose: () => {
+            setIsProcessing(false);
+          },
+        });
+      } else {
+        // Paystack
+        window.PaystackPop.setup({
+          ...paymentData,
+          callback: async (response: any) => {
+            console.log("Payment callback response:", response);
+            if (response.status === "success") {
+              toast({
+                title: "Payment Successful",
+                description: "Your payment has been processed successfully.",
+              });
+            }
+            setIsProcessing(false);
+          },
+          onClose: () => {
+            setIsProcessing(false);
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast({
+        variant: "destructive",
+        title: "Payment Error",
+        description: "There was an error processing your payment. Please try again.",
+      });
+      setIsProcessing(false);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Checkout</h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <BillingForm />
+        <BillingForm onSubmit={handleSubmit} isProcessing={isProcessing} />
         <OrderSummary />
       </div>
     </div>
