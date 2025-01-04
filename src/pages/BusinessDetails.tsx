@@ -39,7 +39,7 @@ const BusinessDetails = () => {
         .single();
 
       if (error) throw error;
-      return data as Business;
+      return data as unknown as Business;
     }
   });
 
@@ -53,8 +53,18 @@ const BusinessDetails = () => {
 
   return (
     <div>
-      <BusinessHeader business={business} />
-      <BusinessGallery photos={business.business_photos} />
+      <BusinessHeader 
+        business={{
+          name: business.name,
+          description: business.description || "",
+          category: business.category,
+          reviews_count: business.reviews?.length,
+          rating: business.reviews?.reduce((acc, review) => acc + review.rating, 0) / (business.reviews?.length || 1),
+          is_claimed: true,
+          is_open: true
+        }}
+      />
+      <BusinessGallery photos={business.business_photos || []} />
 
       <section className="gray py-5 position-relative">
         <div className="container">

@@ -12,7 +12,22 @@ interface BusinessMainContentProps {
 export const BusinessMainContent = ({ business }: BusinessMainContentProps) => {
   return (
     <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12">
-      <BusinessInfo business={business} isOwner={false} />
+      <BusinessInfo 
+        business={{
+          id: business.id,
+          name: business.name,
+          description: business.description || "",
+          address: business.address,
+          city: business.city,
+          state: business.state,
+          zip_code: business.zip_code,
+          phone: business.phone,
+          website: business.website,
+          email: business.email,
+          owner_id: business.owner_id
+        }} 
+        isOwner={false} 
+      />
       <MenuItems businessId={business.id} />
       <Amenities amenities={[
         { name: "Health Score 8.7/10", available: true },
@@ -57,7 +72,7 @@ export const BusinessMainContent = ({ business }: BusinessMainContentProps) => {
       <ReviewSection 
         businessId={business.id} 
         isOwner={false} 
-        reviews={business.reviews} 
+        reviews={business.reviews || []}
       />
     </div>
   );
