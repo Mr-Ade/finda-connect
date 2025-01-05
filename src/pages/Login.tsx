@@ -1,8 +1,8 @@
+import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
@@ -51,8 +51,8 @@ const Login = () => {
                   variables: {
                     default: {
                       colors: {
-                        brand: '#FF385C',
-                        brandAccent: '#FF385C',
+                        brand: '#359e04',
+                        brandAccent: '#359e04',
                       },
                     },
                   },
