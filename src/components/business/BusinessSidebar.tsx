@@ -1,4 +1,4 @@
-import { MapPin, Globe, Mail, Phone } from "lucide-react";
+import { MapPin, Globe, Mail, Phone, Camera, Share2, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
