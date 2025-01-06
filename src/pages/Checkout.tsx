@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 import { BillingForm, type CheckoutFormData } from "@/components/checkout/BillingForm";
 import { OrderSummary } from "@/components/checkout/OrderSummary";
@@ -86,6 +86,18 @@ const Checkout = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      <div className="bg-[#05222A] py-3">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center gap-2 text-sm">
+            <a href="/" className="text-white hover:text-primary">Home</a>
+            <span className="text-white">/</span>
+            <a href="#" className="text-white hover:text-primary">Page</a>
+            <span className="text-white">/</span>
+            <span className="text-primary">Booking Page</span>
+          </div>
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold mb-8">Checkout</h1>
 
