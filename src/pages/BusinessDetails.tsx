@@ -71,7 +71,7 @@ const BusinessDetails = () => {
         }));
       }
 
-      // Ensure review_responses is always an array
+      // Ensure review_responses and review_photos are always arrays
       if (data && data.reviews) {
         data.reviews = data.reviews.map(review => ({
           ...review,

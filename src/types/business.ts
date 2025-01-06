@@ -50,7 +50,7 @@ export interface Business {
   id: string;
   owner_id?: string;
   name: string;
-  description?: string; // Made optional to match database
+  description?: string;
   category: string;
   address: string;
   city: string;
@@ -64,7 +64,6 @@ export interface Business {
   latitude?: number;
   longitude?: number;
   
-  // Related tables
   business_photos?: {
     id: string;
     photo_url: string;
@@ -98,15 +97,15 @@ export interface Business {
       username: string;
       avatar_url: string;
     };
-    review_responses?: {
+    review_responses?: Array<{
       id: string;
       response_text: string;
       created_at: string;
-    }[];
-    review_photos?: {
+    }>;
+    review_photos?: Array<{
       id: string;
       photo_url: string;
-    }[];
+    }>;
   }[];
   
   owner?: {
