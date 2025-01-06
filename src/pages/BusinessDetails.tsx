@@ -6,11 +6,13 @@ import { BusinessGallery } from "@/components/business/BusinessGallery";
 import { BusinessMainContent } from "@/components/business/details/BusinessMainContent";
 import { BusinessRightSidebar } from "@/components/business/details/BusinessRightSidebar";
 import type { Business } from "@/types/business";
+import { useToast } from "@/hooks/use-toast";
 
 const BusinessDetails = () => {
   const { id } = useParams();
+  const { toast } = useToast();
 
-  const { data: business, isLoading } = useQuery({
+  const { data: business, isLoading, error } = useQuery({
     queryKey: ['business', id],
     queryFn: async () => {
       console.log('Fetching business details...');
@@ -61,6 +63,11 @@ const BusinessDetails = () => {
 
       if (error) {
         console.error('Error fetching business:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load business details. Please try again.",
+        });
         throw error;
       }
 
@@ -76,22 +83,30 @@ const BusinessDetails = () => {
       if (data?.reviews) {
         data.reviews = data.reviews.map(review => ({
           ...review,
-          review_responses: Array.isArray(review.review_responses) 
-            ? review.review_responses 
-            : review.review_responses 
-              ? [review.review_responses]
-              : [],
+          review_responses: review.review_responses ? 
+            (Array.isArray(review.review_responses) ? review.review_responses : [review.review_responses]) 
+            : [],
           review_photos: review.review_photos || []
         }));
       }
 
       return data as Business;
     },
-    retry: 1
+    retry: 2,
+    retryDelay: 1000
   });
 
   if (isLoading) {
     return <div className="preloader"></div>;
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 text-center">
+        <h2 className="text-xl font-semibold text-red-600">Error Loading Business</h2>
+        <p className="text-gray-600">Please try again later</p>
+      </div>
+    );
   }
 
   if (!business) {

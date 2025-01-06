@@ -1,5 +1,4 @@
 export interface BusinessFormData {
-  // Basic Info
   name: string;
   description: string;
   category: string;
