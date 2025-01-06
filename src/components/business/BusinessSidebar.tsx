@@ -1,6 +1,7 @@
-import { MapPin, Globe, Mail, Phone, Camera, Share2, Heart } from "lucide-react";
+import { MapPin, Globe, Mail, Phone, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
 
 interface BusinessSidebarProps {
   business: {
@@ -42,7 +43,7 @@ export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
         </div>
       </div>
 
-      {/* Author Box */}
+      {/* Business Owner Info */}
       {business.owner && (
         <div className="bg-white rounded-lg p-4 shadow-sm">
           <div className="flex items-center gap-3 mb-4">
@@ -54,31 +55,52 @@ export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
             <div>
               <h4 className="font-medium">{business.owner.full_name}</h4>
               <span className="text-gray-500 text-sm flex items-center gap-1">
-                <MapPin className="h-4 w-4" />San Francisco
+                <User className="h-4 w-4" />Business Owner
               </span>
             </div>
           </div>
           
-          <div className="grid grid-cols-3 text-center mb-4">
-            <div>
-              <div className="font-bold">140+</div>
-              <div className="text-sm text-gray-500">Listings</div>
-            </div>
-            <div>
-              <div className="font-bold text-green-500">4.7</div>
-              <div className="text-sm text-gray-500">Rating</div>
-            </div>
-            <div>
-              <div className="font-bold">80K</div>
-              <div className="text-sm text-gray-500">Followers</div>
-            </div>
+          <div className="space-y-3 mb-4">
+            {business.email && (
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <Mail className="h-5 w-5 text-gray-600" />
+                </div>
+                <div>
+                  <h5 className="text-sm font-medium">Email</h5>
+                  <p className="text-sm text-gray-600">{business.email}</p>
+                </div>
+              </div>
+            )}
+            
+            {business.phone && (
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <Phone className="h-5 w-5 text-gray-600" />
+                </div>
+                <div>
+                  <h5 className="text-sm font-medium">Phone</h5>
+                  <p className="text-sm text-gray-600">{business.phone}</p>
+                </div>
+              </div>
+            )}
+            
+            {business.website && (
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <Globe className="h-5 w-5 text-gray-600" />
+                </div>
+                <div>
+                  <h5 className="text-sm font-medium">Website</h5>
+                  <p className="text-sm text-gray-600">{business.website}</p>
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="grid grid-cols-2 gap-2 mb-3">
-            <Button variant="outline">Follow Now</Button>
-            <Button variant="outline">Send Message</Button>
-          </div>
-          <Button className="w-full">View Profile</Button>
+          <Link to={`/author/${business.owner.username}`}>
+            <Button variant="outline" className="w-full">View Profile</Button>
+          </Link>
         </div>
       )}
 
