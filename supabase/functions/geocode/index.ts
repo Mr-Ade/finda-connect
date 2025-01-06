@@ -2,7 +2,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { corsHeaders } from '../_shared/cors.ts'
 
 serve(async (req) => {
-  // Handle CORS
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -15,20 +15,56 @@ serve(async (req) => {
       throw new Error('Google Maps API key not configured')
     }
 
+    console.log('Geocoding coordinates:', { latitude, longitude })
+
     const response = await fetch(
       `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
     )
-
+    
     const data = await response.json()
+    
+    console.log('Google Maps API response:', data)
 
-    return new Response(JSON.stringify(data), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 200,
-    })
+    if (data.error_message) {
+      // Handle specific Google Maps API errors
+      if (data.error_message.includes('You must enable Billing')) {
+        throw new Error('Google Maps API billing must be enabled. Please visit https://console.cloud.google.com/project/_/billing/enable to enable billing.')
+      }
+      throw new Error(`Google Maps API error: ${data.error_message}`)
+    }
+
+    if (!data.results || data.status === 'ZERO_RESULTS') {
+      return new Response(
+        JSON.stringify({ 
+          error: 'No results found',
+          status: data.status
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 404
+        }
+      )
+    }
+
+    return new Response(
+      JSON.stringify(data),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      }
+    )
+
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 400,
-    })
+    console.error('Geocoding error:', error)
+    return new Response(
+      JSON.stringify({
+        error: error.message,
+        details: 'Please ensure Google Maps API key is configured and billing is enabled'
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
+      }
+    )
   }
 })
