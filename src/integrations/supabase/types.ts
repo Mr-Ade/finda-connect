@@ -49,36 +49,42 @@ export type Database = {
       }
       appointments: {
         Row: {
+          amount: number | null
           appointment_date: string
           business_id: string
           created_at: string
           email: string
           id: string
           name: string
+          payment_method: string | null
           phone: string
           status: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          amount?: number | null
           appointment_date: string
           business_id: string
           created_at?: string
           email: string
           id?: string
           name: string
+          payment_method?: string | null
           phone: string
           status?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          amount?: number | null
           appointment_date?: string
           business_id?: string
           created_at?: string
           email?: string
           id?: string
           name?: string
+          payment_method?: string | null
           phone?: string
           status?: string
           updated_at?: string

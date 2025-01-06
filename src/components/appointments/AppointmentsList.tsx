@@ -1,216 +1,179 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
-import { Calendar, Mail, Phone, Building, DollarSign, CreditCard, Check, Trash2, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { format } from "date-fns";
+import { 
+  Calendar,
+  CircleDollarSign,
+  Clock,
+  Mail,
+  MapPin,
+  Phone,
+  User,
+  Users
+} from "lucide-react";
 
 interface Appointment {
   id: string;
+  business_id: string;
+  user_id: string;
   appointment_date: string;
   name: string;
   email: string;
   phone: string;
   status: string;
-  amount: number | null; // Made nullable since we set a default
-  payment_method: string | null; // Made nullable since we set a default
+  amount: number | null;
+  payment_method: string | null;
   business: {
     name: string;
   };
 }
 
-export const AppointmentsList = ({ isBusinessOwner = false }) => {
+export const AppointmentsList = () => {
   const { toast } = useToast();
 
-  const { data: appointments, isLoading } = useQuery({
-    queryKey: ['appointments'],
+  const { data: appointments, isLoading, error } = useQuery({
+    queryKey: ["appointments"],
     queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("No session found");
-
-      let query = supabase
-        .from('appointments')
+      const query = supabase
+        .from("appointments")
         .select(`
           *,
           business:businesses(name)
-        `);
-
-      if (isBusinessOwner) {
-        query = query.in('business_id', [
-          supabase
-            .from('businesses')
-            .select('id')
-            .eq('owner_id', session.user.id)
-        ]);
-      } else {
-        query = query.eq('user_id', session.user.id);
-      }
+        `)
+        .order("created_at", { ascending: false });
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as unknown as Appointment[]; // Type assertion after we've verified the shape
+      return data as unknown as Appointment[];
     },
   });
 
-  const handleStatusChange = async (appointmentId: string, newStatus: string) => {
-    try {
-      const { error } = await supabase
-        .from('appointments')
-        .update({ status: newStatus })
-        .eq('id', appointmentId);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-      if (error) throw error;
+  if (error) {
+    return <div>Error loading appointments</div>;
+  }
 
-      toast({
-        title: "Status Updated",
-        description: "Appointment status has been updated successfully.",
-      });
-    } catch (error) {
-      console.error("Error updating appointment status:", error);
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    const { error } = await supabase
+      .from("appointments")
+      .update({ status: newStatus })
+      .eq("id", id);
+
+    if (error) {
       toast({
         title: "Error",
-        description: "Failed to update appointment status.",
+        description: "Failed to update appointment status",
         variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Appointment status updated",
       });
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center p-8">
-        <Loader2 className="w-8 h-8 animate-spin" />
-      </div>
-    );
-  }
-
   return (
-    <div className="goodup-dashboard-content">
-      <div className="dashboard-tlbar d-block mb-5">
-        <div className="row">
-          <div className="colxl-12 col-lg-12 col-md-12">
-            <h1 className="text-2xl font-medium">My Bookings</h1>
-            <nav className="flex" aria-label="Breadcrumb">
-              <ol className="inline-flex items-center space-x-1 md:space-x-3">
-                <li className="text-muted">Home</li>
-                <li className="text-muted">/</li>
-                <li className="text-muted">Dashboard</li>
-                <li className="text-muted">/</li>
-                <li className="text-primary">My Bookings</li>
-              </ol>
-            </nav>
-          </div>
+    <div className="dashboard-list-wraps bg-white rounded mb-4">
+      <div className="dashboard-list-wraps-head border-b py-3 px-3">
+        <div className="dashboard-list-wraps-flx">
+          <h4 className="mb-0 font-medium text-lg">
+            <Calendar className="inline-block mr-2 text-primary" size={20} />
+            All Bookings
+          </h4>
         </div>
       </div>
 
-      <div className="dashboard-widg-bar d-block">
-        <div className="row">
-          <div className="col-xl-12 col-lg-12">
-            <Card className="dashboard-list-wraps bg-white rounded mb-4">
-              <div className="p-4 border-b">
-                <div className="flex items-center">
-                  <h4 className="text-lg font-medium flex items-center">
-                    <Calendar className="mr-2 h-5 w-5 text-primary" />
-                    All Bookings
-                  </h4>
+      <div className="dashboard-list-wraps-body py-3 px-3">
+        <div className="dashboard-bookings-wraps space-y-4">
+          {appointments?.map((appointment) => (
+            <div key={appointment.id} className="border rounded-lg p-4">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                <div>
+                  <h5 className="text-lg font-semibold flex items-center">
+                    <User className="mr-2" size={20} />
+                    {appointment.name}
+                    <span className="text-sm text-gray-500 ml-2">
+                      {format(new Date(appointment.created_at), "dd MMM yyyy")}
+                    </span>
+                  </h5>
+                </div>
+                <div className="flex gap-2 mt-2 md:mt-0">
+                  {appointment.payment_method && (
+                    <div className="px-2 py-1 text-sm bg-green-50 text-green-600 rounded">
+                      Paid via {appointment.payment_method}
+                    </div>
+                  )}
+                  <div className={`px-2 py-1 text-sm rounded ${
+                    appointment.status === "confirmed" 
+                      ? "bg-green-50 text-green-600"
+                      : appointment.status === "pending"
+                      ? "bg-yellow-50 text-yellow-600"
+                      : "bg-red-50 text-red-600"
+                  }`}>
+                    {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+                  </div>
                 </div>
               </div>
 
-              <div className="p-4">
-                {!appointments?.length ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    No appointments found
-                  </div>
-                ) : (
-                  <div className="dashboard-bookings-wraps space-y-6">
-                    {appointments.map((appointment) => (
-                      <div key={appointment.id} className="dsd-single-bookings-wraps border rounded-lg p-4">
-                        <div className="flex flex-col md:flex-row gap-4">
-                          <div className="flex-1">
-                            <div className="flex justify-between items-start mb-4">
-                              <div>
-                                <h5 className="text-lg font-medium">{appointment.name}</h5>
-                                <span className="text-sm text-muted-foreground">
-                                  {format(new Date(appointment.appointment_date), 'dd MMM yyyy')}
-                                </span>
-                              </div>
-                              <div className="flex gap-2">
-                                <Badge variant={appointment.status === 'confirmed' ? 'default' : 'secondary'}>
-                                  {appointment.status}
-                                </Badge>
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className="flex items-center gap-2">
-                                <Building className="h-4 w-4 text-muted-foreground" />
-                                <span>{appointment.business.name}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Calendar className="h-4 w-4 text-muted-foreground" />
-                                <span>{format(new Date(appointment.appointment_date), 'PPp')}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Mail className="h-4 w-4 text-muted-foreground" />
-                                <span>{appointment.email}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Phone className="h-4 w-4 text-muted-foreground" />
-                                <span>{appointment.phone}</span>
-                              </div>
-                              {appointment.amount && (
-                                <div className="flex items-center gap-2">
-                                  <DollarSign className="h-4 w-4 text-muted-foreground" />
-                                  <span>${appointment.amount}</span>
-                                </div>
-                              )}
-                              {appointment.payment_method && (
-                                <div className="flex items-center gap-2">
-                                  <CreditCard className="h-4 w-4 text-muted-foreground" />
-                                  <span>{appointment.payment_method}</span>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="flex gap-2 mt-4">
-                              {isBusinessOwner && (
-                                <>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => handleStatusChange(appointment.id, 'confirmed')}
-                                    disabled={appointment.status === 'confirmed'}
-                                  >
-                                    <Check className="h-4 w-4 mr-1" />
-                                    Approve
-                                  </Button>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => handleStatusChange(appointment.id, 'cancelled')}
-                                    disabled={appointment.status === 'cancelled'}
-                                  >
-                                    <Trash2 className="h-4 w-4 mr-1" />
-                                    Reject
-                                  </Button>
-                                </>
-                              )}
-                              <Button variant="outline" size="sm">
-                                <MessageSquare className="h-4 w-4 mr-1" />
-                                Message
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="flex items-center">
+                  <MapPin className="mr-2 text-gray-400" size={18} />
+                  <span className="text-gray-600">{appointment.business.name}</span>
+                </div>
+                <div className="flex items-center">
+                  <Calendar className="mr-2 text-gray-400" size={18} />
+                  <span className="text-gray-600">
+                    {format(new Date(appointment.appointment_date), "dd MMM yyyy")}
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <Clock className="mr-2 text-gray-400" size={18} />
+                  <span className="text-gray-600">
+                    {format(new Date(appointment.appointment_date), "hh:mm a")}
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <Mail className="mr-2 text-gray-400" size={18} />
+                  <span className="text-gray-600">{appointment.email}</span>
+                </div>
+                <div className="flex items-center">
+                  <Phone className="mr-2 text-gray-400" size={18} />
+                  <span className="text-gray-600">{appointment.phone}</span>
+                </div>
+                {appointment.amount && (
+                  <div className="flex items-center">
+                    <CircleDollarSign className="mr-2 text-gray-400" size={18} />
+                    <span className="text-gray-600">${appointment.amount}</span>
                   </div>
                 )}
               </div>
-            </Card>
-          </div>
+
+              <div className="flex gap-2 mt-4">
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => handleStatusChange(appointment.id, "confirmed")}
+                  disabled={appointment.status === "confirmed"}
+                >
+                  Approve
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleStatusChange(appointment.id, "cancelled")}
+                  disabled={appointment.status === "cancelled"}
+                >
+                  Reject
+                </Button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
