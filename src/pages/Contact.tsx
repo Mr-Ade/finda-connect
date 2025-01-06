@@ -36,122 +36,109 @@ const Contact = () => {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
-          <p className="text-gray-600">
-            Have questions? We'd love to hear from you. Send us a message and we'll
-            respond as soon as possible.
-          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12">
+        <div className="grid md:grid-cols-1 gap-12">
           <div>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="text-sm font-medium mb-1 block">
-                  Your Name *
-                </label>
-                <Input
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Your Name"
-                  required
-                />
+            <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-8 space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="text-sm font-medium mb-1 block">
+                    Your Name *
+                  </label>
+                  <Input
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Your Name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1 block">
+                    Your Email *
+                  </label>
+                  <Input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Your Email"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1 block">
+                    Mobile
+                  </label>
+                  <Input
+                    type="tel"
+                    name="mobile"
+                    value={formData.mobile}
+                    onChange={handleChange}
+                    placeholder="+91 256 548 7542"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1 block">
+                    Subject
+                  </label>
+                  <Input
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    placeholder="Type Your Subject"
+                  />
+                </div>
               </div>
               <div>
                 <label className="text-sm font-medium mb-1 block">
-                  Email Address *
-                </label>
-                <Input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Email Address"
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-1 block">
-                  Phone Number
-                </label>
-                <Input
-                  type="tel"
-                  name="mobile"
-                  value={formData.mobile}
-                  onChange={handleChange}
-                  placeholder="Phone Number"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-1 block">Subject</label>
-                <Input
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  placeholder="Subject"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-1 block">
-                  Your Message
+                  Message
                 </label>
                 <Textarea
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="Your Message"
+                  placeholder="Your Message..."
                   className="min-h-[150px]"
                   required
                 />
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="bg-red-500 hover:bg-red-600">
                 Send Message
               </Button>
             </form>
           </div>
 
-          <div className="space-y-6">
-            <div className="h-[300px] rounded-lg overflow-hidden">
-              <Map 
-                center={{ lat: 9.0820, lng: 8.6753 }}
-                markers={[{ lat: 9.0820, lng: 8.6753 }]}
-              />
+          <div className="grid md:grid-cols-3 gap-6 mt-8">
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h3 className="text-xl font-semibold mb-3 text-red-500">Address info:</h3>
+              <p className="text-gray-600">
+                1354 Green Street Nashville Drive, Dodge City, KS 67801 United States
+              </p>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-semibold mb-2">Address</h3>
-                <p className="text-gray-600">
-                  1354 Green Street Nashville Drive, Dodge City, KS 67801
-                </p>
-              </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h3 className="text-xl font-semibold mb-3 text-red-500">Call Us:</h3>
+              <h4 className="font-medium mb-2">Customer Care:</h4>
+              <p className="text-gray-600">
+                <a href="tel:+914587536924" className="hover:text-red-500">
+                  +91 458 753 6924
+                </a>
+              </p>
+            </div>
 
-              <div>
-                <h3 className="font-semibold mb-2">Phone</h3>
-                <p className="text-gray-600">
-                  <a href="tel:+914587536924">+91 458 753 6924</a>
-                </p>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-2">Email</h3>
-                <p className="text-gray-600">
-                  <a href="mailto:contact@example.com">
-                    contact@example.com
-                  </a>
-                </p>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-2">Working Hours</h3>
-                <p className="text-gray-600">
-                  Monday - Friday: 9:00 AM - 6:00 PM
-                  <br />
-                  Saturday: 10:00 AM - 4:00 PM
-                  <br />
-                  Sunday: Closed
-                </p>
-              </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h3 className="text-xl font-semibold mb-3 text-red-500">Drop A Mail:</h3>
+              <p className="text-gray-600 mb-2">
+                Drop mail we will contact you within 24 hours.
+              </p>
+              <a 
+                href="mailto:dhananjaypreet@gmail.com" 
+                className="text-gray-800 hover:text-red-500"
+              >
+                dhananjaypreet@gmail.com
+              </a>
             </div>
           </div>
         </div>
