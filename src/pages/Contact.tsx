@@ -1,18 +1,33 @@
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Map } from "@/components/Map";
-import { Link } from "react-router-dom";
 
 const Contact = () => {
   const { toast } = useToast();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    mobile: "",
+    subject: "",
+    message: ""
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Here you would typically send the data to your backend
     toast({
       title: "Message sent",
       description: "We'll get back to you as soon as possible.",
+    });
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
     });
   };
 
@@ -31,16 +46,59 @@ const Contact = () => {
           <div>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <Input placeholder="Your Name" required />
+                <label className="text-sm font-medium mb-1 block">
+                  Your Name *
+                </label>
+                <Input
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Your Name"
+                  required
+                />
               </div>
               <div>
-                <Input type="email" placeholder="Email Address" required />
+                <label className="text-sm font-medium mb-1 block">
+                  Email Address *
+                </label>
+                <Input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Email Address"
+                  required
+                />
               </div>
               <div>
-                <Input placeholder="Subject" required />
+                <label className="text-sm font-medium mb-1 block">
+                  Phone Number
+                </label>
+                <Input
+                  type="tel"
+                  name="mobile"
+                  value={formData.mobile}
+                  onChange={handleChange}
+                  placeholder="Phone Number"
+                />
               </div>
               <div>
+                <label className="text-sm font-medium mb-1 block">Subject</label>
+                <Input
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  placeholder="Subject"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1 block">
+                  Your Message
+                </label>
                 <Textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
                   placeholder="Your Message"
                   className="min-h-[150px]"
                   required
@@ -64,23 +122,23 @@ const Contact = () => {
               <div>
                 <h3 className="font-semibold mb-2">Address</h3>
                 <p className="text-gray-600">
-                  123 Business Avenue, Lagos, Nigeria
+                  1354 Green Street Nashville Drive, Dodge City, KS 67801
                 </p>
               </div>
 
               <div>
                 <h3 className="font-semibold mb-2">Phone</h3>
                 <p className="text-gray-600">
-                  <Link to="tel:+2341234567890">+234 123 456 7890</Link>
+                  <a href="tel:+914587536924">+91 458 753 6924</a>
                 </p>
               </div>
 
               <div>
                 <h3 className="font-semibold mb-2">Email</h3>
                 <p className="text-gray-600">
-                  <Link to="mailto:contact@example.com">
+                  <a href="mailto:contact@example.com">
                     contact@example.com
-                  </Link>
+                  </a>
                 </p>
               </div>
 
