@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Newsletter } from "@/components/home/Newsletter";
 import { Footer } from "@/components/Footer";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 
 const NotFound = () => {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ const NotFound = () => {
               {/* 404 Image */}
               <div className="mb-8">
                 <img 
-                  src="/lovable-uploads/466c2f0b-adaf-4844-b5dc-0b430e8e3f2c.png" 
+                  src="/lovable-uploads/a686189b-978f-49f9-a271-d56b8de6bca1.png" 
                   alt="404 Error" 
                   className="w-full max-w-md mx-auto"
                 />
