@@ -1,10 +1,59 @@
 import { Link, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 export const ProfileSidebar = () => {
   const location = useLocation();
+  const { toast } = useToast();
+  const navigate = useNavigate();
   
   const isActive = (path: string) => {
     return location.pathname === path;
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate("/login");
+      toast({
+        title: "Logged out successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error logging out",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirm = window.confirm(
+      "Are you sure you want to delete your account? This action cannot be undone."
+    );
+
+    if (confirm) {
+      try {
+        const { error } = await supabase.auth.admin.deleteUser(
+          (await supabase.auth.getUser()).data.user?.id || ""
+        );
+        
+        if (error) throw error;
+        
+        await supabase.auth.signOut();
+        navigate("/login");
+        toast({
+          title: "Account deleted successfully",
+        });
+      } catch (error) {
+        toast({
+          title: "Error deleting account",
+          description: "Please try again later",
+          variant: "destructive",
+        });
+      }
+    }
   };
 
   return (
@@ -86,6 +135,24 @@ export const ProfileSidebar = () => {
             >
               <span className="flex-1">Change Password</span>
             </Link>
+          </li>
+          <li className="pt-4">
+            <Button 
+              variant="destructive" 
+              className="w-full"
+              onClick={handleDeleteAccount}
+            >
+              Delete Account
+            </Button>
+          </li>
+          <li>
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
           </li>
         </ul>
       </div>
