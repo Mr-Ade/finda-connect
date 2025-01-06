@@ -75,11 +75,11 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
 
             if (error) {
               console.error("Geocoding error:", error);
-              // Don't throw here, just show a toast
+              // Show a less severe message to user
               toast({
                 title: "Location Detection Limited",
                 description: "Using approximate location. Some features may be limited.",
-                variant: "warning",
+                variant: "default"
               });
               return;
             }
@@ -136,7 +136,7 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
             toast({
               title: "Location Detection Limited",
               description: "Using approximate location. Some features may be limited.",
-              variant: "warning",
+              variant: "default"
             });
           }
         }
