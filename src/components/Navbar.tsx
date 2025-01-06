@@ -92,7 +92,7 @@ export const Navbar = () => {
           {isAuthenticated ? (
             <>
               <div className="hidden md:flex items-center space-x-4">
-                <Link to="/dashboard/listings" className="text-gray-600 hover:text-primary">
+                <Link to="/dashboard" className="text-gray-600 hover:text-primary">
                   Dashboard
                 </Link>
                 <Link to="/profile" className="text-gray-600 hover:text-primary">
