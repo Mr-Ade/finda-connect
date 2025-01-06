@@ -3,6 +3,17 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const ProfileSidebar = () => {
   const location = useLocation();
@@ -29,30 +40,24 @@ export const ProfileSidebar = () => {
   };
 
   const handleDeleteAccount = async () => {
-    const confirm = window.confirm(
-      "Are you sure you want to delete your account? This action cannot be undone."
-    );
-
-    if (confirm) {
-      try {
-        const { error } = await supabase.auth.admin.deleteUser(
-          (await supabase.auth.getUser()).data.user?.id || ""
-        );
-        
-        if (error) throw error;
-        
-        await supabase.auth.signOut();
-        navigate("/login");
-        toast({
-          title: "Account deleted successfully",
-        });
-      } catch (error) {
-        toast({
-          title: "Error deleting account",
-          description: "Please try again later",
-          variant: "destructive",
-        });
-      }
+    try {
+      const { error } = await supabase.auth.admin.deleteUser(
+        (await supabase.auth.getUser()).data.user?.id || ""
+      );
+      
+      if (error) throw error;
+      
+      await supabase.auth.signOut();
+      navigate("/login");
+      toast({
+        title: "Account deleted successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error deleting account",
+        description: "Please try again later",
+        variant: "destructive",
+      });
     }
   };
 
@@ -137,22 +142,51 @@ export const ProfileSidebar = () => {
             </Link>
           </li>
           <li className="pt-4">
-            <Button 
-              variant="destructive" 
-              className="w-full"
-              onClick={handleDeleteAccount}
-            >
-              Delete Account
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" className="w-full">
+                  Delete Account
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete your account
+                    and remove your data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDeleteAccount}>
+                    Delete Account
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </li>
           <li>
-            <Button 
-              variant="outline" 
-              className="w-full"
-              onClick={handleLogout}
-            >
-              Logout
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" className="w-full">
+                  Logout
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to logout? You will need to login again to access your account.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleLogout}>
+                    Logout
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </li>
         </ul>
       </div>
