@@ -5,6 +5,7 @@ import { BusinessHeader } from "@/components/business/BusinessHeader";
 import { BusinessGallery } from "@/components/business/BusinessGallery";
 import { BusinessMainContent } from "@/components/business/details/BusinessMainContent";
 import { BusinessRightSidebar } from "@/components/business/details/BusinessRightSidebar";
+import type { Business } from "@/types/business";
 
 const BusinessDetails = () => {
   const { id } = useParams();
@@ -64,7 +65,7 @@ const BusinessDetails = () => {
       }
 
       // Ensure business_photos has order_index
-      if (data && data.business_photos) {
+      if (data?.business_photos) {
         data.business_photos = data.business_photos.map((photo, index) => ({
           ...photo,
           order_index: photo.order_index || index
@@ -72,18 +73,21 @@ const BusinessDetails = () => {
       }
 
       // Ensure review_responses and review_photos are always arrays
-      if (data && data.reviews) {
+      if (data?.reviews) {
         data.reviews = data.reviews.map(review => ({
           ...review,
-          review_responses: review.review_responses ? 
-            (Array.isArray(review.review_responses) ? review.review_responses : [review.review_responses]) 
-            : [],
+          review_responses: Array.isArray(review.review_responses) 
+            ? review.review_responses 
+            : review.review_responses 
+              ? [review.review_responses]
+              : [],
           review_photos: review.review_photos || []
         }));
       }
 
-      return data;
-    }
+      return data as Business;
+    },
+    retry: 1
   });
 
   if (isLoading) {

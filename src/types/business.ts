@@ -64,31 +64,31 @@ export interface Business {
   latitude?: number;
   longitude?: number;
   
-  business_photos?: {
+  business_photos?: Array<{
     id: string;
     photo_url: string;
     caption?: string;
     order_index: number;
-  }[];
+  }>;
   
-  menu_items?: {
+  menu_items?: Array<{
     id: string;
     name: string;
     description?: string;
     price: number;
     image_url?: string;
     category?: string;
-  }[];
+  }>;
   
-  business_hours?: {
+  business_hours?: Array<{
     id: string;
     day_of_week: number;
     open_time: string;
     close_time: string;
     is_closed: boolean;
-  }[];
+  }>;
   
-  reviews?: {
+  reviews?: Array<{
     id: string;
     rating: number;
     comment: string;
@@ -106,7 +106,7 @@ export interface Business {
       id: string;
       photo_url: string;
     }>;
-  }[];
+  }>;
   
   owner?: {
     username?: string;
