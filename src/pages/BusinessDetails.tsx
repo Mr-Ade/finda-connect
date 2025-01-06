@@ -75,9 +75,10 @@ const BusinessDetails = () => {
       if (data && data.reviews) {
         data.reviews = data.reviews.map(review => ({
           ...review,
-          review_responses: Array.isArray(review.review_responses) ? 
-            review.review_responses : 
-            (review.review_responses ? [review.review_responses] : [])
+          review_responses: review.review_responses ? 
+            (Array.isArray(review.review_responses) ? review.review_responses : [review.review_responses]) 
+            : [],
+          review_photos: review.review_photos || []
         }));
       }
 
