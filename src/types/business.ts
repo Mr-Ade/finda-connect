@@ -94,9 +94,9 @@ export interface Business {
     rating: number;
     comment: string;
     created_at: string;
-    profiles?: {
-      username?: string;
-      avatar_url?: string;
+    profiles: {
+      username: string;
+      avatar_url: string;
     };
     review_responses?: {
       id: string;

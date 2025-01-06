@@ -43,6 +43,10 @@ const BusinessDetails = () => {
               id,
               response_text,
               created_at
+            ),
+            review_photos (
+              id,
+              photo_url
             )
           ),
           owner:profiles (
@@ -64,6 +68,16 @@ const BusinessDetails = () => {
         data.business_photos = data.business_photos.map((photo, index) => ({
           ...photo,
           order_index: photo.order_index || index
+        }));
+      }
+
+      // Ensure review_responses is always an array
+      if (data && data.reviews) {
+        data.reviews = data.reviews.map(review => ({
+          ...review,
+          review_responses: Array.isArray(review.review_responses) ? 
+            review.review_responses : 
+            (review.review_responses ? [review.review_responses] : [])
         }));
       }
 
