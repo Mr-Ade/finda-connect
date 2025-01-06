@@ -49,6 +49,14 @@ export const ProfileSidebar = () => {
           </li>
           <li>
             <Link 
+              to="/dashboard/saved-listings"
+              className={`flex items-center p-2 rounded-lg hover:bg-gray-50 ${isActive('/dashboard/saved-listings') ? 'bg-gray-50 text-primary' : 'text-gray-700'}`}
+            >
+              <span className="flex-1">Saved Listings</span>
+            </Link>
+          </li>
+          <li>
+            <Link 
               to="/dashboard/messages"
               className={`flex items-center p-2 rounded-lg hover:bg-gray-50 ${isActive('/dashboard/messages') ? 'bg-gray-50 text-primary' : 'text-gray-700'}`}
             >
