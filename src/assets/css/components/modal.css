@@ -1,0 +1,75 @@
+button.close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 10px;
+    color: #121212;
+    opacity: 1;
+    background: #f4f5f7;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-content: center;
+    border-radius: 50%;
+	z-index:1;
+	cursor:pointer;
+}
+.modal.lg-modal .modal-dialog {
+    max-width: 950px;
+}
+button.close {
+    border: 1px solid #e0e0e0;
+    background: #ededed;
+    color: #252525;
+    font-weight: 600;
+}
+.option-log {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    width: 100%;
+    justify-content: space-between;
+}
+.option-log .single-log-opt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 48%;
+    position: relative;
+    width:48%;
+}
+.option-log .single-log-opt .log-btn {
+    position: relative;
+    font-weight: 500;
+    font-size: 13px;
+    border: 1px solid #ecf2f7;
+    height: 50px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    background: #ecf2f7;
+    width: 100%;
+    margin: 0 auto;
+}
+.option-log .single-log-opt .log-btn img{
+	width:15px;
+	margin-right:7px;
+}
+.signup-screen-wrap {
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+    overflow: hidden;
+	flex-wrap:wrap;
+}
+.signup-screen-single {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 100%;
+    background:#ffffff;
+    padding:2rem 2rem;
+}

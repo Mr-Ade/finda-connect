@@ -1,0 +1,95 @@
+/* Custom Checkbox & Radio Button Styles */
+.checkbox-custom, .radio-custom {
+    opacity: 0;
+    position: absolute;   
+}
+
+.checkbox-custom, .checkbox-custom-label, .radio-custom, .radio-custom-label {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 5px;
+    cursor: pointer;
+    margin-left: 0;
+}
+.checkbox-custom-label, .radio-custom-label {
+	position: relative;
+	width: 100%;
+}
+.checkbox-custom + .checkbox-custom-label:before{
+	content: '';
+	background: #fff;
+	border: 2px solid #dae3ec;
+	display: inline-block;
+	vertical-align: middle;
+	width: 20px;
+	height: 20px;
+	border-radius:2px;
+	padding: 2px;
+	margin-right: 10px;
+	text-align: center;
+}
+
+._adv_features_list label i {
+    font-style: initial;
+    font-weight: 600;
+    float: right;
+}
+
+.radio-custom + .radio-custom-label:before {
+    content: '';
+    background: #fff;
+    border: 2px solid #dae3ec;
+    display: inline-block;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    padding: 2px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+.checkbox-custom:checked + .checkbox-custom-label:before {
+    background: rgba(5, 175, 120,0.1);
+    border-radius: 2px;
+    border: none;
+}
+
+.checkbox-custom:checked + .checkbox-custom-label:after {
+    content:"\f058";
+    font-family:"Font Awesome 5 Free";
+    position: absolute;
+    left: 5px;
+    top:5px;
+    font-size: 10px;
+    color: #05af78;
+}
+
+.radio-custom + .radio-custom-label:before {
+    border-radius: 50%;
+}
+
+.radio-custom:checked + .radio-custom-label:before {
+    background:#F41b3b;
+    border-color:#F41b3b;
+    box-shadow: inset 0px 0px 0px 4px #fff;
+}
+
+.company-brands label{
+    font-weight:normal;
+    color:#828f99;
+    font-size:15px;
+}
+
+.checkbox-custom:focus + .checkbox-custom-label, 
+.radio-custom:focus + .radio-custom-label {
+    outline:none;
+}
+
+.company-brands input[type='checkbox']:focus{
+    outline:none;
+}
+
+.company-brands label:focus{
+    outline:none;
+}
