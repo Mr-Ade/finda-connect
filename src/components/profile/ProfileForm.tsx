@@ -25,6 +25,11 @@ export const ProfileForm = ({
   onSubmit
 }: ProfileFormProps) => {
   const [bio, setBio] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
+  const [address, setAddress] = useState("");
+  const [zipCode, setZipCode] = useState("");
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,6 +46,11 @@ export const ProfileForm = ({
           username,
           full_name: fullName,
           bio,
+          mobile,
+          state,
+          city,
+          address,
+          zip_code: zipCode
         })
         .eq('id', user.id);
 
@@ -107,6 +117,57 @@ export const ProfileForm = ({
             placeholder="email@example.com"
           />
         </div>
+
+        <div className="space-y-2">
+          <Label>Mobile</Label>
+          <Input
+            type="tel"
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
+            disabled={updating}
+            placeholder="Enter mobile number"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>State</Label>
+          <Input
+            value={state}
+            onChange={(e) => setState(e.target.value)}
+            disabled={updating}
+            placeholder="Enter state"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>City</Label>
+          <Input
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            disabled={updating}
+            placeholder="Enter city"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Zip Code</Label>
+          <Input
+            value={zipCode}
+            onChange={(e) => setZipCode(e.target.value)}
+            disabled={updating}
+            placeholder="Enter zip code"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Address</Label>
+        <Input
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          disabled={updating}
+          placeholder="Enter full address"
+        />
       </div>
 
       <div className="space-y-2">
