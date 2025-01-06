@@ -1,0 +1,288 @@
+/* Grid Component Styles */
+.Goodup-grid-wrap {
+    position: relative;
+    width: 100%;
+    margin-bottom: 30px;
+    border-radius: 6px;
+    overflow: hidden;
+    background:#ffffff;
+}
+.Goodup-grid-fl-wrap {
+    float: left;
+    width: 100%;
+    position: relative;
+    border: 1px solid #eeeeee;
+    border-radius: 0 0 6px 6px;
+    overflow: initial;
+}
+.Goodup-grid-upper {
+    position: relative;
+    width: 100%;
+    display: block;
+}
+.Goodup-grid-thumb a {
+    display: block;
+    position: relative;
+}
+.Goodup-grid-thumb a img {
+    position: relative;
+    display: block;
+    width: 100%;
+}
+.Goodup-grid-thumb a:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+	opacity:0.3;
+    background:#202838;
+    z-index:1;
+}
+.Goodup-author {
+    position: absolute;
+    right: 10px;
+    top: -30px;
+    width: 55px;
+    height: 55px;
+    object-fit: cover;
+    border: 4px solid #ffffff;
+    border-radius: 50%;
+    z-index: 2;
+}
+.Goodup-author a{
+    display:block;
+	position:relative;
+}
+.Goodup-cates a {
+    font-size: 11px;
+    color: #f41b3b;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-right: 5px;
+}
+.Goodup-caption {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.Goodup-middle-caption div {
+    font-size: 14px;
+    margin-bottom:10px;
+    color: #6c717e;
+}
+.Goodup-middle-caption div i{
+    margin-right:7px;
+	opacity:0.8;
+}
+.Goodup-grid-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px dashed #eeeeee;
+}
+.Goodup-bookmark-btn {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+	z-index:2;
+}
+.Goodup-bookmark-btn button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+    border: none;
+    color: #ffffff;
+    background: rgba(255,255,255,0.2);
+    cursor: pointer;
+}
+.Goodup-pos {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+	z-index:2;
+}
+.Goodup-featured-tag {
+    position:relative;
+    z-index: 3;
+    background:#f41b3b;
+	letter-spacing: 0.5px;
+    padding:4px 12px;
+	font-weight:500;
+	text-transform:uppercase;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    font-size: 11px;
+    color: #fff;
+    -webkit-transform: translate3d(0,0,0);
+}
+.Goodup-featured-tag:before {
+    border-top: 14px solid #f41b3b;
+    border-right: 14px solid transparent;
+    margin-right: -12px;
+    margin-top: -4px;
+}
+.Goodup-featured-tag:after {
+    border-bottom: 14px solid #f41b3b;
+    border-right: 14px solid transparent;
+    margin-right: -12px;
+    margin-top:7px;
+}
+.Goodup-featured-tag:before, .Goodup-featured-tag:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    right: 0;
+}
+.Goodup-status {
+    font-size: 11px;
+    font-weight: 500;
+    color: #ffffff;
+    background: #282525;
+    padding:4px 12px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.Goodup-status.open {
+    background: #8bc34a;
+}
+.Goodup-status.close{
+    background:#1683f4;
+}
+.Goodup-status.offer {
+    background: #ff5018;
+}
+span.verified-badge {
+    margin-left: 5px;
+    position: relative;
+    top: 2px;
+    color: #0fb351;
+}
+.Goodup-ft-first {
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    position: relative;
+}
+.Goodup-rating {
+    display: inline-flex;
+    position: relative;
+    margin-right: 10px;
+	align-items: center;
+}
+.Goodup-pr-average {
+    padding: 2px 8px;
+    background: #323232;
+    display: inline-flex;
+    margin-right: 4px;
+    border-radius: 2px;
+	font-weight:500;
+	color:#ffffff;
+}
+.Goodup-rates {
+    font-size:9px;
+    color: #ff9800;
+}
+.Goodup-price-range {
+    font-size: 12px;
+    color: #989bb1;
+}
+.Goodup-price-range .active{
+    color:#41434c;
+}
+.Goodup-pr-average.high {
+    background:#07a262;
+}
+.Goodup-pr-average.mid {
+    background:#ff6e19;
+}
+.Goodup-pr-average.poor {
+    background:#f22b2b;
+}
+.Goodup-rating.overlay {
+    position: absolute;
+    left: 10px;
+    bottom: 15px;
+    z-index: 2;
+}
+.Goodup-rating.overlay .Goodup-pr-average {
+    padding: 7px 10px;
+	border-radius:4px;
+}
+.Goodup-rating.overlay .Goodup-rates {
+    font-size: 10px;
+    color: #ff9d0c;
+    letter-spacing: 1px;
+}
+.Goodup-aldeio {
+    display: inline-block;
+    margin-left: 5px;
+}
+.Goodup-all-review {
+    line-height:1.4;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+}
+.Goodup-cats-wrap {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+}
+.Goodup-cats-wrap .cats-ico {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    border-radius: 50%;
+    background: #323232;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 12px;
+	margin-right:5px;
+}
+.Goodup-cats-wrap .cats-title {
+    font-size: 13px;
+    font-weight: 500;
+}
+.Goodup-inline .Goodup-bookmark-btn {
+    position: relative;
+    margin-left:8px;
+	display:inline-block;
+	right:0;
+	top:0;
+}
+.Goodup-inline .Goodup-bookmark-btn button {
+    background:#ffffff;
+	border:1px solid #eeeeee;
+    color: #707d9b;
+}
+.Goodup-ft-last, .Goodup-inline {
+    display: inline-flex;
+}
+.Goodup-cates.multi .cats-1 {
+    padding: 2px 7px;
+    background: rgba(33, 150, 243,0.13);
+    border-radius: 2px;
+    color: #2196f3;
+}
+.Goodup-cates.multi .cats-2 {
+    padding: 2px 7px;
+    background: rgba(255, 87, 34,0.13);
+    border-radius: 2px;
+    color: #ff5722;
+}
+.Goodup-cates.multi a {
+    padding: 2px 7px;
+    background: #f0f2f7;
+    border-radius: 2px;
+    color: #6d7691;
+}

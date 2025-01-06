@@ -1,0 +1,87 @@
+/* Job List Styles */
+._jb_list72 {
+    background: #ffffff;
+    border-radius: 6px;
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 30px;
+    padding: 1rem 0.7rem;
+    position: relative;
+    overflow: hidden;
+    border:1px solid #e9ebf5;
+}
+.jobs-like.bookmark {
+    position: absolute;
+    left: auto;
+    right: 20px;
+    top: 15px;
+}
+.toggler {
+    color: #dadeef;
+    cursor: pointer;
+    font-size: 20px;
+    margin-bottom: 0;
+    line-height: 1;
+}
+.toggler [type=checkbox]:checked, .toggler [type=checkbox]:not(:checked) {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+}
+.jobs-like.bookmark .toggler input:checked + i {
+    color: #ff9800;
+}
+._jb_list72_flex {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    position: static;
+}
+._jb_list72_yhumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    margin-right: 0px;
+    margin-bottom: 10px;
+}
+._jb_list72_last {
+    padding-left: 12px;
+}
+._jb_list72_last ._jb_title {
+    font-size: 15px;
+    line-height: 1.2;
+    font-weight: 600;
+    margin: 0;
+}
+._times_jb {
+    font-size: 12px;
+    color: #5c75a2;
+    font-weight:500;
+}
+._jb_types {
+    font-size: 12px;
+    font-weight: 600;
+    background: #f4f5f7;
+    display: inline-flex;
+    padding: 0px 13px;
+    height: 25px;
+    align-items: center;
+    justify-content: center;
+    margin-top:8px;
+    border-radius: 3px;
+}
+._jb_types.fulltime_lite {
+    background: rgba(51, 187, 56,0.1);
+    color: #33bb38;
+}
+._jb_types.parttime_lite {
+    background: rgba(255, 152, 0,0.1);
+    color:#ff9800;
+}
+._jb_types.internship_lite {
+    background: rgba(4, 158, 230,0.1);
+    color:#049ee6;
+}

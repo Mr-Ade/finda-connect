@@ -1,0 +1,256 @@
+/* Search Component Styles */
+.main-search-button .btn {
+    position: absolute;
+    right: 0px;
+    height:70px;
+    width:120px;
+    color: #fff;
+    top: 0;
+    border: none;
+    border-radius: 0 6px 6px 0;
+    cursor: pointer;
+    display:inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-search-button .btn i{
+    margin-left:5px;
+}
+.main-search-item .radius{
+    border-radius: 6px 0 0 6px;
+}
+.main-search-item .form-control {
+    box-shadow: none;
+    border: none;
+    height:70px !important;
+}
+span.search-tag {
+    padding-left: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #1d1f22;
+}
+span.search-tag i {
+    color: #b7bdc5;
+    font-size: 20px;
+    position: relative;
+    top: 2px;
+}
+.Goodup-search-shadow {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 8px 16px rgb(146 152 198 / 8%);
+    -webkit-box-shadow: 0 8px 16px rgb(146 152 198 / 8%);
+    padding:2rem;
+    margin-top:-60px;
+    z-index:22;
+}
+.Goodup-search-shadow .main-search-wrap{
+    margin:0;
+    border:1px solid #eee;
+}
+.Goodup-top-cates {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.Goodup-top-cates ul {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    position: relative;
+}
+.Goodup-top-cates ul li {
+    display: inline-block;
+    padding: 0.5rem;
+    list-style: none;
+}
+.Goodup-top-cates ul li a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+    width:110px;
+    height:100px;
+    border-radius: 6px;
+    transition: all ease 0.4s;
+}
+.Goodup-top-cates ul li a .Goodup-tp-ico {
+    font-size: 25px;
+    color: #ffffff;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+.Goodup-top-cates ul li a .Goodup-tp-title h5 {
+    font-size: 13px;
+    margin: 0;
+    letter-spacing: 0.2px;
+}
+.Goodup-top-cates ul li a:hover, .Goodup-top-cates ul li a:focus, .Goodup-top-cates ul li a:active {
+    background: #ffffff;
+}
+.Goodup-top-cates ul li a:hover .Goodup-tp-title h5, .Goodup-top-cates ul li a:focus .Goodup-tp-title h5, .Goodup-top-cates ul li a:active .Goodup-tp-title h5{
+   color:#353535;
+}
+.Goodup-top-cates ul li a:hover .Goodup-tp-ico, .Goodup-top-cates ul li a:focus .Goodup-tp-ico, .Goodup-top-cates ul li a:active .Goodup-tp-ico{
+    color:#f41b3b;
+}
+.Goodup-counter {
+    position: relative;
+    width: 100%;
+}
+.Goodup-counter ul {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.Goodup-counter ul li {
+    display: block;
+    list-style: none;
+    margin: 2rem 0;
+}
+.Goodup-counter ul li .Goodup-ylp-first h3 {
+    font-size: 35px;
+    font-weight: 600;
+    margin: 0 0 5px;
+}
+.Goodup-counter ul li .Goodup-ylp-last span {
+    font-size: 13px;
+    font-weight: 500;
+}
+.Goodup-counter ul li .Goodup-ylp-first h3 span {
+    margin-right:2px;
+}
+.Goodup-bnr-cats {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    padding-top:3rem;
+}
+.Goodup-bnr-cats ul {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+.Goodup-bnr-cats ul li {
+    display: inline-block;
+    padding: 5px;
+    list-style: none;
+    position: relative;
+}
+.Goodup-bnr-cats ul li a {
+    padding: 4px 10px;
+    color: #ffffff;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    font-weight: 500;
+    font-size: 12px;
+    text-transform: capitalize;
+    transition: all ease 0.4s;
+}
+.Goodup-bnr-cats ul li a:hover, .Goodup-bnr-cats ul li a:focus, .Goodup-bnr-cats ul li a:active{
+    color:#F41b3b;
+    background:#ffffff;
+}
+.Goodup-over-cats-sty {
+    display: flex;
+    align-items: self-start;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 100%;
+    padding-top:2.5rem;
+}
+.Goodup-over-cats-sty ul{
+    display: -webkit-flex;
+    display: flex;
+    overflow: hidden;
+    margin:1rem 0 0 0;
+    padding:0;
+    padding-right:20px;
+}
+.Goodup-over-cats-sty ul li{
+    display:inline-block;
+    list-style:none;
+}
+.Goodup-over-cats-sty li a {
+    height: 45px;
+    width: 45px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 60px;
+    margin-right: -15px;
+    background: #252525;
+    color: #ffffff;
+    transition:all ease 0.4s;
+}
+.Goodup-over-cats-sty li a.bg-1 {
+    background:#f44336;
+}
+.Goodup-over-cats-sty li a.bg-2{
+    background:#03a9f4;
+}
+.Goodup-over-cats-sty li a.bg-3 {
+    background:#8bc34a;
+}
+.Goodup-over-cats-sty li a.bg-4 {
+    background:#ff9800;
+}
+.Goodup-over-cats-sty li a.bg-5 {
+    background:#9558da;
+}
+.Goodup-over-cats-sty li a.bg-6 {
+    background:#795548;
+}
+.Goodup-over-cats-sty li a.bg-7 {
+    background:#607d8b;
+}
+.Goodup-over-cats-sty li a.bg-more{
+    background:#009688;
+}
+.Goodup-over-cats-sty li a:hover, .Goodup-over-cats-sty li a:focus, .Goodup-over-cats-sty li a:active {
+    margin:0;
+}
+.nav-menus-wrapper .fl-wrap {
+    float: left;
+    width: auto;
+    position: relative;
+    margin:8px 0;
+    border: 1px solid #e9ebf1;
+}
+.nav-menus-wrapper span.search-tag {
+    font-size: 12px;
+    font-weight: 500;
+}
+.nav-menus-wrapper .main-search-item {
+    height:46px;
+}
+.nav-menus-wrapper .main-search-item .form-control {
+    box-shadow: none;
+    border: none;
+    font-size: 14px;
+    height:46px !important;
+}
+.nav-menus-wrapper .main-search-button .btn {
+    height: 40px;
+    width: auto;
+    padding: 0 10px;
+    margin: 3px;
+    border-radius: 5px;
+}
