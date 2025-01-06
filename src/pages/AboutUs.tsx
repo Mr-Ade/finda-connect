@@ -1,47 +1,70 @@
 import { Link } from "react-router-dom";
 import { Newsletter } from "@/components/home/Newsletter";
-import { Footer } from "@/components/Footer";
 
 const teamMembers = [
   {
     name: "James R. Smith",
     role: "Project Manager",
     image: "/team/t-1.png",
-    isNew: true
+    isNew: true,
+    socialLinks: {
+      facebook: "#",
+      twitter: "#",
+      instagram: "#",
+      linkedin: "#"
+    }
   },
   {
     name: "Howard L. Gallegos",
     role: "Team Leader",
-    image: "/team/t-2.png"
+    image: "/team/t-2.png",
+    socialLinks: {
+      facebook: "#",
+      twitter: "#",
+      instagram: "#",
+      linkedin: "#"
+    }
   },
   {
     name: "Patricia C. Foshee",
     role: "UI/UX Designer",
     image: "/team/t-3.png",
-    isPopular: true
+    isPopular: true,
+    socialLinks: {
+      facebook: "#",
+      twitter: "#",
+      instagram: "#",
+      linkedin: "#"
+    }
   },
   {
     name: "Helen A. Robbins",
     role: "Web Developer",
-    image: "/team/t-4.png"
+    image: "/team/t-4.png",
+    socialLinks: {
+      facebook: "#",
+      twitter: "#",
+      instagram: "#",
+      linkedin: "#"
+    }
   }
 ];
 
 const workingSteps = [
   {
-    icon: <i className="ti-map-alt text-success" />,
+    icon: "🔍",
     title: "Find Interesting Place",
-    description: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti"
+    description: "Browse through our curated list of high-quality businesses and discover your next favorite spot."
   },
   {
-    icon: <i className="ti-user theme-cl" />,
+    icon: "👥",
     title: "Contact A Few Owners",
-    description: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti"
+    description: "Connect directly with business owners to get detailed information and special offers."
   },
   {
-    icon: <i className="ti-shield text-sky" />,
+    icon: "📅",
     title: "Make A Reservation",
-    description: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti"
+    description: "Book your spot quickly and easily with our streamlined reservation system."
   }
 ];
 
@@ -86,17 +109,19 @@ const AboutUs = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-16">
+      <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h6 className="text-primary font-medium mb-2">Working Process</h6>
-            <h2 className="text-3xl font-bold">How It Working</h2>
+            <h2 className="text-3xl font-bold text-center mb-4">How It Working</h2>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {workingSteps.map((step, index) => (
-              <div key={index} className="p-6 rounded-lg hover:shadow-lg transition-shadow">
-                <div className="mb-4">{step.icon}</div>
+              <div key={index} className="bg-white p-8 rounded-lg text-center hover:shadow-lg transition-shadow duration-300">
+                <div className="w-16 h-16 mx-auto mb-6 flex items-center justify-center text-3xl bg-primary/10 rounded-full">
+                  {step.icon}
+                </div>
                 <h4 className="text-xl font-semibold mb-3">{step.title}</h4>
                 <p className="text-gray-600">{step.description}</p>
               </div>
@@ -106,35 +131,42 @@ const AboutUs = () => {
       </section>
 
       {/* Team Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h6 className="text-primary font-medium mb-2">Our Team</h6>
-            <h2 className="text-3xl font-bold">Finda Expert Team</h2>
+            <h2 className="text-3xl font-bold">Goodup Expert team</h2>
           </div>
 
           <div className="grid md:grid-cols-4 gap-6">
             {teamMembers.map((member, index) => (
-              <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                {(member.isNew || member.isPopular) && (
-                  <div className={`px-3 py-1 text-sm text-white ${member.isNew ? 'bg-primary' : 'bg-yellow-500'} absolute`}>
-                    {member.isNew ? 'New' : 'Popular'}
-                  </div>
-                )}
-                <div className="p-4">
+              <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow text-center group">
+                <div className="relative">
+                  {(member.isNew || member.isPopular) && (
+                    <div className={`absolute top-4 left-4 px-3 py-1 text-sm text-white ${member.isNew ? 'bg-primary' : 'bg-yellow-500'} rounded`}>
+                      {member.isNew ? 'New' : 'Popular'}
+                    </div>
+                  )}
                   <img 
                     src={member.image} 
                     alt={member.name}
-                    className="w-24 h-24 rounded-full mx-auto mb-4"
+                    className="w-full h-64 object-cover"
                   />
-                  <h4 className="text-lg font-semibold text-center mb-1">{member.name}</h4>
-                  <p className="text-gray-600 text-center mb-4">{member.role}</p>
-                  <div className="flex justify-center space-x-3">
-                    <a href="#" className="text-gray-400 hover:text-primary"><i className="fab fa-facebook" /></a>
-                    <a href="#" className="text-gray-400 hover:text-primary"><i className="fab fa-twitter" /></a>
-                    <a href="#" className="text-gray-400 hover:text-primary"><i className="fab fa-instagram" /></a>
-                    <a href="#" className="text-gray-400 hover:text-primary"><i className="fab fa-linkedin" /></a>
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-4">
+                    {Object.entries(member.socialLinks).map(([platform, link]) => (
+                      <a 
+                        key={platform} 
+                        href={link}
+                        className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-gray-800 hover:bg-primary hover:text-white transition-colors"
+                      >
+                        <i className={`fab fa-${platform}`}></i>
+                      </a>
+                    ))}
                   </div>
+                </div>
+                <div className="p-6">
+                  <h4 className="text-lg font-semibold mb-1">{member.name}</h4>
+                  <p className="text-gray-600">{member.role}</p>
                 </div>
               </div>
             ))}
