@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,13 +7,37 @@ import { Map } from "@/components/Map";
 import { Link } from "react-router-dom";
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    mobile: "",
+    subject: "",
+    message: ""
+  });
+
   const { toast } = useToast();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Here you would typically send the data to your backend
     toast({
       title: "Message sent",
       description: "We'll get back to you as soon as possible.",
+    });
+    setFormData({
+      name: "",
+      email: "",
+      mobile: "",
+      subject: "",
+      message: ""
     });
   };
 
@@ -31,18 +56,49 @@ const Contact = () => {
           <div>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <Input placeholder="Your Name" required />
+                <Input 
+                  placeholder="Your Name" 
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required 
+                />
               </div>
               <div>
-                <Input type="email" placeholder="Email Address" required />
+                <Input 
+                  type="email" 
+                  placeholder="Email Address" 
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required 
+                />
               </div>
               <div>
-                <Input placeholder="Subject" required />
+                <Input 
+                  placeholder="Mobile Number"
+                  name="mobile"
+                  value={formData.mobile}
+                  onChange={handleChange}
+                  required 
+                />
+              </div>
+              <div>
+                <Input 
+                  placeholder="Subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required 
+                />
               </div>
               <div>
                 <Textarea
                   placeholder="Your Message"
                   className="min-h-[150px]"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
                   required
                 />
               </div>
