@@ -5,7 +5,7 @@ import { BusinessHeader } from "@/components/business/BusinessHeader";
 import { BusinessGallery } from "@/components/business/BusinessGallery";
 import { BusinessMainContent } from "@/components/business/details/BusinessMainContent";
 import { BusinessRightSidebar } from "@/components/business/details/BusinessRightSidebar";
-import type { Business } from "@/types/business";
+import type { Business, Review } from "@/types/business";
 import { useToast } from "@/hooks/use-toast";
 
 const BusinessDetails = () => {
@@ -71,26 +71,17 @@ const BusinessDetails = () => {
         throw error;
       }
 
-      // Ensure business_photos has order_index
-      if (data?.business_photos) {
-        data.business_photos = data.business_photos.map((photo, index) => ({
-          ...photo,
-          order_index: photo.order_index || index
-        }));
-      }
-
-      // Ensure review_responses and review_photos are always arrays
-      if (data?.reviews) {
-        data.reviews = data.reviews.map(review => ({
+      // Transform the data to match our Business type
+      const transformedData: Business = {
+        ...data,
+        reviews: data.reviews?.map((review: any) => ({
           ...review,
-          review_responses: review.review_responses ? 
-            (Array.isArray(review.review_responses) ? review.review_responses : [review.review_responses]) 
-            : [],
+          review_responses: Array.isArray(review.review_responses) ? review.review_responses : [],
           review_photos: review.review_photos || []
-        }));
-      }
+        })) as Review[]
+      };
 
-      return data as Business;
+      return transformedData;
     },
     retry: 2,
     retryDelay: 1000

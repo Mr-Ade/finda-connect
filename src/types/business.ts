@@ -45,6 +45,26 @@ export interface BusinessFormData {
   }[];
 }
 
+export interface Review {
+  id: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+  profiles: {
+    username: string;
+    avatar_url: string;
+  };
+  review_responses?: Array<{
+    id: string;
+    response_text: string;
+    created_at: string;
+  }>;
+  review_photos?: Array<{
+    id: string;
+    photo_url: string;
+  }>;
+}
+
 export interface Business {
   id: string;
   owner_id?: string;
@@ -87,25 +107,7 @@ export interface Business {
     is_closed: boolean;
   }>;
   
-  reviews?: Array<{
-    id: string;
-    rating: number;
-    comment: string;
-    created_at: string;
-    profiles: {
-      username: string;
-      avatar_url: string;
-    };
-    review_responses?: Array<{
-      id: string;
-      response_text: string;
-      created_at: string;
-    }>;
-    review_photos?: Array<{
-      id: string;
-      photo_url: string;
-    }>;
-  }>;
+  reviews?: Review[];
   
   owner?: {
     username?: string;
