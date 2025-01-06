@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import Goodup styles */
-@import './styles/goodup.css';
-
 @layer base {
   :root {
     --background: 0 0% 100%;

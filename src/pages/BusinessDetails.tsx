@@ -13,7 +13,6 @@ const BusinessDetails = () => {
   const { data: business, isLoading } = useQuery({
     queryKey: ['business', id],
     queryFn: async () => {
-      console.log("Fetching business data for ID:", id);
       const { data, error } = await supabase
         .from('businesses')
         .select(`
@@ -39,48 +38,36 @@ const BusinessDetails = () => {
         .eq('id', id)
         .single();
 
-      if (error) {
-        console.error("Error fetching business:", error);
-        throw error;
-      }
-      
-      console.log("Fetched business data:", data);
+      if (error) throw error;
       return data as unknown as Business;
-    },
-    enabled: !!id
+    }
   });
 
   if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return <div>Loading...</div>;
   }
 
   if (!business) {
-    return <div className="flex items-center justify-center min-h-screen">Business not found</div>;
+    return <div>Business not found</div>;
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Featured Gallery Section */}
-      <div className="featured-slick relative">
-        <BusinessGallery photos={business.business_photos || []} />
-        <BusinessHeader 
-          business={{
-            name: business.name,
-            description: business.description || "",
-            category: business.category,
-            reviews_count: business.reviews?.length,
-            rating: business.reviews?.reduce((acc, review) => acc + review.rating, 0) / (business.reviews?.length || 1),
-            is_claimed: true,
-            is_open: true,
-            opening_time: "11:00 AM",
-            closing_time: "12:00 AM"
-          }}
-        />
-      </div>
+    <div>
+      <BusinessHeader 
+        business={{
+          name: business.name,
+          description: business.description || "",
+          category: business.category,
+          reviews_count: business.reviews?.length,
+          rating: business.reviews?.reduce((acc, review) => acc + review.rating, 0) / (business.reviews?.length || 1),
+          is_claimed: true,
+          is_open: true
+        }}
+      />
+      <BusinessGallery photos={business.business_photos || []} />
 
-      {/* Main Content Section */}
-      <section className="bg-gray-100 py-5 relative">
-        <div className="container mx-auto px-4">
+      <section className="gray py-5 position-relative">
+        <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-8">
               <BusinessMainContent business={business} />
