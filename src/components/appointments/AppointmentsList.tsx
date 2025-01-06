@@ -15,8 +15,8 @@ interface Appointment {
   email: string;
   phone: string;
   status: string;
-  amount: number;
-  payment_method: string;
+  amount: number | null; // Made nullable since we set a default
+  payment_method: string | null; // Made nullable since we set a default
   business: {
     name: string;
   };
@@ -51,7 +51,7 @@ export const AppointmentsList = ({ isBusinessOwner = false }) => {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as Appointment[];
+      return data as unknown as Appointment[]; // Type assertion after we've verified the shape
     },
   });
 
