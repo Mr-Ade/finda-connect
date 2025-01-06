@@ -35,14 +35,29 @@ serve(async (req) => {
     console.log('Geocoding response:', data)
 
     if (data.status === 'REQUEST_DENIED') {
+      console.error('Geocoding request denied:', data.error_message)
       return new Response(
         JSON.stringify({
           error: 'Geocoding request denied',
-          details: data.error_message
+          details: data.error_message || 'Please check if the Geocoding API is enabled in your Google Cloud Console'
         }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 403
+        }
+      )
+    }
+
+    if (data.status !== 'OK') {
+      console.error('Geocoding error:', data.status, data.error_message)
+      return new Response(
+        JSON.stringify({
+          error: 'Geocoding failed',
+          details: data.error_message || `Status: ${data.status}`
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400
         }
       )
     }
