@@ -57,26 +57,38 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
           const { latitude, longitude } = position.coords;
           console.log("Got coordinates:", latitude, longitude);
           
-          const response = await fetch(
-            `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=155e6c1220b94de0a87f628b659b430b&countrycode=ng`
-          );
-          
-          if (!response.ok) {
-            throw new Error('Geocoding API request failed');
+          // Use our Edge Function instead of direct API call
+          const { data, error } = await supabase.functions.invoke('geocode', {
+            body: { latitude, longitude }
+          });
+
+          if (error) {
+            throw error;
           }
 
-          const data = await response.json();
           console.log("Geocoding response:", data);
 
           if (data.results && data.results[0]) {
-            const result = data.results[0].components;
-            console.log("Location components:", result);
+            const addressComponents = data.results[0].address_components;
+            let city = '', state = '';
+
+            // Parse Google Maps response
+            for (const component of addressComponents) {
+              if (component.types.includes('locality')) {
+                city = component.long_name;
+              }
+              if (component.types.includes('administrative_area_level_1')) {
+                state = component.long_name;
+              }
+            }
+
+            console.log("Location components:", { city, state });
             
-            if (result.country === "Nigeria") {
+            if (data.results[0].formatted_address.includes("Nigeria")) {
               setLocationData(prev => ({
                 ...prev,
-                state: result.state || "",
-                city: result.city || "",
+                state: state || "",
+                city: city || "",
                 coordinates: {
                   latitude,
                   longitude,
@@ -92,8 +104,8 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
                     location_data: {
                       latitude,
                       longitude,
-                      state: result.state,
-                      city: result.city,
+                      state,
+                      city,
                     }
                   })
                   .eq('id', session.user.id);
