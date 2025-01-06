@@ -19,6 +19,12 @@
 @import url(components/forms.css);
 @import url(components/switch.css);
 @import url(components/text.css);
+@import url(components/navigation.css);
+@import url(components/header.css);
+@import url(components/banner.css);
+
+/* Using Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&amp;display=swap');
 
 /* Button styles */
 .prd_btn_square:hover, .prd_btn_square:focus{
@@ -401,3 +407,4 @@ button.close {
 .text-gray{
 	color:#e3ecfc;
 }
+
