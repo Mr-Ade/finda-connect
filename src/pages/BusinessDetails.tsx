@@ -1,11 +1,9 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { BusinessHeader } from "@/components/business/BusinessHeader";
-import { BusinessGallery } from "@/components/business/BusinessGallery";
-import { BusinessMainContent } from "@/components/business/details/BusinessMainContent";
-import { BusinessRightSidebar } from "@/components/business/details/BusinessRightSidebar";
-import type { Business } from "@/types/business";
+import BusinessHeader from "@/components/business/BusinessHeader";
+import BusinessMainContent from "@/components/business/details/BusinessMainContent";
+import BusinessSidebar from "@/components/business/BusinessSidebar";
 
 const BusinessDetails = () => {
   const { id } = useParams();
@@ -13,6 +11,10 @@ const BusinessDetails = () => {
   const { data: business, isLoading } = useQuery({
     queryKey: ['business', id],
     queryFn: async () => {
+      console.log('Fetching business with ID:', id); // Debug log
+      
+      if (!id) throw new Error('Business ID is required');
+
       const { data, error } = await supabase
         .from('businesses')
         .select(`
@@ -25,9 +27,19 @@ const BusinessDetails = () => {
             rating,
             comment,
             created_at,
-            profiles:user_id(username, avatar_url),
-            review_responses(id, response_text, created_at),
-            review_photos(id, photo_url)
+            profiles:user_id(
+              username,
+              avatar_url
+            ),
+            review_responses(
+              id,
+              response_text,
+              created_at
+            ),
+            review_photos(
+              id,
+              photo_url
+            )
           ),
           owner:owner_id(
             username,
@@ -38,9 +50,14 @@ const BusinessDetails = () => {
         .eq('id', id)
         .single();
 
-      if (error) throw error;
-      return data as unknown as Business;
-    }
+      if (error) {
+        console.error('Error fetching business:', error); // Debug log
+        throw error;
+      }
+
+      return data;
+    },
+    enabled: !!id
   });
 
   if (isLoading) {
@@ -52,32 +69,20 @@ const BusinessDetails = () => {
   }
 
   return (
-    <div>
-      <BusinessHeader 
-        business={{
-          name: business.name,
-          description: business.description || "",
-          category: business.category,
-          reviews_count: business.reviews?.length,
-          rating: business.reviews?.reduce((acc, review) => acc + review.rating, 0) / (business.reviews?.length || 1),
-          is_claimed: true,
-          is_open: true
-        }}
-      />
-      <BusinessGallery photos={business.business_photos || []} />
-
-      <section className="gray py-5 position-relative">
-        <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-8">
-              <BusinessMainContent business={business} />
-            </div>
-            <div className="lg:col-span-4 relative z-10">
-              <BusinessRightSidebar business={business} />
-            </div>
-          </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-12">
+          <BusinessHeader business={business} />
         </div>
-      </section>
+        
+        <div className="lg:col-span-8">
+          <BusinessMainContent business={business} />
+        </div>
+        
+        <div className="lg:col-span-4">
+          <BusinessSidebar business={business} />
+        </div>
+      </div>
     </div>
   );
 };
