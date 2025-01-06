@@ -28,9 +28,15 @@ export const BusinessMainContent = ({ business }: BusinessMainContentProps) => {
     }
   ];
 
+  // Create a safe business object with required fields defaulted
+  const safeBusiness = {
+    ...business,
+    description: business.description || "",
+  };
+
   return (
     <div className="space-y-6">
-      <BusinessInfo business={business} isOwner={false} />
+      <BusinessInfo business={safeBusiness} isOwner={false} />
       
       <div className="mb-4">
         <MenuItems businessId={business.id} />

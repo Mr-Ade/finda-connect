@@ -20,7 +20,8 @@ const BusinessDetails = () => {
           business_photos (
             id,
             photo_url,
-            caption
+            caption,
+            order_index
           ),
           business_hours (
             id,
@@ -56,6 +57,14 @@ const BusinessDetails = () => {
       if (error) {
         console.error('Error fetching business:', error);
         throw error;
+      }
+
+      // Ensure business_photos has order_index
+      if (data && data.business_photos) {
+        data.business_photos = data.business_photos.map((photo, index) => ({
+          ...photo,
+          order_index: photo.order_index || index
+        }));
       }
 
       return data;

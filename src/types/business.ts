@@ -50,7 +50,7 @@ export interface Business {
   id: string;
   owner_id?: string;
   name: string;
-  description?: string;
+  description?: string; // Made optional to match database
   category: string;
   address: string;
   city: string;
