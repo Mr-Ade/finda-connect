@@ -44,7 +44,7 @@ const BusinessDetails = () => {
   });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="preloader"></div>;
   }
 
   if (!business) {
@@ -52,7 +52,13 @@ const BusinessDetails = () => {
   }
 
   return (
-    <div>
+    <div id="main-wrapper">
+      {/* Featured Gallery */}
+      <div className="featured-slick">
+        <BusinessGallery photos={business.business_photos || []} />
+      </div>
+
+      {/* Business Header */}
       <BusinessHeader 
         business={{
           name: business.name,
@@ -61,18 +67,20 @@ const BusinessDetails = () => {
           reviews_count: business.reviews?.length,
           rating: business.reviews?.reduce((acc, review) => acc + review.rating, 0) / (business.reviews?.length || 1),
           is_claimed: true,
-          is_open: true
+          is_open: true,
+          opening_time: business.business_hours?.[0]?.open_time,
+          closing_time: business.business_hours?.[0]?.close_time
         }}
       />
-      <BusinessGallery photos={business.business_photos || []} />
 
+      {/* Main Content */}
       <section className="gray py-5 position-relative">
         <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-8">
+          <div className="row">
+            <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12">
               <BusinessMainContent business={business} />
             </div>
-            <div className="lg:col-span-4 relative z-10">
+            <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12">
               <BusinessRightSidebar business={business} />
             </div>
           </div>
