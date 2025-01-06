@@ -34,7 +34,7 @@ const Appointments = () => {
         </nav>
       </div>
 
-      <AppointmentsList isBusinessOwner={profile?.business_owner} />
+      <AppointmentsList isBusinessOwner={profile?.business_owner || false} />
     </DashboardLayout>
   );
 };

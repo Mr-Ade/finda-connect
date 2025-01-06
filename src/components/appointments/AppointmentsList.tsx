@@ -25,12 +25,17 @@ interface Appointment {
   status: string;
   amount: number | null;
   payment_method: string | null;
+  created_at: string;
   business: {
     name: string;
   };
 }
 
-export const AppointmentsList = () => {
+interface AppointmentsListProps {
+  isBusinessOwner?: boolean;
+}
+
+export const AppointmentsList = ({ isBusinessOwner }: AppointmentsListProps) => {
   const { toast } = useToast();
 
   const { data: appointments, isLoading, error } = useQuery({
