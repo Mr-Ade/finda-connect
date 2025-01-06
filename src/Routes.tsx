@@ -10,6 +10,7 @@ import Listings from "@/pages/dashboard/Listings";
 import Messages from "@/pages/dashboard/Messages";
 import Wallet from "@/pages/dashboard/Wallet";
 import SavedListings from "@/pages/dashboard/SavedListings";
+import Profile from "@/pages/dashboard/Profile";
 import NotFound from "@/pages/404";
 import AuthorDetail from "@/pages/AuthorDetail";
 import ExploreListings from "@/pages/ExploreListings";
@@ -31,6 +32,7 @@ const Routes = () => {
       <Route path="/dashboard/messages" element={<Messages />} />
       <Route path="/dashboard/wallet" element={<Wallet />} />
       <Route path="/dashboard/saved-listings" element={<SavedListings />} />
+      <Route path="/dashboard/profile" element={<Profile />} />
       <Route path="/author/:username" element={<AuthorDetail />} />
       <Route path="/explore-listings" element={<ExploreListings />} />
       <Route path="/business/:id" element={<BusinessDetails />} />
