@@ -1,12 +1,27 @@
+import { useState } from "react";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Newsletter } from "@/components/home/Newsletter";
 import { Footer } from "@/components/Footer";
+import { CategoryCard } from "@/components/home/CategoryCard";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
+import { INITIAL_CATEGORIES, ADDITIONAL_CATEGORIES } from "@/components/home/CategoryData";
 
 const BrowseCategories = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showAll, setShowAll] = useState(false);
+
   const breadcrumbItems = [
     { label: "Home", href: "/" },
     { label: "Browse Categories", href: "#", active: true },
   ];
+
+  const allCategories = [...INITIAL_CATEGORIES, ...ADDITIONAL_CATEGORIES];
+  const displayedCategories = showAll ? allCategories : INITIAL_CATEGORIES;
+
+  const filteredCategories = displayedCategories.filter(category =>
+    category.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -18,11 +33,48 @@ const BrowseCategories = () => {
 
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-8 text-center">Browse Categories</h1>
-          <p className="text-gray-600 text-center mb-8">
-            Explore our comprehensive list of business categories
-          </p>
-          {/* Add categories grid here */}
+          <div className="max-w-3xl mx-auto text-center mb-12">
+            <h1 className="text-4xl font-bold mb-4">Browse Categories</h1>
+            <p className="text-gray-600 mb-8">
+              Explore our comprehensive list of business categories to find exactly what you're looking for
+            </p>
+            <div className="relative max-w-xl mx-auto">
+              <Input
+                type="text"
+                placeholder="Search categories..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12"
+              />
+              <Search className="absolute left-4 top-3 h-5 w-5 text-gray-400" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredCategories.map((category, index) => (
+              <CategoryCard
+                key={index}
+                name={category.name}
+                Icon={category.icon}
+                count={category.count}
+                onClick={() => {
+                  // Navigate to category page
+                  window.location.href = `/search?category=${encodeURIComponent(category.name)}`;
+                }}
+              />
+            ))}
+          </div>
+
+          {!showAll && ADDITIONAL_CATEGORIES.length > 0 && (
+            <div className="text-center mt-12">
+              <button
+                onClick={() => setShowAll(true)}
+                className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+              >
+                Show More Categories
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
