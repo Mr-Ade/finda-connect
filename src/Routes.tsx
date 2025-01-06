@@ -22,6 +22,9 @@ import Signup from "@/pages/Signup";
 import AboutUs from "@/pages/AboutUs";
 import Pricing from "@/pages/Pricing";
 import Privacy from "@/pages/Privacy";
+import WhoWeAre from "@/pages/WhoWeAre";
+import OurMission from "@/pages/OurMission";
+import OurTeam from "@/pages/OurTeam";
 
 const Routes = () => {
   return (
@@ -32,6 +35,9 @@ const Routes = () => {
       <Route path="/contact" element={<Contact />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/about-us" element={<AboutUs />} />
+      <Route path="/who-we-are" element={<WhoWeAre />} />
+      <Route path="/our-mission" element={<OurMission />} />
+      <Route path="/our-team" element={<OurTeam />} />
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/dashboard" element={<Dashboard />} />
