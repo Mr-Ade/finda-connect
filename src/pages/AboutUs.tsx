@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
-import { Facebook, Twitter, Instagram, Linkedin, MapPin, User, Shield } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Newsletter } from "@/components/home/Newsletter";
+import { Footer } from "@/components/Footer";
 
 const teamMembers = [
   {
@@ -30,17 +29,17 @@ const teamMembers = [
 
 const workingSteps = [
   {
-    icon: <MapPin className="w-8 h-8 text-green-500" />,
+    icon: <i className="ti-map-alt text-success" />,
     title: "Find Interesting Place",
     description: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti"
   },
   {
-    icon: <User className="w-8 h-8 text-primary" />,
+    icon: <i className="ti-user theme-cl" />,
     title: "Contact A Few Owners",
     description: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti"
   },
   {
-    icon: <Shield className="w-8 h-8 text-sky-500" />,
+    icon: <i className="ti-shield text-sky" />,
     title: "Make A Reservation",
     description: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti"
   }
@@ -63,10 +62,10 @@ const AboutUs = () => {
             <p className="text-lg text-white/90 mb-8">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </p>
-            <Button size="lg" variant="default" className="bg-white text-primary hover:bg-gray-100">
+            <button className="bg-white text-primary hover:bg-gray-100 px-6 py-3 rounded-md font-medium">
               Get Started
               <span className="ml-2">→</span>
-            </Button>
+            </button>
 
             <div className="grid grid-cols-3 gap-8 mt-12">
               <div>
@@ -131,10 +130,10 @@ const AboutUs = () => {
                   <h4 className="text-lg font-semibold text-center mb-1">{member.name}</h4>
                   <p className="text-gray-600 text-center mb-4">{member.role}</p>
                   <div className="flex justify-center space-x-3">
-                    <a href="#" className="text-gray-400 hover:text-primary"><Facebook className="w-5 h-5" /></a>
-                    <a href="#" className="text-gray-400 hover:text-primary"><Twitter className="w-5 h-5" /></a>
-                    <a href="#" className="text-gray-400 hover:text-primary"><Instagram className="w-5 h-5" /></a>
-                    <a href="#" className="text-gray-400 hover:text-primary"><Linkedin className="w-5 h-5" /></a>
+                    <a href="#" className="text-gray-400 hover:text-primary"><i className="fab fa-facebook" /></a>
+                    <a href="#" className="text-gray-400 hover:text-primary"><i className="fab fa-twitter" /></a>
+                    <a href="#" className="text-gray-400 hover:text-primary"><i className="fab fa-instagram" /></a>
+                    <a href="#" className="text-gray-400 hover:text-primary"><i className="fab fa-linkedin" /></a>
                   </div>
                 </div>
               </div>

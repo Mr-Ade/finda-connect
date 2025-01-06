@@ -19,6 +19,7 @@ import ExploreListings from "@/pages/ExploreListings";
 import BusinessDetails from "@/pages/BusinessDetails";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
+import AboutUs from "@/pages/AboutUs";
 
 const Routes = () => {
   return (
@@ -28,6 +29,7 @@ const Routes = () => {
       <Route path="/blog/:id" element={<BlogDetail />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/faq" element={<FAQ />} />
+      <Route path="/about-us" element={<AboutUs />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/dashboard/my-bookings" element={<MyBookings />} />
       <Route path="/dashboard/add-listing" element={<AddListing />} />
