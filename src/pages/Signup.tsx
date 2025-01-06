@@ -1,32 +1,14 @@
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Mail, Lock, User, UserPlus } from "lucide-react";
 
 const Signup = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === "SIGNED_IN") {
-          console.log("User signed in, redirecting to home");
-          navigate("/");
-          toast({
-            title: "Welcome!",
-            description: "Your account has been created successfully.",
-          });
-        }
-      }
-    );
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, [navigate, toast]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -48,8 +30,8 @@ const Signup = () => {
                   variables: {
                     default: {
                       colors: {
-                        brand: '#FF385C',
-                        brandAccent: '#FF385C',
+                        brand: '#359e04',
+                        brandAccent: '#359e04',
                       },
                     },
                   },
