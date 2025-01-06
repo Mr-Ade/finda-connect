@@ -29,7 +29,7 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     currency: "NGN",
     language: navigator.language,
     coordinates: {
-      latitude: 9.0820,
+      latitude: 9.0820,  // Nigeria's approximate center
       longitude: 8.6753
     },
     isLoading: true,
@@ -57,64 +57,87 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
           const { latitude, longitude } = position.coords;
           console.log("Got coordinates:", latitude, longitude);
           
-          // Use our Edge Function instead of direct API call
-          const { data, error } = await supabase.functions.invoke('geocode', {
-            body: { latitude, longitude }
-          });
+          // Set coordinates even if geocoding fails
+          setLocationData(prev => ({
+            ...prev,
+            coordinates: {
+              latitude,
+              longitude,
+            },
+            isLoading: false,
+          }));
 
-          if (error) {
-            throw error;
-          }
+          try {
+            // Try to get location details from Supabase Edge Function
+            const { data, error } = await supabase.functions.invoke('geocode', {
+              body: { latitude, longitude }
+            });
 
-          console.log("Geocoding response:", data);
-
-          if (data.results && data.results[0]) {
-            const addressComponents = data.results[0].address_components;
-            let city = '', state = '';
-
-            // Parse Google Maps response
-            for (const component of addressComponents) {
-              if (component.types.includes('locality')) {
-                city = component.long_name;
-              }
-              if (component.types.includes('administrative_area_level_1')) {
-                state = component.long_name;
-              }
+            if (error) {
+              console.error("Geocoding error:", error);
+              // Don't throw here, just show a toast
+              toast({
+                title: "Location Detection Limited",
+                description: "Using approximate location. Some features may be limited.",
+                variant: "warning",
+              });
+              return;
             }
 
-            console.log("Location components:", { city, state });
-            
-            if (data.results[0].formatted_address.includes("Nigeria")) {
-              setLocationData(prev => ({
-                ...prev,
-                state: state || "",
-                city: city || "",
-                coordinates: {
-                  latitude,
-                  longitude,
-                },
-                isLoading: false,
-              }));
+            console.log("Geocoding response:", data);
 
-              const { data: { session } } = await supabase.auth.getSession();
-              if (session?.user) {
-                const { error } = await supabase
-                  .from('profiles')
-                  .update({
-                    location_data: {
-                      latitude,
-                      longitude,
-                      state,
-                      city,
-                    }
-                  })
-                  .eq('id', session.user.id);
+            if (data.results && data.results[0]) {
+              const addressComponents = data.results[0].address_components;
+              let city = '', state = '';
 
-                if (error) {
-                  console.error("Error updating profile location:", error);
+              // Parse Google Maps response
+              for (const component of addressComponents) {
+                if (component.types.includes('locality')) {
+                  city = component.long_name;
+                }
+                if (component.types.includes('administrative_area_level_1')) {
+                  state = component.long_name;
+                }
+              }
+
+              console.log("Location components:", { city, state });
+              
+              if (data.results[0].formatted_address.includes("Nigeria")) {
+                setLocationData(prev => ({
+                  ...prev,
+                  state: state || "",
+                  city: city || "",
+                  isLoading: false,
+                }));
+
+                // Update user profile if logged in
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session?.user) {
+                  const { error } = await supabase
+                    .from('profiles')
+                    .update({
+                      location_data: {
+                        latitude,
+                        longitude,
+                        state,
+                        city,
+                      }
+                    })
+                    .eq('id', session.user.id);
+
+                  if (error) {
+                    console.error("Error updating profile location:", error);
+                  }
                 }
               }
             }
+          } catch (geocodingError) {
+            console.error("Geocoding error:", geocodingError);
+            toast({
+              title: "Location Detection Limited",
+              description: "Using approximate location. Some features may be limited.",
+              variant: "warning",
+            });
           }
         }
       } catch (error) {
