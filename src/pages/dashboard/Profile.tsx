@@ -4,18 +4,11 @@ import { ProfileDetails } from "@/components/profile/ProfileDetails";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [bio, setBio] = useState("");
   const [updating, setUpdating] = useState(false);
 
   const { toast } = useToast();
@@ -36,13 +29,42 @@ const Profile = () => {
       
       setUsername(data.username || '');
       setFullName(data.full_name || '');
-      setEmail(session.user.email || '');
-      setPhone(data.mobile || '');
-      setBio(data.bio || '');
       
       return data;
     }
   });
+
+  const handleAvatarChange = async (avatarUrl: string) => {
+    try {
+      setUpdating(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error('No user session found');
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ 
+          id: session.user.id,
+          avatar_url: avatarUrl 
+        })
+        .eq('id', session.user.id);
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: "Success",
+        description: "Profile picture updated successfully",
+      });
+    } catch (error) {
+      console.error('Error updating avatar:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update profile picture",
+      });
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,15 +76,13 @@ const Profile = () => {
       const { error } = await supabase
         .from('profiles')
         .update({
+          id: session.user.id,
           username,
           full_name: fullName,
-          mobile: phone,
-          bio
         })
         .eq('id', session.user.id);
 
       if (error) throw error;
-
       toast({
         title: "Success",
         description: "Profile updated successfully",
@@ -109,73 +129,16 @@ const Profile = () => {
           </nav>
         </div>
 
-        <Card>
-          <CardHeader>
-            <h3 className="text-lg font-medium">Personal Information</h3>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Full Name</label>
-                  <Input
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    disabled={updating}
-                    placeholder="Enter your full name"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Username</label>
-                  <Input
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    disabled={updating}
-                    placeholder="Choose a username"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Email</label>
-                  <Input
-                    type="email"
-                    value={email}
-                    disabled
-                    placeholder="Your email address"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Phone</label>
-                  <Input
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    disabled={updating}
-                    placeholder="Enter your phone number"
-                  />
-                </div>
-
-                <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm font-medium">Bio</label>
-                  <Textarea
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    disabled={updating}
-                    placeholder="Tell us about yourself"
-                    className="min-h-[150px]"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end">
-                <Button type="submit" disabled={updating}>
-                  {updating ? "Updating..." : "Save Changes"}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+        <ProfileDetails
+          username={username}
+          setUsername={setUsername}
+          fullName={fullName}
+          setFullName={setFullName}
+          avatarUrl={profile?.avatar_url}
+          onAvatarChange={handleAvatarChange}
+          onSubmit={handleSubmit}
+          updating={updating}
+        />
       </div>
     </DashboardLayout>
   );
