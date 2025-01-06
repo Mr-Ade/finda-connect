@@ -42,11 +42,11 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold text-lg mb-4">About Company</h4>
             <ul className="space-y-2">
-              <li><Link to="/about" className="text-gray-600 hover:text-primary">Who We're?</Link></li>
-              <li><Link to="/about" className="text-gray-600 hover:text-primary">Our Mission</Link></li>
-              <li><Link to="/about" className="text-gray-600 hover:text-primary">Our team</Link></li>
+              <li><Link to="/who-we-are" className="text-gray-600 hover:text-primary">Who We're?</Link></li>
+              <li><Link to="/our-mission" className="text-gray-600 hover:text-primary">Our Mission</Link></li>
+              <li><Link to="/our-team" className="text-gray-600 hover:text-primary">Our team</Link></li>
               <li><Link to="/pricing" className="text-gray-600 hover:text-primary">Packages</Link></li>
-              <li><Link to="/profile" className="text-gray-600 hover:text-primary">Dashboard</Link></li>
+              <li><Link to="/dashboard" className="text-gray-600 hover:text-primary">Dashboard</Link></li>
             </ul>
           </div>
 
@@ -58,7 +58,7 @@ export const Footer = () => {
               <li><Link to="/browse-authors" className="text-gray-600 hover:text-primary">Browse Authors</Link></li>
               <li><Link to="/submit-listing" className="text-gray-600 hover:text-primary">Submit Listings</Link></li>
               <li><Link to="/shortlisted" className="text-gray-600 hover:text-primary">Shortlisted</Link></li>
-              <li><Link to="/profile" className="text-gray-600 hover:text-primary">Dashboard</Link></li>
+              <li><Link to="/dashboard" className="text-gray-600 hover:text-primary">Dashboard</Link></li>
             </ul>
           </div>
 
@@ -69,7 +69,7 @@ export const Footer = () => {
               <li><Link to="/browse-categories" className="text-gray-600 hover:text-primary">Browse Categories</Link></li>
               <li><Link to="/payment-links" className="text-gray-600 hover:text-primary">Payment Links</Link></li>
               <li><Link to="/saved-places" className="text-gray-600 hover:text-primary">Saved Places</Link></li>
-              <li><Link to="/profile" className="text-gray-600 hover:text-primary">Dashboard</Link></li>
+              <li><Link to="/dashboard" className="text-gray-600 hover:text-primary">Dashboard</Link></li>
             </ul>
           </div>
 
