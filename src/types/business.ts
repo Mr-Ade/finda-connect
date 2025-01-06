@@ -1,4 +1,5 @@
 export interface BusinessFormData {
+  // Basic Info
   name: string;
   description: string;
   category: string;
@@ -45,26 +46,6 @@ export interface BusinessFormData {
   }[];
 }
 
-export interface Review {
-  id: string;
-  rating: number;
-  comment: string;
-  created_at: string;
-  profiles: {
-    username: string;
-    avatar_url: string;
-  };
-  review_responses?: Array<{
-    id: string;
-    response_text: string;
-    created_at: string;
-  }>;
-  review_photos?: Array<{
-    id: string;
-    photo_url: string;
-  }>;
-}
-
 export interface Business {
   id: string;
   owner_id?: string;
@@ -83,31 +64,50 @@ export interface Business {
   latitude?: number;
   longitude?: number;
   
-  business_photos?: Array<{
+  // Related tables
+  business_photos?: {
     id: string;
     photo_url: string;
     caption?: string;
     order_index: number;
-  }>;
+  }[];
   
-  menu_items?: Array<{
+  menu_items?: {
     id: string;
     name: string;
     description?: string;
     price: number;
     image_url?: string;
     category?: string;
-  }>;
+  }[];
   
-  business_hours?: Array<{
+  business_hours?: {
     id: string;
     day_of_week: number;
     open_time: string;
     close_time: string;
     is_closed: boolean;
-  }>;
+  }[];
   
-  reviews?: Review[];
+  reviews?: {
+    id: string;
+    rating: number;
+    comment: string;
+    created_at: string;
+    profiles?: {
+      username?: string;
+      avatar_url?: string;
+    };
+    review_responses?: {
+      id: string;
+      response_text: string;
+      created_at: string;
+    }[];
+    review_photos?: {
+      id: string;
+      photo_url: string;
+    }[];
+  }[];
   
   owner?: {
     username?: string;
