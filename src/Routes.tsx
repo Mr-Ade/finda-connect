@@ -20,6 +20,7 @@ import BusinessDetails from "@/pages/BusinessDetails";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import AboutUs from "@/pages/AboutUs";
+import Pricing from "@/pages/Pricing";
 
 const Routes = () => {
   return (
@@ -30,6 +31,7 @@ const Routes = () => {
       <Route path="/contact" element={<Contact />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/about-us" element={<AboutUs />} />
+      <Route path="/pricing" element={<Pricing />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/dashboard/my-bookings" element={<MyBookings />} />
       <Route path="/dashboard/add-listing" element={<AddListing />} />
