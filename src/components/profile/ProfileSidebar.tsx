@@ -79,6 +79,14 @@ export const ProfileSidebar = () => {
               <span className="flex-1">My Profile</span>
             </Link>
           </li>
+          <li>
+            <Link 
+              to="/dashboard/change-password"
+              className={`flex items-center p-2 rounded-lg hover:bg-gray-50 ${isActive('/dashboard/change-password') ? 'bg-gray-50 text-primary' : 'text-gray-700'}`}
+            >
+              <span className="flex-1">Change Password</span>
+            </Link>
+          </li>
         </ul>
       </div>
     </div>
