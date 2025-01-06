@@ -7,7 +7,7 @@ interface BusinessRightSidebarProps {
 
 export const BusinessRightSidebar = ({ business }: BusinessRightSidebarProps) => {
   return (
-    <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 h-fit">
+    <div className="page-sidebar">
       <BusinessSidebar 
         business={{
           id: business.id,

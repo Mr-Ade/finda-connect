@@ -1,11 +1,10 @@
-import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { BusinessHeader } from "@/components/business/BusinessHeader";
 import { BusinessGallery } from "@/components/business/BusinessGallery";
 import { BusinessMainContent } from "@/components/business/details/BusinessMainContent";
 import { BusinessRightSidebar } from "@/components/business/details/BusinessRightSidebar";
-import type { Business } from "@/types/business";
 
 const BusinessDetails = () => {
   const { id } = useParams();
@@ -13,23 +12,39 @@ const BusinessDetails = () => {
   const { data: business, isLoading } = useQuery({
     queryKey: ['business', id],
     queryFn: async () => {
+      console.log('Fetching business details...');
       const { data, error } = await supabase
         .from('businesses')
         .select(`
           *,
-          business_photos(*),
-          menu_items(*),
-          business_hours(*),
-          reviews(
+          business_photos (
+            id,
+            photo_url,
+            caption
+          ),
+          business_hours (
+            id,
+            day_of_week,
+            open_time,
+            close_time,
+            is_closed
+          ),
+          reviews (
             id,
             rating,
             comment,
             created_at,
-            profiles:user_id(username, avatar_url),
-            review_responses(id, response_text, created_at),
-            review_photos(id, photo_url)
+            profiles (
+              username,
+              avatar_url
+            ),
+            review_responses (
+              id,
+              response_text,
+              created_at
+            )
           ),
-          owner:owner_id(
+          owner:profiles (
             username,
             avatar_url,
             full_name
@@ -38,8 +53,12 @@ const BusinessDetails = () => {
         .eq('id', id)
         .single();
 
-      if (error) throw error;
-      return data as unknown as Business;
+      if (error) {
+        console.error('Error fetching business:', error);
+        throw error;
+      }
+
+      return data;
     }
   });
 
@@ -62,7 +81,7 @@ const BusinessDetails = () => {
       <BusinessHeader 
         business={{
           name: business.name,
-          description: business.description || "",
+          description: business.description || '',
           category: business.category,
           reviews_count: business.reviews?.length,
           rating: business.reviews?.reduce((acc, review) => acc + review.rating, 0) / (business.reviews?.length || 1),
