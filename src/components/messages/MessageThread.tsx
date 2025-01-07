@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
@@ -7,10 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+interface PresenceState {
+  user_id: string;
+  isTyping: boolean;
+  presence_ref: string;
+}
+
 export const MessageThread = ({ userId }: { userId: string }) => {
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   
   const { data: messages, isLoading } = useQuery({
     queryKey: ['messages', userId],
@@ -54,7 +61,7 @@ export const MessageThread = ({ userId }: { userId: string }) => {
           event: '*',
           schema: 'public',
           table: 'messages',
-          filter: `sender_id=eq.${userId},receiver_id=eq.${supabase.auth.user()?.id}`
+          filter: `sender_id=eq.${userId},receiver_id=eq.${supabase.auth.getSession().then(({ data }) => data.session?.user.id)}`
         },
         () => {
           // Invalidate and refetch messages
@@ -70,9 +77,11 @@ export const MessageThread = ({ userId }: { userId: string }) => {
         'presence',
         { event: 'sync' },
         () => {
-          const state = typingChannel.presenceState();
+          const state = typingChannel.presenceState() as Record<string, PresenceState[]>;
           const otherUserTyping = Object.values(state).some(
-            presence => presence.user_id === userId && presence.isTyping
+            presences => presences.some(presence => 
+              presence.user_id === userId && presence.isTyping
+            )
           );
           setIsTyping(otherUserTyping);
         }
@@ -83,7 +92,7 @@ export const MessageThread = ({ userId }: { userId: string }) => {
       supabase.removeChannel(channel);
       supabase.removeChannel(typingChannel);
     };
-  }, [userId]);
+  }, [userId, queryClient]);
 
   // Handle typing indicator
   useEffect(() => {
@@ -92,8 +101,11 @@ export const MessageThread = ({ userId }: { userId: string }) => {
     const typingChannel = supabase.channel('typing_channel');
     
     const updateTypingStatus = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
+
       await typingChannel.track({
-        user_id: supabase.auth.user()?.id,
+        user_id: session.user.id,
         isTyping: newMessage.length > 0
       });
     };
