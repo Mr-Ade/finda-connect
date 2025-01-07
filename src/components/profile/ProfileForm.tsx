@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { PersonalInfoForm } from "./PersonalInfoForm";
 import { ContactDetailsForm } from "./ContactDetailsForm";
 import { BioForm } from "./BioForm";
+import { toast } from "sonner";
 
 interface ProfileFormProps {
   username: string;
@@ -30,6 +31,83 @@ export const ProfileForm = ({
   const [address, setAddress] = useState("");
   const [zipCode, setZipCode] = useState("");
   const { toast } = useToast();
+
+  // Subscribe to real-time profile updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('profile-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${(supabase.auth.getUser()).then(({ data }) => data.user?.id)}`
+        },
+        (payload) => {
+          console.log('Profile update received:', payload);
+          const { new: newProfile } = payload;
+          
+          // Update local state with new values
+          if (newProfile) {
+            setUsername(newProfile.username || '');
+            setFullName(newProfile.full_name || '');
+            setBio(newProfile.bio || '');
+            setMobile(newProfile.mobile || '');
+            setState(newProfile.state || '');
+            setCity(newProfile.city || '');
+            setAddress(newProfile.address || '');
+            setZipCode(newProfile.zip_code || '');
+            
+            toast({
+              title: "Profile Updated",
+              description: "Your profile has been updated in real-time",
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  // Load initial profile data
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error("No user found");
+
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        if (error) throw error;
+
+        if (data) {
+          setBio(data.bio || '');
+          setMobile(data.mobile || '');
+          setState(data.state || '');
+          setCity(data.city || '');
+          setAddress(data.address || '');
+          setZipCode(data.zip_code || '');
+        }
+      } catch (error) {
+        console.error("Error loading profile:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load profile data",
+        });
+      }
+    };
+
+    loadProfile();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
