@@ -8,6 +8,7 @@ import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { AdminRoute } from "@/components/auth/AdminRoute";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface AdminSetting {
   id: string;
@@ -20,36 +21,51 @@ interface AdminSetting {
 const Settings = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch current settings
-  const { data: settings, refetch } = useQuery({
+  const { data: settings, refetch, isError } = useQuery({
     queryKey: ['admin-settings'],
     queryFn: async () => {
       console.log('Fetching admin settings...');
-      const { data, error } = await supabase
-        .from('admin_settings')
-        .select('*')
-        .returns<AdminSetting[]>();
+      try {
+        const { data, error } = await supabase
+          .from('admin_settings')
+          .select('*')
+          .returns<AdminSetting[]>();
 
-      if (error) {
-        console.error('Error fetching settings:', error);
-        throw error;
+        if (error) {
+          console.error('Error fetching settings:', error);
+          setError(error.message);
+          throw error;
+        }
+
+        return data || [];
+      } catch (err) {
+        console.error('Error in query:', err);
+        setError(err instanceof Error ? err.message : 'An error occurred');
+        throw err;
       }
-
-      return data || [];
-    }
+    },
+    retry: 1
   });
 
   const handleUpdateSetting = async (key: string, value: string | number) => {
     setLoading(true);
+    setError(null);
     try {
+      const session = await supabase.auth.getSession();
+      if (!session.data.session) {
+        throw new Error('No authenticated session');
+      }
+
       const { error } = await supabase
         .from('admin_settings')
         .upsert({ 
           key,
-          value: value.toString(), // Convert to string for storage
+          value: value.toString(),
           updated_at: new Date().toISOString(),
-          updated_by: (await supabase.auth.getUser()).data.user?.id
+          updated_by: session.data.session.user.id
         });
 
       if (error) throw error;
@@ -62,9 +78,11 @@ const Settings = () => {
       refetch();
     } catch (error) {
       console.error('Error updating setting:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update settings';
+      setError(errorMessage);
       toast({
         title: "Error",
-        description: "Failed to update settings. Please try again.",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -77,6 +95,12 @@ const Settings = () => {
       <div className="container mx-auto py-6">
         <h1 className="text-2xl font-bold mb-6">Admin Settings</h1>
         
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
         <div className="grid gap-4">
           <Card>
             <CardHeader>
@@ -105,7 +129,7 @@ const Settings = () => {
               </div>
 
               <Button disabled={loading}>
-                Save Changes
+                {loading ? 'Saving...' : 'Save Changes'}
               </Button>
             </CardContent>
           </Card>
