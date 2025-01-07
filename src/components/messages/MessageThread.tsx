@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -9,8 +9,9 @@ import { useToast } from "@/hooks/use-toast";
 
 export const MessageThread = ({ userId }: { userId: string }) => {
   const [newMessage, setNewMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const { toast } = useToast();
-
+  
   const { data: messages, isLoading } = useQuery({
     queryKey: ['messages', userId],
     queryFn: async () => {
@@ -40,6 +41,69 @@ export const MessageThread = ({ userId }: { userId: string }) => {
     },
     enabled: !!userId
   });
+
+  useEffect(() => {
+    if (!userId) return;
+
+    // Subscribe to new messages
+    const channel = supabase
+      .channel('messages_channel')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+          filter: `sender_id=eq.${userId},receiver_id=eq.${supabase.auth.user()?.id}`
+        },
+        () => {
+          // Invalidate and refetch messages
+          queryClient.invalidateQueries(['messages', userId]);
+        }
+      )
+      .subscribe();
+
+    // Subscribe to typing indicators
+    const typingChannel = supabase
+      .channel('typing_channel')
+      .on(
+        'presence',
+        { event: 'sync' },
+        () => {
+          const state = typingChannel.presenceState();
+          const otherUserTyping = Object.values(state).some(
+            presence => presence.user_id === userId && presence.isTyping
+          );
+          setIsTyping(otherUserTyping);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+      supabase.removeChannel(typingChannel);
+    };
+  }, [userId]);
+
+  // Handle typing indicator
+  useEffect(() => {
+    if (!userId || !newMessage) return;
+
+    const typingChannel = supabase.channel('typing_channel');
+    
+    const updateTypingStatus = async () => {
+      await typingChannel.track({
+        user_id: supabase.auth.user()?.id,
+        isTyping: newMessage.length > 0
+      });
+    };
+
+    updateTypingStatus();
+
+    return () => {
+      typingChannel.untrack();
+    };
+  }, [newMessage, userId]);
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,6 +167,13 @@ export const MessageThread = ({ userId }: { userId: string }) => {
               </div>
             );
           })}
+          {isTyping && (
+            <div className="flex justify-start">
+              <div className="bg-muted rounded-lg p-3">
+                <p className="text-sm text-muted-foreground">Typing...</p>
+              </div>
+            </div>
+          )}
         </div>
       </ScrollArea>
       <form onSubmit={sendMessage} className="p-4 border-t flex gap-2">

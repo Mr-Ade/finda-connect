@@ -458,6 +458,7 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          is_typing: boolean | null
           read: boolean | null
           receiver_id: string
           sender_id: string
@@ -467,6 +468,7 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          is_typing?: boolean | null
           read?: boolean | null
           receiver_id: string
           sender_id: string
@@ -476,6 +478,7 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          is_typing?: boolean | null
           read?: boolean | null
           receiver_id?: string
           sender_id?: string
@@ -650,6 +653,7 @@ export type Database = {
           full_name: string | null
           id: string
           is_admin: boolean | null
+          last_seen: string | null
           location_data: Json | null
           mobile: string | null
           preferred_currency: string | null
@@ -670,6 +674,7 @@ export type Database = {
           full_name?: string | null
           id: string
           is_admin?: boolean | null
+          last_seen?: string | null
           location_data?: Json | null
           mobile?: string | null
           preferred_currency?: string | null
@@ -690,6 +695,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_admin?: boolean | null
+          last_seen?: string | null
           location_data?: Json | null
           mobile?: string | null
           preferred_currency?: string | null
