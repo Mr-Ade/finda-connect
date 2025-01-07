@@ -4,9 +4,25 @@ import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { AdminRoute } from "@/components/auth/AdminRoute";
 import { supabase } from "@/integrations/supabase/client";
 
+interface AuditLog {
+  id: string;
+  admin_id: string | null;
+  action: string;
+  entity_type: string;
+  entity_id: string | null;
+  changes: any;
+  created_at: string | null;
+}
+
+interface AuditLogWithAdmin extends AuditLog {
+  admin: {
+    full_name: string | null;
+  } | null;
+}
+
 const AuditLogs = () => {
   // Fetch audit logs
-  const { data: auditLogs } = useQuery({
+  const { data: auditLogs } = useQuery<AuditLogWithAdmin[]>({
     queryKey: ['admin-audit-logs'],
     queryFn: async () => {
       console.log('Fetching audit logs...');
@@ -15,15 +31,7 @@ const AuditLogs = () => {
         .select('*')
         .order('created_at', { ascending: false })
         .limit(100)
-        .returns<{
-          id: string;
-          admin_id: string | null;
-          action: string;
-          entity_type: string;
-          entity_id: string | null;
-          changes: any;
-          created_at: string | null;
-        }[]>();
+        .returns<AuditLog[]>();
 
       if (error) {
         console.error('Error fetching audit logs:', error);
@@ -57,7 +65,11 @@ const AuditLogs = () => {
         }
       }
 
-      return data || [];
+      // If no admin profiles were fetched, return logs with null admin info
+      return data.map(log => ({
+        ...log,
+        admin: { full_name: null }
+      }));
     }
   });
 
