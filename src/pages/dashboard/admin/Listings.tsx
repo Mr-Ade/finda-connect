@@ -13,7 +13,6 @@ import type { Database } from "@/integrations/supabase/types";
 type Business = Database["public"]["Tables"]["businesses"]["Row"] & {
   owner: {
     full_name: string | null;
-    email: string | null;
   } | null;
   business_photos: {
     photo_url: string;
@@ -34,7 +33,7 @@ const AdminListings = () => {
         .from('businesses')
         .select(`
           *,
-          owner:profiles(full_name, email),
+          owner:profiles(full_name),
           business_photos(photo_url),
           reviews(rating)
         `)
@@ -50,8 +49,7 @@ const AdminListings = () => {
         throw error;
       }
 
-      // Type assertion to ensure the returned data matches our Business type
-      return data as unknown as Business[];
+      return data as Business[];
     }
   });
 

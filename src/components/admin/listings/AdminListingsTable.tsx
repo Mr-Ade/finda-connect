@@ -30,7 +30,6 @@ import type { Database } from "@/integrations/supabase/types";
 type Business = Database["public"]["Tables"]["businesses"]["Row"] & {
   owner?: {
     full_name: string | null;
-    email: string | null;
   };
   business_photos?: {
     photo_url: string;
@@ -141,7 +140,6 @@ export const AdminListingsTable = ({ listings }: AdminListingsTableProps) => {
             <TableCell>
               <div className="text-sm">
                 <div>{listing.owner?.full_name || 'N/A'}</div>
-                <div className="text-muted-foreground">{listing.owner?.email || 'N/A'}</div>
               </div>
             </TableCell>
             <TableCell>{listing.category}</TableCell>
