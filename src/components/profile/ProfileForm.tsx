@@ -7,6 +7,7 @@ import { ContactDetailsForm } from "./ContactDetailsForm";
 import { BioForm } from "./BioForm";
 import { toast } from "sonner";
 import { Database } from "@/integrations/supabase/types";
+import { RealtimeChannel } from "@supabase/supabase-js";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 type ProfileUpdate = {
@@ -42,9 +43,9 @@ export const ProfileForm = ({
 
   // Subscribe to real-time profile updates
   useEffect(() => {
-    const channel = supabase
+    const channel: RealtimeChannel = supabase
       .channel('profile-updates')
-      .on(
+      .on<Profile>(
         'postgres_changes',
         {
           event: '*',
