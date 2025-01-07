@@ -9,6 +9,14 @@ import { AdminRoute } from "@/components/auth/AdminRoute";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
+interface AdminSetting {
+  id: string;
+  key: string;
+  value: string | number;
+  updated_at: string | null;
+  updated_by: string | null;
+}
+
 const Settings = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -20,7 +28,8 @@ const Settings = () => {
       console.log('Fetching admin settings...');
       const { data, error } = await supabase
         .from('admin_settings')
-        .select('*');
+        .select('*')
+        .returns<AdminSetting[]>();
 
       if (error) {
         console.error('Error fetching settings:', error);
@@ -31,14 +40,14 @@ const Settings = () => {
     }
   });
 
-  const handleUpdateSetting = async (key: string, value: any) => {
+  const handleUpdateSetting = async (key: string, value: string | number) => {
     setLoading(true);
     try {
       const { error } = await supabase
         .from('admin_settings')
         .upsert({ 
           key,
-          value,
+          value: value.toString(), // Convert to string for storage
           updated_at: new Date().toISOString(),
           updated_by: (await supabase.auth.getUser()).data.user?.id
         });
@@ -79,7 +88,7 @@ const Settings = () => {
                 <Input 
                   id="site-name"
                   placeholder="Enter site name"
-                  defaultValue={settings?.find(s => s.key === 'site_name')?.value}
+                  defaultValue={settings?.find(s => s.key === 'site_name')?.value?.toString() || ''}
                   onChange={(e) => handleUpdateSetting('site_name', e.target.value)}
                 />
               </div>
@@ -90,7 +99,7 @@ const Settings = () => {
                   id="contact-email"
                   type="email"
                   placeholder="Enter contact email"
-                  defaultValue={settings?.find(s => s.key === 'contact_email')?.value}
+                  defaultValue={settings?.find(s => s.key === 'contact_email')?.value?.toString() || ''}
                   onChange={(e) => handleUpdateSetting('contact_email', e.target.value)}
                 />
               </div>

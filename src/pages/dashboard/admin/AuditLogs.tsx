@@ -19,7 +19,19 @@ const AuditLogs = () => {
           )
         `)
         .order('created_at', { ascending: false })
-        .limit(100);
+        .limit(100)
+        .returns<{
+          id: string;
+          admin_id: string | null;
+          action: string;
+          entity_type: string;
+          entity_id: string | null;
+          changes: any;
+          created_at: string | null;
+          admin?: {
+            full_name: string | null;
+          } | null;
+        }[]>();
 
       if (error) {
         console.error('Error fetching audit logs:', error);
@@ -61,7 +73,7 @@ const AuditLogs = () => {
                       )}
                     </div>
                     <time className="text-sm text-muted-foreground">
-                      {new Date(log.created_at).toLocaleString()}
+                      {new Date(log.created_at || '').toLocaleString()}
                     </time>
                   </div>
                 </div>
