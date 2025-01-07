@@ -8,6 +8,11 @@ import { INITIAL_CATEGORIES, ADDITIONAL_CATEGORIES } from "./CategoryData";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 
+interface CategoryCount {
+  category: string;
+  count: number;
+}
+
 export const PopularCategories = () => {
   const navigate = useNavigate();
   const [showAll, setShowAll] = useState(false);
@@ -20,8 +25,8 @@ export const PopularCategories = () => {
       
       const { data, error } = await supabase
         .from('businesses')
-        .select('category, count', { count: 'exact', head: false })
-        .select('category');
+        .select('category')
+        .not('category', 'is', null);
 
       if (error) {
         console.error('Error fetching category counts:', error);
@@ -33,11 +38,12 @@ export const PopularCategories = () => {
         throw error;
       }
 
+      // Transform the data into category counts
       const counts: Record<string, number> = {};
       data.forEach(item => {
-        if (item.category) {
-          counts[item.category] = (counts[item.category] || 0) + 1;
-        }
+        // Get the top-level category by splitting on '/' and taking first part
+        const mainCategory = item.category.split('/')[0].trim();
+        counts[mainCategory] = (counts[mainCategory] || 0) + 1;
       });
 
       console.log('Category counts:', counts);
@@ -52,6 +58,12 @@ export const PopularCategories = () => {
   const displayedCategories = showAll 
     ? [...INITIAL_CATEGORIES, ...ADDITIONAL_CATEGORIES]
     : INITIAL_CATEGORIES;
+
+  // Map the categories with their counts
+  const categoriesWithCounts = displayedCategories.map(category => ({
+    ...category,
+    count: categoryCounts?.[category.name] || 0
+  }));
 
   if (isLoading) {
     return (
@@ -102,12 +114,12 @@ export const PopularCategories = () => {
           </p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {displayedCategories.map((category) => (
+          {categoriesWithCounts.map((category) => (
             <CategoryCard
               key={category.name}
               name={category.name}
               Icon={category.icon}
-              count={categoryCounts?.[category.name] || 0}
+              count={category.count}
               onClick={() => handleCategoryClick(category.name)}
             />
           ))}
