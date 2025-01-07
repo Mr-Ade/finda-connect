@@ -75,7 +75,6 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
 
             if (error) {
               console.error("Geocoding error:", error);
-              // Show a less severe message to user
               toast({
                 title: "Location Detection Limited",
                 description: "Using approximate location. Some features may be limited.",
@@ -87,17 +86,21 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
             console.log("Geocoding response:", data);
 
             if (data.results && data.results[0]) {
-              const addressComponents = data.results[0].address_components;
-              let city = '', state = '';
+              const components = data.results[0].address_components;
+              let city = '';
+              let state = '';
 
-              // Parse Google Maps response
-              for (const component of addressComponents) {
-                if (component.types.includes('locality')) {
-                  city = component.long_name;
-                }
-                if (component.types.includes('administrative_area_level_1')) {
-                  state = component.long_name;
-                }
+              // Safely extract city and state
+              if (typeof components === 'object' && components !== null) {
+                // Try to find city from various possible fields
+                city = components.city || 
+                       components.town || 
+                       components.village || 
+                       components.district || 
+                       '';
+                
+                // Get state
+                state = components.state || '';
               }
 
               console.log("Location components:", { city, state });
@@ -113,7 +116,7 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
                 // Update user profile if logged in
                 const { data: { session } } = await supabase.auth.getSession();
                 if (session?.user) {
-                  const { error } = await supabase
+                  const { error: updateError } = await supabase
                     .from('profiles')
                     .update({
                       location_data: {
@@ -125,8 +128,8 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
                     })
                     .eq('id', session.user.id);
 
-                  if (error) {
-                    console.error("Error updating profile location:", error);
+                  if (updateError) {
+                    console.error("Error updating profile location:", updateError);
                   }
                 }
               }
