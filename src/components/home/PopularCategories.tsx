@@ -49,6 +49,7 @@ export const PopularCategories = () => {
       console.log('Category counts:', counts);
       return counts;
     },
+    refetchInterval: 30000, // Refetch every 30 seconds
   });
 
   const handleCategoryClick = (categoryName: string) => {
