@@ -225,6 +225,8 @@ export type Database = {
       businesses: {
         Row: {
           address: string
+          approved_at: string | null
+          approved_by: string | null
           category: string
           city: string
           created_at: string
@@ -235,14 +237,18 @@ export type Database = {
           longitude: number | null
           name: string
           owner_id: string | null
+          payment_methods: Json | null
           phone: string | null
           state: string
+          status: string
           updated_at: string
           website: string | null
           zip_code: string
         }
         Insert: {
           address: string
+          approved_at?: string | null
+          approved_by?: string | null
           category: string
           city: string
           created_at?: string
@@ -253,14 +259,18 @@ export type Database = {
           longitude?: number | null
           name: string
           owner_id?: string | null
+          payment_methods?: Json | null
           phone?: string | null
           state: string
+          status?: string
           updated_at?: string
           website?: string | null
           zip_code: string
         }
         Update: {
           address?: string
+          approved_at?: string | null
+          approved_by?: string | null
           category?: string
           city?: string
           created_at?: string
@@ -271,8 +281,10 @@ export type Database = {
           longitude?: number | null
           name?: string
           owner_id?: string | null
+          payment_methods?: Json | null
           phone?: string | null
           state?: string
+          status?: string
           updated_at?: string
           website?: string | null
           zip_code?: string
@@ -637,6 +649,7 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          is_admin: boolean | null
           location_data: Json | null
           mobile: string | null
           preferred_currency: string | null
@@ -656,6 +669,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
+          is_admin?: boolean | null
           location_data?: Json | null
           mobile?: string | null
           preferred_currency?: string | null
@@ -675,6 +689,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          is_admin?: boolean | null
           location_data?: Json | null
           mobile?: string | null
           preferred_currency?: string | null
