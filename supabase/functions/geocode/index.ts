@@ -9,35 +9,26 @@ serve(async (req) => {
 
   try {
     const { latitude, longitude } = await req.json()
-    const apiKey = Deno.env.get('GOOGLE_MAPS_API_KEY')
-
-    if (!apiKey) {
-      throw new Error('Google Maps API key not configured')
-    }
 
     console.log('Geocoding coordinates:', { latitude, longitude })
 
     const response = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
+      `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=155e6c1220b94de0a87f628b659b430b`
     )
     
     const data = await response.json()
     
-    console.log('Google Maps API response:', data)
+    console.log('OpenCage API response:', data)
 
-    if (data.error_message) {
-      // Handle specific Google Maps API errors
-      if (data.error_message.includes('You must enable Billing')) {
-        throw new Error('Google Maps API billing must be enabled. Please visit https://console.cloud.google.com/project/_/billing/enable to enable billing.')
-      }
-      throw new Error(`Google Maps API error: ${data.error_message}`)
+    if (data.status.code !== 200) {
+      throw new Error(`OpenCage API error: ${data.status.message}`)
     }
 
-    if (!data.results || data.status === 'ZERO_RESULTS') {
+    if (!data.results || data.results.length === 0) {
       return new Response(
         JSON.stringify({ 
           error: 'No results found',
-          status: data.status
+          status: 'ZERO_RESULTS'
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -46,8 +37,16 @@ serve(async (req) => {
       )
     }
 
+    // Transform response to match Google Maps API format
+    const transformedData = {
+      results: [{
+        address_components: data.results[0].components,
+        formatted_address: data.results[0].formatted
+      }]
+    }
+
     return new Response(
-      JSON.stringify(data),
+      JSON.stringify(transformedData),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
@@ -59,7 +58,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         error: error.message,
-        details: 'Please ensure Google Maps API key is configured and billing is enabled'
+        details: 'Error occurred during geocoding request'
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
