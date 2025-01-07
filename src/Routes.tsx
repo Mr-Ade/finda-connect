@@ -25,6 +25,8 @@ import Privacy from "@/pages/Privacy";
 import WhoWeAre from "@/pages/WhoWeAre";
 import OurMission from "@/pages/OurMission";
 import OurTeam from "@/pages/OurTeam";
+// Admin pages
+import Users from "@/pages/dashboard/admin/Users";
 
 const Routes = () => {
   return (
@@ -49,6 +51,8 @@ const Routes = () => {
       <Route path="/dashboard/saved-listings" element={<SavedListings />} />
       <Route path="/dashboard/profile" element={<Profile />} />
       <Route path="/dashboard/change-password" element={<ChangePassword />} />
+      {/* Admin routes */}
+      <Route path="/dashboard/admin/users" element={<Users />} />
       <Route path="/author/:username" element={<AuthorDetail />} />
       <Route path="/explore-listings" element={<ExploreListings />} />
       <Route path="/business/:id" element={<BusinessDetails />} />
