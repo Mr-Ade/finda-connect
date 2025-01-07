@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardStats } from "./DashboardStats";
 import { ActivityChart } from "./ActivityChart";
-import { ActivitiesFeed } from "./ActivitiesFeed";
+import { ActivityFeed } from "./ActivityFeed";
 import { RecentReviews } from "./RecentReviews";
 import { BookmarkedBusinesses } from "./BookmarkedBusinesses";
 import { CheckInHistory } from "./CheckInHistory";
@@ -59,7 +59,7 @@ export const UserDashboard = () => {
           <ActivityChart />
         </div>
         <div className="md:col-span-1">
-          <ActivitiesFeed />
+          <ActivityFeed />
         </div>
       </div>
 
@@ -71,7 +71,7 @@ export const UserDashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <CheckInHistory />
-        <ActivitiesFeed />
+        <ActivityFeed />
       </div>
     </div>
   );
