@@ -39,7 +39,8 @@ export const RecentListings = () => {
 
       console.log('Fetched listings:', data?.length);
       return data as Business[];
-    }
+    },
+    refetchInterval: 30000, // Refetch every 30 seconds
   });
 
   if (isLoading) {
