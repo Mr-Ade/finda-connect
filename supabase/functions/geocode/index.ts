@@ -25,19 +25,12 @@ serve(async (req) => {
     
     console.log('Google Maps API response:', data)
 
-    // Handle API errors more gracefully
     if (data.error_message) {
-      // Return a more user-friendly response
-      return new Response(
-        JSON.stringify({
-          error: "Location service temporarily unavailable",
-          details: "Please enter location details manually"
-        }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200 // Changed to 200 to handle this gracefully on the frontend
-        }
-      )
+      // Handle specific Google Maps API errors
+      if (data.error_message.includes('You must enable Billing')) {
+        throw new Error('Google Maps API billing must be enabled. Please visit https://console.cloud.google.com/project/_/billing/enable to enable billing.')
+      }
+      throw new Error(`Google Maps API error: ${data.error_message}`)
     }
 
     if (!data.results || data.status === 'ZERO_RESULTS') {
@@ -48,7 +41,7 @@ serve(async (req) => {
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200
+          status: 404
         }
       )
     }
@@ -65,12 +58,12 @@ serve(async (req) => {
     console.error('Geocoding error:', error)
     return new Response(
       JSON.stringify({
-        error: "Location service temporarily unavailable",
-        details: "Please enter location details manually"
+        error: error.message,
+        details: 'Please ensure Google Maps API key is configured and billing is enabled'
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200
+        status: 400,
       }
     )
   }
