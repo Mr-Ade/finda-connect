@@ -50,18 +50,15 @@ export const ProfileForm = ({
         },
         (payload: ProfileUpdate) => {
           console.log('Profile update received:', payload);
-          const newProfile = payload.new;
-          
-          // Update local state with new values
-          if (newProfile) {
-            setUsername(newProfile.username || '');
-            setFullName(newProfile.full_name || '');
-            setBio(newProfile.bio || '');
-            setMobile(newProfile.mobile || '');
-            setState(newProfile.state || '');
-            setCity(newProfile.city || '');
-            setAddress(newProfile.address || '');
-            setZipCode(newProfile.zip_code || '');
+          if (payload.new) {
+            setUsername(payload.new.username || '');
+            setFullName(payload.new.full_name || '');
+            setBio(payload.new.bio || '');
+            setMobile(payload.new.mobile || '');
+            setState(payload.new.state || '');
+            setCity(payload.new.city || '');
+            setAddress(payload.new.address || '');
+            setZipCode(payload.new.zip_code || '');
             
             toast({
               title: "Profile Updated",
