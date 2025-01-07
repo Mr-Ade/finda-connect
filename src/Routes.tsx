@@ -25,6 +25,11 @@ import Privacy from "@/pages/Privacy";
 import WhoWeAre from "@/pages/WhoWeAre";
 import OurMission from "@/pages/OurMission";
 import OurTeam from "@/pages/OurTeam";
+import BrowseAuthors from "@/pages/BrowseAuthors";
+import SubmitListing from "@/pages/SubmitListing";
+import Shortlisted from "@/pages/Shortlisted";
+import SavedPlaces from "@/pages/SavedPlaces";
+import PaymentLinks from "@/pages/PaymentLinks";
 
 const Routes = () => {
   return (
@@ -54,6 +59,11 @@ const Routes = () => {
       <Route path="/business/:id" element={<BusinessDetails />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/browse-authors" element={<BrowseAuthors />} />
+      <Route path="/submit-listing" element={<SubmitListing />} />
+      <Route path="/shortlisted" element={<Shortlisted />} />
+      <Route path="/saved-places" element={<SavedPlaces />} />
+      <Route path="/payment-links" element={<PaymentLinks />} />
       <Route path="*" element={<NotFound />} />
     </RouterRoutes>
   );
