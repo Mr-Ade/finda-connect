@@ -10,17 +10,17 @@ import { Database } from "@/integrations/supabase/types";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-type ProfileUpdate = RealtimePostgresChangesPayload<{
-  [key: string]: any;
-  username?: string;
-  full_name?: string;
-  bio?: string;
-  mobile?: string;
-  state?: string;
-  city?: string;
-  address?: string;
-  zip_code?: string;
-}>;
+type ProfileUpdatePayload = {
+  username: string | null;
+  full_name: string | null;
+  bio: string | null;
+  mobile: string | null;
+  state: string | null;
+  city: string | null;
+  address: string | null;
+  zip_code: string | null;
+};
+type ProfileUpdate = RealtimePostgresChangesPayload<ProfileUpdatePayload>;
 
 interface ProfileFormProps {
   username: string;
@@ -61,14 +61,15 @@ export const ProfileForm = ({
         (payload: ProfileUpdate) => {
           console.log('Profile update received:', payload);
           if (payload.new && typeof payload.new === 'object') {
-            setUsername(payload.new.username ?? '');
-            setFullName(payload.new.full_name ?? '');
-            setBio(payload.new.bio ?? '');
-            setMobile(payload.new.mobile ?? '');
-            setState(payload.new.state ?? '');
-            setCity(payload.new.city ?? '');
-            setAddress(payload.new.address ?? '');
-            setZipCode(payload.new.zip_code ?? '');
+            const newData = payload.new as ProfileUpdatePayload;
+            setUsername(newData.username ?? '');
+            setFullName(newData.full_name ?? '');
+            setBio(newData.bio ?? '');
+            setMobile(newData.mobile ?? '');
+            setState(newData.state ?? '');
+            setCity(newData.city ?? '');
+            setAddress(newData.address ?? '');
+            setZipCode(newData.zip_code ?? '');
             
             toast({
               title: "Profile Updated",
