@@ -11,16 +11,16 @@ import { useToast } from "@/hooks/use-toast";
 import type { Database } from "@/integrations/supabase/types";
 
 type Business = Database["public"]["Tables"]["businesses"]["Row"] & {
-  owner?: {
+  owner: {
     full_name: string | null;
     email: string | null;
-  };
-  business_photos?: {
+  } | null;
+  business_photos: {
     photo_url: string;
-  }[];
-  reviews?: {
+  }[] | null;
+  reviews: {
     rating: number;
-  }[];
+  }[] | null;
 };
 
 const AdminListings = () => {
