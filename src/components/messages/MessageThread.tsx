@@ -65,7 +65,7 @@ export const MessageThread = ({ userId }: { userId: string }) => {
         },
         () => {
           // Invalidate and refetch messages
-          queryClient.invalidateQueries(['messages', userId]);
+          queryClient.invalidateQueries({ queryKey: ['messages', userId] });
         }
       )
       .subscribe();
