@@ -12,12 +12,7 @@ const AuditLogs = () => {
       console.log('Fetching audit logs...');
       const { data, error } = await supabase
         .from('admin_audit_logs')
-        .select(`
-          *,
-          admin:profiles!admin_audit_logs_admin_id_fkey(
-            full_name
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(100)
         .returns<{
@@ -28,14 +23,38 @@ const AuditLogs = () => {
           entity_id: string | null;
           changes: any;
           created_at: string | null;
-          admin?: {
-            full_name: string | null;
-          } | null;
         }[]>();
 
       if (error) {
         console.error('Error fetching audit logs:', error);
         throw error;
+      }
+
+      // If we have audit logs, fetch the admin names in a separate query
+      if (data && data.length > 0) {
+        const adminIds = data.filter(log => log.admin_id).map(log => log.admin_id);
+        
+        if (adminIds.length > 0) {
+          const { data: profiles, error: profilesError } = await supabase
+            .from('profiles')
+            .select('id, full_name')
+            .in('id', adminIds as string[]);
+
+          if (profilesError) {
+            console.error('Error fetching admin profiles:', profilesError);
+          } else {
+            // Create a map of admin IDs to names
+            const adminMap = new Map(profiles?.map(p => [p.id, p.full_name]));
+            
+            // Attach admin names to the audit logs
+            return data.map(log => ({
+              ...log,
+              admin: {
+                full_name: log.admin_id ? adminMap.get(log.admin_id) : null
+              }
+            }));
+          }
+        }
       }
 
       return data || [];
