@@ -27,6 +27,10 @@ import OurMission from "@/pages/OurMission";
 import OurTeam from "@/pages/OurTeam";
 // Admin pages
 import Users from "@/pages/dashboard/admin/Users";
+import AdminListings from "@/pages/dashboard/admin/Listings";
+import Analytics from "@/pages/dashboard/admin/Analytics";
+import Settings from "@/pages/dashboard/admin/Settings";
+import AuditLogs from "@/pages/dashboard/admin/AuditLogs";
 
 const Routes = () => {
   return (
@@ -53,6 +57,10 @@ const Routes = () => {
       <Route path="/dashboard/change-password" element={<ChangePassword />} />
       {/* Admin routes */}
       <Route path="/dashboard/admin/users" element={<Users />} />
+      <Route path="/dashboard/admin/listings" element={<AdminListings />} />
+      <Route path="/dashboard/admin/analytics" element={<Analytics />} />
+      <Route path="/dashboard/admin/settings" element={<Settings />} />
+      <Route path="/dashboard/admin/audit-logs" element={<AuditLogs />} />
       <Route path="/author/:username" element={<AuthorDetail />} />
       <Route path="/explore-listings" element={<ExploreListings />} />
       <Route path="/business/:id" element={<BusinessDetails />} />
