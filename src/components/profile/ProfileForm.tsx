@@ -6,6 +6,14 @@ import { PersonalInfoForm } from "./PersonalInfoForm";
 import { ContactDetailsForm } from "./ContactDetailsForm";
 import { BioForm } from "./BioForm";
 import { toast } from "sonner";
+import { Database } from "@/integrations/supabase/types";
+
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+type ProfileUpdate = {
+  new: Profile;
+  old: Profile;
+  eventType: 'INSERT' | 'UPDATE' | 'DELETE';
+};
 
 interface ProfileFormProps {
   username: string;
@@ -44,9 +52,9 @@ export const ProfileForm = ({
           table: 'profiles',
           filter: `id=eq.${(supabase.auth.getUser()).then(({ data }) => data.user?.id)}`
         },
-        (payload) => {
+        (payload: ProfileUpdate) => {
           console.log('Profile update received:', payload);
-          const { new: newProfile } = payload;
+          const newProfile = payload.new;
           
           // Update local state with new values
           if (newProfile) {
