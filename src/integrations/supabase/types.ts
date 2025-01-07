@@ -47,6 +47,60 @@ export type Database = {
           },
         ]
       }
+      admin_audit_logs: {
+        Row: {
+          action: string
+          admin_id: string | null
+          changes: Json | null
+          created_at: string | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+        }
+        Insert: {
+          action: string
+          admin_id?: string | null
+          changes?: Json | null
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+        }
+        Update: {
+          action?: string
+          admin_id?: string | null
+          changes?: Json | null
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      admin_settings: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string | null
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string | null
+          updated_by?: string | null
+          value: Json
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string | null
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
       appointments: {
         Row: {
           amount: number | null
