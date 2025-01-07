@@ -8,8 +8,12 @@ import { BookmarkedBusinesses } from "./BookmarkedBusinesses";
 import { CheckInHistory } from "./CheckInHistory";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { X } from "lucide-react";
+import { useDashboardRealtime } from "@/hooks/use-dashboard-realtime";
 
 export const UserDashboard = () => {
+  // Enable real-time updates for dashboard
+  useDashboardRealtime();
+
   const { data: profile } = useQuery({
     queryKey: ['profile'],
     queryFn: async () => {
