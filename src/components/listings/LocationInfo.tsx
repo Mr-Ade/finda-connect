@@ -49,14 +49,15 @@ export const LocationInfo = () => {
       .then(response => response.json())
       .then(data => {
         if (data.results && data.results[0]) {
-          const result = data.results[0].components;
-          console.log("Reverse geocoding result:", result);
+          const components = data.results[0].components;
+          console.log("Reverse geocoding result:", components);
           
           setAddress(prev => ({
             ...prev,
-            state: result.state || prev.state,
-            city: result.city || prev.city,
-            zipCode: result.postcode || prev.zipCode
+            state: components.state || prev.state,
+            city: components.city || components.town || components.village || prev.city,
+            zipCode: components.postcode || prev.zipCode,
+            street: components.road ? `${components.road}${components.house_number ? `, ${components.house_number}` : ''}` : prev.street
           }));
         }
       })
