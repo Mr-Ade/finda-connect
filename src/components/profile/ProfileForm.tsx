@@ -5,22 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { PersonalInfoForm } from "./PersonalInfoForm";
 import { ContactDetailsForm } from "./ContactDetailsForm";
 import { BioForm } from "./BioForm";
-import { toast } from "sonner";
-import { Database } from "@/integrations/supabase/types";
-import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
-
-type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-type ProfileUpdatePayload = {
-  username: string | null;
-  full_name: string | null;
-  bio: string | null;
-  mobile: string | null;
-  state: string | null;
-  city: string | null;
-  address: string | null;
-  zip_code: string | null;
-};
-type ProfileUpdate = RealtimePostgresChangesPayload<ProfileUpdatePayload>;
+import { useProfileRealtime } from "@/hooks/use-profile-realtime";
+import { ProfileUpdatePayload } from "@/types/profile";
 
 interface ProfileFormProps {
   username: string;
@@ -47,43 +33,18 @@ export const ProfileForm = ({
   const [zipCode, setZipCode] = useState("");
   const { toast } = useToast();
 
-  // Subscribe to real-time profile updates
-  useEffect(() => {
-    const channel = supabase
-      .channel('profile-updates')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'profiles'
-        },
-        (payload: ProfileUpdate) => {
-          console.log('Profile update received:', payload);
-          if (payload.new && typeof payload.new === 'object') {
-            const newData = payload.new as ProfileUpdatePayload;
-            setUsername(newData.username ?? '');
-            setFullName(newData.full_name ?? '');
-            setBio(newData.bio ?? '');
-            setMobile(newData.mobile ?? '');
-            setState(newData.state ?? '');
-            setCity(newData.city ?? '');
-            setAddress(newData.address ?? '');
-            setZipCode(newData.zip_code ?? '');
-            
-            toast({
-              title: "Profile Updated",
-              description: "Your profile has been updated in real-time",
-            });
-          }
-        }
-      )
-      .subscribe();
+  const handleProfileUpdate = (newData: ProfileUpdatePayload) => {
+    setUsername(newData.username ?? '');
+    setFullName(newData.full_name ?? '');
+    setBio(newData.bio ?? '');
+    setMobile(newData.mobile ?? '');
+    setState(newData.state ?? '');
+    setCity(newData.city ?? '');
+    setAddress(newData.address ?? '');
+    setZipCode(newData.zip_code ?? '');
+  };
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+  useProfileRealtime({ onProfileUpdate: handleProfileUpdate });
 
   // Load initial profile data
   useEffect(() => {
@@ -119,7 +80,7 @@ export const ProfileForm = ({
     };
 
     loadProfile();
-  }, []);
+  }, [toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
