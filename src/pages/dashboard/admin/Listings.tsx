@@ -50,7 +50,8 @@ const AdminListings = () => {
         throw error;
       }
 
-      return data as Business[];
+      // Type assertion to ensure the returned data matches our Business type
+      return data as unknown as Business[];
     }
   });
 
