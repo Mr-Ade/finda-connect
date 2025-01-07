@@ -1,8 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { useEffect } from "react";
 import { 
   Calendar,
   CircleDollarSign,
@@ -37,10 +38,12 @@ interface AppointmentsListProps {
 
 export const AppointmentsList = ({ isBusinessOwner }: AppointmentsListProps) => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: appointments, isLoading, error } = useQuery({
     queryKey: ["appointments"],
     queryFn: async () => {
+      console.log("Fetching appointments...");
       const query = supabase
         .from("appointments")
         .select(`
@@ -51,9 +54,69 @@ export const AppointmentsList = ({ isBusinessOwner }: AppointmentsListProps) => 
 
       const { data, error } = await query;
       if (error) throw error;
+      console.log("Fetched appointments:", data);
       return data as unknown as Appointment[];
     },
   });
+
+  useEffect(() => {
+    // Subscribe to real-time changes
+    const channel = supabase
+      .channel('appointments-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'appointments'
+        },
+        (payload) => {
+          console.log('Appointment update received:', payload);
+          queryClient.invalidateQueries({ queryKey: ['appointments'] });
+          
+          // Show toast notification for status changes
+          if (payload.eventType === 'UPDATE') {
+            const newData = payload.new as Appointment;
+            const oldData = payload.old as Appointment;
+            
+            if (newData.status !== oldData.status) {
+              toast({
+                title: "Appointment Status Updated",
+                description: `Appointment status changed to ${newData.status}`,
+              });
+            }
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient, toast]);
+
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from("appointments")
+        .update({ status: newStatus })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Appointment status updated",
+      });
+    } catch (error) {
+      console.error("Error updating appointment status:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update appointment status",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -62,26 +125,6 @@ export const AppointmentsList = ({ isBusinessOwner }: AppointmentsListProps) => 
   if (error) {
     return <div>Error loading appointments</div>;
   }
-
-  const handleStatusChange = async (id: string, newStatus: string) => {
-    const { error } = await supabase
-      .from("appointments")
-      .update({ status: newStatus })
-      .eq("id", id);
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update appointment status",
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Success",
-        description: "Appointment status updated",
-      });
-    }
-  };
 
   return (
     <div className="dashboard-list-wraps bg-white rounded mb-4">
