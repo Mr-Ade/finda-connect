@@ -7,8 +7,43 @@ import { WalletChart } from "@/components/profile/dashboard/WalletChart";
 import { RecentActivities } from "@/components/profile/dashboard/RecentActivities";
 import { InvoicesList } from "@/components/profile/dashboard/InvoicesList";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Wallet = () => {
+  const { toast } = useToast();
+
+  // Fetch user's latest notification
+  const { data: notification } = useQuery({
+    queryKey: ['wallet-notification'],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error('No user session found');
+
+      const { data, error } = await supabase
+        .from('businesses')
+        .select('name')
+        .eq('owner_id', session.user.id)
+        .eq('status', 'approved')
+        .order('approved_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching notification:', error);
+        toast({
+          title: "Error loading notification",
+          description: "Please try again later",
+          variant: "destructive",
+        });
+        return null;
+      }
+
+      return data;
+    }
+  });
+
   return (
     <div className="min-h-screen bg-gray-50">
       <ProfileHeader />
@@ -29,17 +64,17 @@ const Wallet = () => {
               />
             </div>
 
-            {/* Alert */}
-            <div className="mb-6">
-              <div className="bg-gray-900 text-white p-4 rounded-lg flex items-center justify-between">
-                <p className="font-medium">
-                  Your listing <a href="#" className="text-green-400">Wedding Willa Resort</a> has been approved!
-                </p>
-                <button className="text-white hover:text-gray-200">×</button>
+            {notification && (
+              <div className="mb-6">
+                <div className="bg-gray-900 text-white p-4 rounded-lg flex items-center justify-between">
+                  <p className="font-medium">
+                    Your listing <a href="#" className="text-green-400">{notification.name}</a> has been approved!
+                  </p>
+                  <button className="text-white hover:text-gray-200">×</button>
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Stats */}
             <WalletStats />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
