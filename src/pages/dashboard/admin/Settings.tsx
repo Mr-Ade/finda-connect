@@ -1,9 +1,5 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { AdminRoute } from "@/components/auth/AdminRoute";
@@ -11,16 +7,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
+import { SettingsForm } from "@/components/admin/settings/SettingsForm";
+import type { AdminSetting } from "@/types/admin";
 
-interface AdminSetting {
-  id: string;
-  key: string;
-  value: string | number;
-  updated_at: string | null;
-  updated_by: string | null;
-}
-
-const Settings = () => {
+export default function Settings() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
@@ -90,10 +80,6 @@ const Settings = () => {
     }
   };
 
-  const getSetting = (key: string) => {
-    return settings?.find(s => s.key === key)?.value?.toString() || '';
-  };
-
   if (isError) {
     return (
       <DashboardLayout>
@@ -119,103 +105,20 @@ const Settings = () => {
           </TabsList>
 
           <TabsContent value="general">
-            <Card>
-              <CardHeader>
-                <CardTitle>General Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="site-name">Site Name</Label>
-                  <Input 
-                    id="site-name"
-                    placeholder="Enter site name"
-                    defaultValue={getSetting('site_name')}
-                    onChange={(e) => handleUpdateSetting('site_name', e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="contact-email">Contact Email</Label>
-                  <Input 
-                    id="contact-email"
-                    type="email"
-                    placeholder="Enter contact email"
-                    defaultValue={getSetting('contact_email')}
-                    onChange={(e) => handleUpdateSetting('contact_email', e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="support-phone">Support Phone</Label>
-                  <Input 
-                    id="support-phone"
-                    type="tel"
-                    placeholder="Enter support phone number"
-                    defaultValue={getSetting('support_phone')}
-                    onChange={(e) => handleUpdateSetting('support_phone', e.target.value)}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            <SettingsForm 
+              settings={settings}
+              isLoading={loading}
+              onUpdateSetting={handleUpdateSetting}
+            />
           </TabsContent>
 
+          {/* Additional tabs content will be implemented in separate components */}
           <TabsContent value="appearance">
-            <Card>
-              <CardHeader>
-                <CardTitle>Appearance Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="primary-color">Primary Color</Label>
-                  <Input 
-                    id="primary-color"
-                    type="color"
-                    defaultValue={getSetting('primary_color') || '#000000'}
-                    onChange={(e) => handleUpdateSetting('primary_color', e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="logo-url">Logo URL</Label>
-                  <Input 
-                    id="logo-url"
-                    placeholder="Enter logo URL"
-                    defaultValue={getSetting('logo_url')}
-                    onChange={(e) => handleUpdateSetting('logo_url', e.target.value)}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            {/* Appearance settings component will go here */}
           </TabsContent>
 
           <TabsContent value="advanced">
-            <Card>
-              <CardHeader>
-                <CardTitle>Advanced Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="maintenance-mode">Maintenance Mode</Label>
-                  <Input 
-                    id="maintenance-mode"
-                    type="checkbox"
-                    className="w-4 h-4"
-                    checked={getSetting('maintenance_mode') === 'true'}
-                    onChange={(e) => handleUpdateSetting('maintenance_mode', e.target.checked.toString())}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="analytics-id">Analytics ID</Label>
-                  <Input 
-                    id="analytics-id"
-                    placeholder="Enter analytics ID"
-                    defaultValue={getSetting('analytics_id')}
-                    onChange={(e) => handleUpdateSetting('analytics_id', e.target.value)}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            {/* Advanced settings component will go here */}
           </TabsContent>
         </Tabs>
 
@@ -227,9 +130,9 @@ const Settings = () => {
       </div>
     </DashboardLayout>
   );
-};
+}
 
-export default () => (
+export const AdminSettings = () => (
   <AdminRoute>
     <Settings />
   </AdminRoute>
