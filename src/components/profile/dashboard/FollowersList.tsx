@@ -1,40 +1,36 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-
-const followers = [
-  {
-    name: "Maryam Amiri",
-    location: "New York, USA",
-    avatar: "/assets/img/t-1.png",
-    status: "online"
-  },
-  {
-    name: "Sarah Johnson",
-    location: "Canada, USA",
-    avatar: "/assets/img/t-2.png",
-    status: "offline"
-  },
-  {
-    name: "David Wilson",
-    location: "Denver, USA",
-    avatar: "/assets/img/t-3.png",
-    status: "busy"
-  },
-  {
-    name: "Emma Brown",
-    location: "Liverpool, UK",
-    avatar: "/assets/img/t-4.png",
-    status: "away"
-  },
-  {
-    name: "Michael Clark",
-    location: "California",
-    avatar: "/assets/img/t-5.png",
-    status: "online"
-  }
-];
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const FollowersList = () => {
+  const { data: followers } = useQuery({
+    queryKey: ['followers'],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error('No user session found');
+      
+      // Get followers with their profile information
+      const { data, error } = await supabase
+        .from('follows')
+        .select(`
+          follower_id,
+          followers:profiles!follows_follower_id_fkey (
+            id,
+            full_name,
+            avatar_url,
+            city,
+            state
+          )
+        `)
+        .eq('following_id', session.user.id)
+        .limit(5);
+
+      if (error) throw error;
+      return data?.map(f => f.followers) || [];
+    }
+  });
+
   return (
     <Card>
       <CardHeader>
@@ -42,26 +38,29 @@ export const FollowersList = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {followers.map((follower, index) => (
-            <div key={index} className="flex items-center gap-4">
+          {followers?.map((follower) => (
+            <div key={follower.id} className="flex items-center gap-4">
               <div className="relative">
                 <Avatar>
-                  <AvatarImage src={follower.avatar} alt={follower.name} />
+                  <AvatarImage src={follower.avatar_url || '/placeholder.svg'} alt={follower.full_name} />
                 </Avatar>
-                <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white
-                  ${follower.status === 'online' ? 'bg-green-500' :
-                    follower.status === 'busy' ? 'bg-red-500' :
-                    follower.status === 'away' ? 'bg-yellow-500' : 'bg-gray-500'
-                  }`} />
               </div>
               <div>
-                <h6 className="font-medium">{follower.name}</h6>
+                <h6 className="font-medium">{follower.full_name || 'Anonymous User'}</h6>
                 <small className="text-gray-500">
-                  <i className="mr-1">📍</i>{follower.location}
+                  <i className="mr-1">📍</i>
+                  {follower.city && follower.state 
+                    ? `${follower.city}, ${follower.state}`
+                    : 'Location not set'}
                 </small>
               </div>
             </div>
           ))}
+          {!followers?.length && (
+            <div className="text-center text-gray-500 py-4">
+              No followers yet
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
