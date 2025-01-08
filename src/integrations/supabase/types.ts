@@ -666,6 +666,57 @@ export type Database = {
         }
         Relationships: []
       }
+      page_components: {
+        Row: {
+          component_data: Json | null
+          component_name: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          is_active: boolean | null
+          page_name: string
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          component_data?: Json | null
+          component_name: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          page_name: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          component_data?: Json | null
+          component_name?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          page_name?: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_components_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "page_components_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       popular_locations: {
         Row: {
           businesses: number
@@ -713,6 +764,7 @@ export type Database = {
           preferred_currency: string | null
           preferred_language: string | null
           state: string | null
+          super_admin: boolean | null
           timezone: string | null
           updated_at: string
           username: string | null
@@ -734,6 +786,7 @@ export type Database = {
           preferred_currency?: string | null
           preferred_language?: string | null
           state?: string | null
+          super_admin?: boolean | null
           timezone?: string | null
           updated_at?: string
           username?: string | null
@@ -755,6 +808,7 @@ export type Database = {
           preferred_currency?: string | null
           preferred_language?: string | null
           state?: string | null
+          super_admin?: boolean | null
           timezone?: string | null
           updated_at?: string
           username?: string | null
@@ -917,6 +971,51 @@ export type Database = {
           {
             foreignKeyName: "reviews_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_configuration: {
+        Row: {
+          config_key: string
+          config_value: Json | null
+          created_at: string | null
+          created_by: string | null
+          id: string
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          config_key: string
+          config_value?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          config_key?: string
+          config_value?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_configuration_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "site_configuration_updated_by_fkey"
+            columns: ["updated_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]

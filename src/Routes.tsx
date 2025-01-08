@@ -26,6 +26,7 @@ import WhoWeAre from "@/pages/WhoWeAre";
 import OurMission from "@/pages/OurMission";
 import OurTeam from "@/pages/OurTeam";
 // Admin pages
+import AdminDashboard from "@/pages/dashboard/admin/Dashboard";
 import Users from "@/pages/dashboard/admin/Users";
 import AdminListings from "@/pages/dashboard/admin/Listings";
 import Analytics from "@/pages/dashboard/admin/Analytics";
@@ -56,6 +57,7 @@ const Routes = () => {
       <Route path="/dashboard/profile" element={<Profile />} />
       <Route path="/dashboard/change-password" element={<ChangePassword />} />
       {/* Admin routes */}
+      <Route path="/dashboard/admin" element={<AdminDashboard />} />
       <Route path="/dashboard/admin/users" element={<Users />} />
       <Route path="/dashboard/admin/listings" element={<AdminListings />} />
       <Route path="/dashboard/admin/analytics" element={<Analytics />} />
