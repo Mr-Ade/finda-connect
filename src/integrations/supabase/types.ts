@@ -1080,18 +1080,21 @@ export type Database = {
       }
       states: {
         Row: {
+          ad_count: number | null
           code: string
           created_at: string
           id: string
           name: string
         }
         Insert: {
+          ad_count?: number | null
           code: string
           created_at?: string
           id?: string
           name: string
         }
         Update: {
+          ad_count?: number | null
           code?: string
           created_at?: string
           id?: string
