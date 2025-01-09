@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BUSINESS_CATEGORIES } from "@/lib/constants";
+import { INITIAL_CATEGORIES, ADDITIONAL_CATEGORIES } from "@/components/home/CategoryData";
 
 interface CategorySelectProps {
   onSelect: (category: string) => void;
@@ -14,7 +14,7 @@ interface CategorySelectProps {
 }
 
 export const CategorySelect = ({ onSelect, className = "h-12" }: CategorySelectProps) => {
-  const mainCategories = Object.keys(BUSINESS_CATEGORIES);
+  const allCategories = [...INITIAL_CATEGORIES, ...ADDITIONAL_CATEGORIES];
 
   return (
     <DropdownMenu>
@@ -28,13 +28,14 @@ export const CategorySelect = ({ onSelect, className = "h-12" }: CategorySelectP
           <ChevronDown className="h-4 w-4 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-[200px]">
-        {mainCategories.map((category) => (
+      <DropdownMenuContent align="start" className="w-[200px] max-h-[300px] overflow-y-auto">
+        {allCategories.map((category) => (
           <DropdownMenuItem
-            key={category}
-            onClick={() => onSelect(category)}
+            key={category.name}
+            onClick={() => onSelect(category.name)}
           >
-            {category}
+            <category.icon className="h-4 w-4 mr-2" />
+            {category.name}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
