@@ -17,28 +17,42 @@ interface Category {
 
 export const INITIAL_CATEGORIES: Category[] = [
   {
-    name: "Restaurants & Food",
+    name: "Retail & Shopping",
+    icon: Store,
+    count: 0,
+    subcategories: [
+      "Apparel & Accessories",
+      "Books & Media",
+      "Home & Garden",
+      "Electronics",
+      "Gifts & Specialty",
+      "Sporting Goods"
+    ]
+  },
+  {
+    name: "Food & Drink",
     icon: Utensils,
     count: 0,
     subcategories: [
       "Restaurants",
-      "Cafes",
-      "Fast Food",
-      "Food Delivery",
-      "Bakeries",
-      "Bars & Pubs"
+      "Cafes & Coffee Shops",
+      "Bars & Pubs",
+      "Bakeries & Desserts",
+      "Grocery Stores",
+      "Food Trucks"
     ]
   },
   {
-    name: "Shopping & Retail",
-    icon: Store,
+    name: "Professional Services",
+    icon: Briefcase,
     count: 0,
     subcategories: [
-      "Clothing Stores",
-      "Electronics",
-      "Grocery Stores",
-      "Shopping Centers",
-      "Specialty Stores"
+      "Legal Services",
+      "Financial Services",
+      "Real Estate",
+      "Insurance",
+      "Consulting",
+      "Marketing"
     ]
   },
   {
@@ -46,47 +60,25 @@ export const INITIAL_CATEGORIES: Category[] = [
     icon: Stethoscope,
     count: 0,
     subcategories: [
-      "Doctors",
+      "Doctors & Physicians",
       "Dentists",
-      "Hospitals",
+      "Hospitals & Clinics",
       "Pharmacies",
-      "Mental Health"
+      "Mental Health",
+      "Alternative Medicine"
     ]
   },
   {
-    name: "Services",
-    icon: Briefcase,
-    count: 0,
-    subcategories: [
-      "Financial Services",
-      "Legal Services",
-      "Real Estate",
-      "Insurance",
-      "Consulting"
-    ]
-  },
-  {
-    name: "Beauty & Spas",
+    name: "Personal Services",
     icon: Scissors,
     count: 0,
     subcategories: [
       "Hair Salons",
+      "Spas & Wellness",
       "Nail Salons",
-      "Spas",
-      "Barber Shops",
-      "Beauty Supplies"
-    ]
-  },
-  {
-    name: "Automotive",
-    icon: Car,
-    count: 0,
-    subcategories: [
-      "Auto Repair",
-      "Car Dealers",
-      "Car Wash",
-      "Gas Stations",
-      "Parking"
+      "Fitness Centers",
+      "Beauty Services",
+      "Personal Training"
     ]
   },
   {
@@ -94,50 +86,93 @@ export const INITIAL_CATEGORIES: Category[] = [
     icon: Home,
     count: 0,
     subcategories: [
-      "Contractors",
-      "Plumbers",
-      "Electricians",
+      "Plumbing",
+      "Electrical",
+      "HVAC",
+      "Cleaning",
       "Landscaping",
-      "Cleaning"
+      "Handyman"
     ]
   }
 ];
 
 export const ADDITIONAL_CATEGORIES: Category[] = [
   {
-    name: "Entertainment",
-    icon: Music,
+    name: "Automotive",
+    icon: Car,
     count: 0,
     subcategories: [
-      "Movie Theaters",
-      "Music Venues",
-      "Arts & Culture",
-      "Nightlife",
-      "Gaming"
+      "Auto Repair",
+      "Car Dealers",
+      "Auto Detailing",
+      "Tire Shops",
+      "Gas Stations",
+      "Towing"
     ]
   },
   {
-    name: "Education",
+    name: "Arts & Entertainment",
+    icon: Palette,
+    count: 0,
+    subcategories: [
+      "Theaters",
+      "Museums",
+      "Music Venues",
+      "Art Galleries",
+      "Movie Theaters",
+      "Event Venues"
+    ]
+  },
+  {
+    name: "Education & Training",
     icon: GraduationCap,
     count: 0,
     subcategories: [
       "Schools",
+      "Universities",
+      "Trade Schools",
       "Tutoring",
-      "Training Centers",
       "Language Schools",
-      "Art Classes"
+      "Art Schools"
     ]
   },
   {
-    name: "Travel & Hotels",
-    icon: Hotel,
+    name: "Travel & Transportation",
+    icon: Plane,
     count: 0,
     subcategories: [
       "Hotels",
       "Travel Agencies",
+      "Car Rental",
       "Transportation",
-      "Vacation Rentals",
-      "Tours"
+      "Airport Shuttles",
+      "Vacation Rentals"
+    ]
+  },
+  {
+    name: "Technology",
+    icon: Laptop,
+    count: 0,
+    subcategories: [
+      "Computer Services",
+      "Web Development",
+      "IT Support",
+      "Software Services",
+      "Digital Marketing",
+      "Tech Repair"
+    ]
+  },
+  {
+    name: "Event Services",
+    icon: Music,
+    count: 0,
+    subcategories: [
+      "Event Planning",
+      "Catering",
+      "Photography",
+      "Videography",
+      "DJs & Musicians",
+      "Event Rentals"
     ]
   }
 ];
