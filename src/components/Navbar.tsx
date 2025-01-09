@@ -48,9 +48,9 @@ export const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      // First attempt to sign out
       const { error } = await supabase.auth.signOut();
       
+      // Only show error toast if there's an actual error
       if (error) {
         console.error("Error signing out:", error);
         toast({
