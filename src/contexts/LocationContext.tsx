@@ -15,6 +15,7 @@ interface LocationContextType {
   };
   isLoading: boolean;
   setCity: (city: string) => void;
+  setState: (state: string) => void;
 }
 
 const LocationContext = createContext<LocationContextType | undefined>(undefined);
@@ -39,6 +40,13 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     setLocationData(prev => ({
       ...prev,
       city
+    }));
+  };
+
+  const setState = (state: string) => {
+    setLocationData(prev => ({
+      ...prev,
+      state
     }));
   };
 
@@ -158,7 +166,7 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
   }, [toast]);
 
   return (
-    <LocationContext.Provider value={{ ...locationData, setCity }}>
+    <LocationContext.Provider value={{ ...locationData, setCity, setState }}>
       {children}
     </LocationContext.Provider>
   );

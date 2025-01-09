@@ -389,6 +389,38 @@ export type Database = {
           },
         ]
       }
+      cities: {
+        Row: {
+          ad_count: number | null
+          created_at: string
+          id: string
+          name: string
+          state_id: string
+        }
+        Insert: {
+          ad_count?: number | null
+          created_at?: string
+          id?: string
+          name: string
+          state_id: string
+        }
+        Update: {
+          ad_count?: number | null
+          created_at?: string
+          id?: string
+          name?: string
+          state_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cities_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       follows: {
         Row: {
           created_at: string
@@ -1043,6 +1075,27 @@ export type Database = {
           proj4text?: string | null
           srid?: number
           srtext?: string | null
+        }
+        Relationships: []
+      }
+      states: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
         }
         Relationships: []
       }
