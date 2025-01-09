@@ -32,6 +32,7 @@ export const Navbar = () => {
           title: "Signed out",
           description: "You have been successfully signed out.",
         });
+        navigate("/login");
       } else if (event === 'SIGNED_IN') {
         toast({
           title: "Signed in",
@@ -43,14 +44,20 @@ export const Navbar = () => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [toast]);
+  }, [toast, navigate]);
 
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      
-      navigate("/login");
+      if (error) {
+        console.error("Error signing out:", error);
+        toast({
+          title: "Error",
+          description: "Failed to sign out. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
     } catch (error) {
       console.error("Error signing out:", error);
       toast({
