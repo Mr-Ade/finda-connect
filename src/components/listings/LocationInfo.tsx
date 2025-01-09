@@ -19,7 +19,7 @@ export const LocationInfo = () => {
     state: locationContext.state || "",
     city: locationContext.city || "",
     street: "",
-    zipCode: "",
+    zip_code: "",  // Changed from zipCode to zip_code to match the expected type
     phone: "",
     email: "",
     website: ""
@@ -56,7 +56,7 @@ export const LocationInfo = () => {
             ...prev,
             state: components.state || prev.state,
             city: components.city || components.town || components.village || prev.city,
-            zipCode: components.postcode || prev.zipCode,
+            zip_code: components.postcode || prev.zip_code,  // Changed from zipCode to zip_code
             street: components.road ? `${components.road}${components.house_number ? `, ${components.house_number}` : ''}` : prev.street
           }));
         }
