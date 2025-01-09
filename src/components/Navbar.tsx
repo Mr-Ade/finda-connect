@@ -48,7 +48,9 @@ export const Navbar = () => {
 
   const handleLogout = async () => {
     try {
+      // First attempt to sign out
       const { error } = await supabase.auth.signOut();
+      
       if (error) {
         console.error("Error signing out:", error);
         toast({
@@ -56,13 +58,12 @@ export const Navbar = () => {
           description: "Failed to sign out. Please try again.",
           variant: "destructive",
         });
-        return;
       }
     } catch (error) {
-      console.error("Error signing out:", error);
+      console.error("Unexpected error during sign out:", error);
       toast({
         title: "Error",
-        description: "Failed to sign out. Please try again.",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
     }
