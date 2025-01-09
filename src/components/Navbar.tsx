@@ -63,7 +63,7 @@ export const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white border-b z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center">
           <Link to="/" className="flex items-center">
             <img 
               src="/lovable-uploads/4d0af716-aad5-4a66-a3db-4a158a8037a8.png" 
@@ -71,21 +71,24 @@ export const Navbar = () => {
               className="h-8"
             />
           </Link>
-          
-          <div className="hidden md:flex items-center space-x-4">
-            <Link to="/explore-listings" className="text-gray-600 hover:text-primary">
-              Explore
-            </Link>
-            <Link to="/browse-categories" className="text-gray-600 hover:text-primary">
-              Categories
-            </Link>
-            <Link to="/browse-authors" className="text-gray-600 hover:text-primary">
-              Authors
-            </Link>
-            <Link to="/blog" className="text-gray-600 hover:text-primary">
-              Blog
-            </Link>
-          </div>
+        </div>
+
+        <div className="flex items-center space-x-6">
+          <Link to="/explore-listings" className="text-gray-600 hover:text-primary">
+            Explore
+          </Link>
+          <Link to="/browse-categories" className="text-gray-600 hover:text-primary">
+            Categories
+          </Link>
+          <Link to="/browse-authors" className="text-gray-600 hover:text-primary">
+            Authors
+          </Link>
+          <Link to="/blog" className="text-gray-600 hover:text-primary">
+            Blog
+          </Link>
+          <Link to="/shop" className="text-gray-600 hover:text-primary">
+            Shop
+          </Link>
         </div>
 
         <div className="flex items-center space-x-4">
