@@ -16,67 +16,128 @@ interface Category {
 }
 
 export const INITIAL_CATEGORIES: Category[] = [
-  { 
-    name: "Retail & Shopping", 
-    icon: Store, 
+  {
+    name: "Restaurants & Food",
+    icon: Utensils,
     count: 0,
-    subcategories: ["Department Stores", "Malls", "Boutiques", "Specialty Stores", "Outlets"]
+    subcategories: [
+      "Restaurants",
+      "Cafes",
+      "Fast Food",
+      "Food Delivery",
+      "Bakeries",
+      "Bars & Pubs"
+    ]
   },
-  { 
-    name: "Food & Drink", 
-    icon: Utensils, 
+  {
+    name: "Shopping & Retail",
+    icon: Store,
     count: 0,
-    subcategories: ["Fine Dining", "Casual Dining", "Fast Food", "Food Trucks", "Bars & Pubs"]
+    subcategories: [
+      "Clothing Stores",
+      "Electronics",
+      "Grocery Stores",
+      "Shopping Centers",
+      "Specialty Stores"
+    ]
   },
-  { 
-    name: "Services", 
-    icon: Building2, 
+  {
+    name: "Health & Medical",
+    icon: Stethoscope,
     count: 0,
-    subcategories: ["Financial Services", "Legal Services", "Consulting", "Marketing", "Insurance"]
+    subcategories: [
+      "Doctors",
+      "Dentists",
+      "Hospitals",
+      "Pharmacies",
+      "Mental Health"
+    ]
   },
-  { 
-    name: "Health & Medical", 
-    icon: Stethoscope, 
+  {
+    name: "Services",
+    icon: Briefcase,
     count: 0,
-    subcategories: ["Hospitals", "Clinics", "Dental Care", "Pharmacies", "Mental Health"]
+    subcategories: [
+      "Financial Services",
+      "Legal Services",
+      "Real Estate",
+      "Insurance",
+      "Consulting"
+    ]
   },
-  { 
-    name: "Education & Training", 
-    icon: GraduationCap, 
+  {
+    name: "Beauty & Spas",
+    icon: Scissors,
     count: 0,
-    subcategories: ["Schools", "Universities", "Training Centers", "Tutoring", "Language Schools"]
+    subcategories: [
+      "Hair Salons",
+      "Nail Salons",
+      "Spas",
+      "Barber Shops",
+      "Beauty Supplies"
+    ]
   },
-  { 
-    name: "Arts & Entertainment", 
-    icon: Brush, 
+  {
+    name: "Automotive",
+    icon: Car,
     count: 0,
-    subcategories: ["Theaters", "Museums", "Art Galleries", "Music Venues", "Comedy Clubs"]
+    subcategories: [
+      "Auto Repair",
+      "Car Dealers",
+      "Car Wash",
+      "Gas Stations",
+      "Parking"
+    ]
   },
-  { 
-    name: "Travel & Accommodation", 
-    icon: Hotel, 
+  {
+    name: "Home Services",
+    icon: Home,
     count: 0,
-    subcategories: ["Hotels", "Resorts", "Hostels", "Vacation Rentals", "Travel Agencies"]
+    subcategories: [
+      "Contractors",
+      "Plumbers",
+      "Electricians",
+      "Landscaping",
+      "Cleaning"
+    ]
   }
 ];
 
 export const ADDITIONAL_CATEGORIES: Category[] = [
-  { 
-    name: "Apparel & Accessories", 
-    icon: Shirt, 
+  {
+    name: "Entertainment",
+    icon: Music,
     count: 0,
-    subcategories: ["Men's Clothing", "Women's Clothing", "Children's Clothing", "Shoes", "Accessories"]
+    subcategories: [
+      "Movie Theaters",
+      "Music Venues",
+      "Arts & Culture",
+      "Nightlife",
+      "Gaming"
+    ]
   },
-  { 
-    name: "Books, Music & Movies", 
-    icon: Book, 
+  {
+    name: "Education",
+    icon: GraduationCap,
     count: 0,
-    subcategories: ["Bookstores", "Music Stores", "Movie Theaters", "Record Shops", "Libraries"]
+    subcategories: [
+      "Schools",
+      "Tutoring",
+      "Training Centers",
+      "Language Schools",
+      "Art Classes"
+    ]
   },
-  { 
-    name: "Home & Garden", 
-    icon: Home, 
+  {
+    name: "Travel & Hotels",
+    icon: Hotel,
     count: 0,
-    subcategories: ["Furniture", "Garden Centers", "Home Decor", "Hardware", "Appliances"]
-  },
+    subcategories: [
+      "Hotels",
+      "Travel Agencies",
+      "Transportation",
+      "Vacation Rentals",
+      "Tours"
+    ]
+  }
 ];
