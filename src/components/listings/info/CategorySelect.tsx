@@ -2,28 +2,26 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useBusinessForm } from "@/contexts/BusinessFormContext";
-import { INITIAL_CATEGORIES, ADDITIONAL_CATEGORIES } from "@/components/home/CategoryData";
+import { BUSINESS_CATEGORIES } from "@/lib/constants";
 
 export const CategorySelect = () => {
   const { formData, updateFormData } = useBusinessForm();
 
-  // Combine all categories
-  const allCategories = [...INITIAL_CATEGORIES, ...ADDITIONAL_CATEGORIES];
-
-  // Create flattened array of all categories and their subcategories
-  const flattenedCategories = allCategories.flatMap(category => {
+  const flattenedCategories = Object.entries(BUSINESS_CATEGORIES).flatMap(([mainCategory, subCategories]) => {
     // Add main category
-    const items = [{ value: category.name, label: `📁 ${category.name}` }];
+    const items = [{ value: mainCategory, label: `📁 ${mainCategory}` }];
     
-    // Add subcategories if they exist
-    if (category.subcategories) {
-      category.subcategories.forEach(subcategory => {
+    // Add subcategories and their items
+    Object.entries(subCategories).forEach(([subCategory, subItems]) => {
+      items.push({ value: `${mainCategory}/${subCategory}`, label: `  ↳ ${subCategory}` });
+      
+      subItems.forEach(item => {
         items.push({ 
-          value: `${category.name} - ${subcategory}`,
-          label: `  ↳ ${subcategory}`
+          value: `${mainCategory}/${subCategory}/${item}`,
+          label: `    • ${item}`
         });
       });
-    }
+    });
     
     return items;
   });
