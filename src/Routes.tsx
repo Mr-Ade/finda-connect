@@ -1,78 +1,24 @@
-import { Routes as RouterRoutes, Route } from "react-router-dom";
-import Home from "@/pages/Index";
-import Blog from "@/pages/Blog";
-import BlogDetail from "@/pages/BlogDetail";
-import Contact from "@/pages/Contact";
-import FAQ from "@/pages/FAQ";
-import Dashboard from "@/pages/dashboard/Dashboard";
-import MyBookings from "@/pages/dashboard/MyBookings";
-import AddListing from "@/pages/dashboard/AddListing";
-import Listings from "@/pages/dashboard/Listings";
-import Messages from "@/pages/dashboard/Messages";
-import Wallet from "@/pages/dashboard/Wallet";
-import SavedListings from "@/pages/dashboard/SavedListings";
-import Profile from "@/pages/dashboard/Profile";
-import ChangePassword from "@/pages/dashboard/ChangePassword";
-import NotFound from "@/pages/404";
-import AuthorDetail from "@/pages/AuthorDetail";
-import ExploreListings from "@/pages/ExploreListings";
-import BusinessDetails from "@/pages/BusinessDetails";
-import Login from "@/pages/Login";
-import Signup from "@/pages/Signup";
-import AboutUs from "@/pages/AboutUs";
-import Pricing from "@/pages/Pricing";
-import Privacy from "@/pages/Privacy";
-import WhoWeAre from "@/pages/WhoWeAre";
-import OurMission from "@/pages/OurMission";
-import OurTeam from "@/pages/OurTeam";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "@/pages/Home";
 import Shop from "@/pages/Shop";
-// Admin pages
-import AdminDashboard from "@/pages/dashboard/admin/Dashboard";
-import Users from "@/pages/dashboard/admin/Users";
-import AdminListings from "@/pages/dashboard/admin/Listings";
-import Analytics from "@/pages/dashboard/admin/Analytics";
-import Settings from "@/pages/dashboard/admin/Settings";
-import AuditLogs from "@/pages/dashboard/admin/AuditLogs";
+import Checkout from "@/pages/Checkout";
+import PaymentLinks from "@/pages/PaymentLinks";
+import ProductDetails from "@/pages/ProductDetails";
+import NotFound from "@/pages/NotFound";
 
-const Routes = () => {
+const AppRoutes = () => {
   return (
-    <RouterRoutes>
-      <Route path="/" element={<Home />} />
-      <Route path="/blog" element={<Blog />} />
-      <Route path="/blog/:id" element={<BlogDetail />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/faq" element={<FAQ />} />
-      <Route path="/about-us" element={<AboutUs />} />
-      <Route path="/who-we-are" element={<WhoWeAre />} />
-      <Route path="/our-mission" element={<OurMission />} />
-      <Route path="/our-team" element={<OurTeam />} />
-      <Route path="/pricing" element={<Pricing />} />
-      <Route path="/privacy" element={<Privacy />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/dashboard/my-bookings" element={<MyBookings />} />
-      <Route path="/dashboard/add-listing" element={<AddListing />} />
-      <Route path="/dashboard/listings" element={<Listings />} />
-      <Route path="/dashboard/messages" element={<Messages />} />
-      <Route path="/dashboard/wallet" element={<Wallet />} />
-      <Route path="/dashboard/saved-listings" element={<SavedListings />} />
-      <Route path="/dashboard/profile" element={<Profile />} />
-      <Route path="/dashboard/change-password" element={<ChangePassword />} />
-      {/* Admin routes */}
-      <Route path="/dashboard/admin" element={<AdminDashboard />} />
-      <Route path="/dashboard/admin/users" element={<Users />} />
-      <Route path="/dashboard/admin/listings" element={<AdminListings />} />
-      <Route path="/dashboard/admin/analytics" element={<Analytics />} />
-      <Route path="/dashboard/admin/settings" element={<Settings />} />
-      <Route path="/dashboard/admin/audit-logs" element={<AuditLogs />} />
-      <Route path="/author/:username" element={<AuthorDetail />} />
-      <Route path="/explore-listings" element={<ExploreListings />} />
-      <Route path="/business/:id" element={<BusinessDetails />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/shop" element={<Shop />} />
-      <Route path="*" element={<NotFound />} />
-    </RouterRoutes>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/payment-links" element={<PaymentLinks />} />
+        <Route path="/shop/:id" element={<ProductDetails />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 };
 
-export default Routes;
+export default AppRoutes;

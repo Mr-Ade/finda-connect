@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import type { Database } from "@/integrations/supabase/types";
 
 type Product = Database['public']['Tables']['products']['Row'] & {
@@ -71,8 +72,9 @@ const Shop = () => {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {data.products.map((product) => (
-                    <div 
+                    <Link 
                       key={product.id} 
+                      to={`/shop/${product.id}`}
                       className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
                     >
                       {product.image_url && (
@@ -92,11 +94,11 @@ const Shop = () => {
                             ${product.price}
                           </span>
                           <Button size="sm">
-                            Add to Cart
+                            View Details
                           </Button>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
 
