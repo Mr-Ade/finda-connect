@@ -52,19 +52,29 @@ export const BusinessCard = ({
 
   const isOpen = isBusinessOpen(hours || null);
 
+  const getRatingColor = (score: number) => {
+    if (score >= 4) return 'bg-green-500';
+    if (score >= 3) return 'bg-orange-500';
+    return 'bg-red-500';
+  };
+
   return (
     <Link to={`/business/${id}`}>
       <Card className="overflow-hidden group relative">
+        {/* Image container */}
         <div className="relative">
           <img
             src={image}
             alt={name}
             className="w-full h-48 object-cover"
           />
-          <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-lg z-10">
+          <button 
+            className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
+            aria-label="Add to favorites"
+          >
             <Heart className="w-5 h-5 text-gray-600" />
           </button>
-          
+
           {/* Status badges */}
           <div className="absolute top-3 left-3 flex gap-2">
             <span className={`px-3 py-1 text-xs font-medium text-white rounded ${isOpen ? 'bg-green-500' : 'bg-blue-500'} uppercase`}>
@@ -79,7 +89,7 @@ export const BusinessCard = ({
 
           {/* Rating badge */}
           <div className="absolute bottom-3 left-3 bg-white/90 rounded px-2 py-1 flex items-center gap-1">
-            <span className={`text-lg font-bold ${rating >= 4 ? 'text-green-500' : rating >= 3 ? 'text-orange-500' : 'text-red-500'}`}>
+            <span className={`text-lg font-bold ${getRatingColor(rating)} text-white px-2 py-1 rounded`}>
               {rating}
             </span>
             <div className="flex items-center gap-1">
@@ -91,13 +101,15 @@ export const BusinessCard = ({
           </div>
         </div>
 
+        {/* Content */}
         <div className="p-4">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-lg font-semibold">{name}</h3>
           </div>
 
+          {/* Tags */}
           {tags.length > 0 && (
-            <div className="flex gap-2 mb-3">
+            <div className="flex flex-wrap gap-2 mb-3">
               {tags.map((tag, index) => (
                 <span 
                   key={index}
@@ -109,12 +121,14 @@ export const BusinessCard = ({
             </div>
           )}
 
+          {/* Description */}
           {description && (
             <p className="text-gray-600 text-sm mb-3 line-clamp-2">
               {description}
             </p>
           )}
 
+          {/* Facilities */}
           <div className="flex gap-3 mb-4">
             <Wifi className="w-4 h-4 text-gray-400" />
             <Car className="w-4 h-4 text-gray-400" />
@@ -122,6 +136,7 @@ export const BusinessCard = ({
             <Fan className="w-4 h-4 text-gray-400" />
           </div>
 
+          {/* Location and contact */}
           <div className="flex items-center justify-between text-gray-600">
             <div className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
