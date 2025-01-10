@@ -249,6 +249,7 @@ export type Database = {
           day_of_week: number
           id: string
           is_closed: boolean | null
+          is_open: boolean | null
           open_time: string
           updated_at: string
         }
@@ -259,6 +260,7 @@ export type Database = {
           day_of_week: number
           id?: string
           is_closed?: boolean | null
+          is_open?: boolean | null
           open_time: string
           updated_at?: string
         }
@@ -269,6 +271,7 @@ export type Database = {
           day_of_week?: number
           id?: string
           is_closed?: boolean | null
+          is_open?: boolean | null
           open_time?: string
           updated_at?: string
         }
@@ -389,6 +392,7 @@ export type Database = {
           business_hours: Json | null
           category: string
           city: string
+          claimed: boolean | null
           created_at: string
           delivery_info: Json | null
           description: string | null
@@ -397,6 +401,7 @@ export type Database = {
           gallery_images: string[] | null
           hero_image: string | null
           id: string
+          is_open: boolean | null
           latitude: number | null
           longitude: number | null
           menu_categories: string[] | null
@@ -404,6 +409,9 @@ export type Database = {
           owner_id: string | null
           payment_methods: Json | null
           phone: string | null
+          price_range: string | null
+          rating: number | null
+          review_count: number | null
           social_links: Json | null
           state: string
           status: string
@@ -419,6 +427,7 @@ export type Database = {
           business_hours?: Json | null
           category: string
           city: string
+          claimed?: boolean | null
           created_at?: string
           delivery_info?: Json | null
           description?: string | null
@@ -427,6 +436,7 @@ export type Database = {
           gallery_images?: string[] | null
           hero_image?: string | null
           id?: string
+          is_open?: boolean | null
           latitude?: number | null
           longitude?: number | null
           menu_categories?: string[] | null
@@ -434,6 +444,9 @@ export type Database = {
           owner_id?: string | null
           payment_methods?: Json | null
           phone?: string | null
+          price_range?: string | null
+          rating?: number | null
+          review_count?: number | null
           social_links?: Json | null
           state: string
           status?: string
@@ -449,6 +462,7 @@ export type Database = {
           business_hours?: Json | null
           category?: string
           city?: string
+          claimed?: boolean | null
           created_at?: string
           delivery_info?: Json | null
           description?: string | null
@@ -457,6 +471,7 @@ export type Database = {
           gallery_images?: string[] | null
           hero_image?: string | null
           id?: string
+          is_open?: boolean | null
           latitude?: number | null
           longitude?: number | null
           menu_categories?: string[] | null
@@ -464,6 +479,9 @@ export type Database = {
           owner_id?: string | null
           payment_methods?: Json | null
           phone?: string | null
+          price_range?: string | null
+          rating?: number | null
+          review_count?: number | null
           social_links?: Json | null
           state?: string
           status?: string
@@ -1341,8 +1359,10 @@ export type Database = {
           business_id: string
           comment: string
           created_at: string
+          helpful_count: number | null
           id: string
           rating: number
+          reply_count: number | null
           updated_at: string
           user_id: string
         }
@@ -1350,8 +1370,10 @@ export type Database = {
           business_id: string
           comment: string
           created_at?: string
+          helpful_count?: number | null
           id?: string
           rating: number
+          reply_count?: number | null
           updated_at?: string
           user_id: string
         }
@@ -1359,8 +1381,10 @@ export type Database = {
           business_id?: string
           comment?: string
           created_at?: string
+          helpful_count?: number | null
           id?: string
           rating?: number
+          reply_count?: number | null
           updated_at?: string
           user_id?: string
         }
