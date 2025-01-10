@@ -2,11 +2,12 @@ import { Link } from "react-router-dom";
 import { Heart, Mail, Star, Wifi, Car, Dog, Wind } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Database } from "@/integrations/supabase/types";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { isBusinessOpen } from "@/lib/utils/businessHours";
+import { useAuth } from "@/hooks/useAuth";
 
 type BusinessPhoto = {
   id: string;
@@ -26,6 +27,8 @@ interface ListingCardProps {
 
 export const ListingCard = ({ business }: ListingCardProps) => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   // Fetch business hours
   const { data: hours, refetch: refetchHours } = useQuery({
@@ -68,6 +71,67 @@ export const ListingCard = ({ business }: ListingCardProps) => {
     }
   });
 
+  // Fetch bookmark status
+  const { data: isBookmarked, refetch: refetchBookmark } = useQuery({
+    queryKey: ['bookmark', business.id, user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('bookmarks')
+        .select('id')
+        .eq('business_id', business.id)
+        .eq('user_id', user?.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching bookmark:', error);
+        throw error;
+      }
+
+      return !!data;
+    }
+  });
+
+  // Toggle bookmark mutation
+  const toggleBookmarkMutation = useMutation({
+    mutationFn: async () => {
+      if (!user) {
+        throw new Error('Must be logged in to bookmark');
+      }
+
+      if (isBookmarked) {
+        const { error } = await supabase
+          .from('bookmarks')
+          .delete()
+          .eq('business_id', business.id)
+          .eq('user_id', user.id);
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('bookmarks')
+          .insert([{ business_id: business.id, user_id: user.id }]);
+
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['bookmark', business.id, user?.id]);
+      toast({
+        title: isBookmarked ? "Bookmark removed" : "Business bookmarked",
+        description: isBookmarked ? "Business removed from your bookmarks" : "Business added to your bookmarks",
+      });
+    },
+    onError: (error) => {
+      console.error('Error toggling bookmark:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update bookmark. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+
   // Subscribe to real-time updates
   useEffect(() => {
     const channel = supabase
@@ -98,12 +162,25 @@ export const ListingCard = ({ business }: ListingCardProps) => {
           refetchReviews();
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'bookmarks',
+          filter: `business_id=eq.${business.id}`
+        },
+        () => {
+          console.log('Bookmarks changed, refreshing...');
+          refetchBookmark();
+        }
+      )
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [business.id, refetchHours, refetchReviews]);
+  }, [business.id, refetchHours, refetchReviews, refetchBookmark]);
 
   const isOpen = isBusinessOpen(hours || null);
 
@@ -114,8 +191,21 @@ export const ListingCard = ({ business }: ListingCardProps) => {
           variant="ghost" 
           size="icon"
           className="absolute top-3 right-3 z-10 bg-white/80 hover:bg-white"
+          onClick={() => {
+            if (!user) {
+              toast({
+                title: "Login required",
+                description: "Please login to bookmark businesses",
+                variant: "destructive",
+              });
+              return;
+            }
+            toggleBookmarkMutation.mutate();
+          }}
         >
-          <Heart className="h-5 w-5" />
+          <Heart 
+            className={`h-5 w-5 ${isBookmarked ? 'fill-primary text-primary' : ''}`} 
+          />
         </Button>
         
         <div className="absolute top-3 left-3 z-10 flex gap-2">
