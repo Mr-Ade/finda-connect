@@ -16,7 +16,6 @@ import ChangePassword from "@/pages/dashboard/ChangePassword";
 import NotFound from "@/pages/404";
 import AuthorDetail from "@/pages/AuthorDetail";
 import ExploreListings from "@/pages/ExploreListings";
-import BusinessDetails from "@/pages/BusinessDetails";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import AboutUs from "@/pages/AboutUs";
@@ -65,7 +64,6 @@ const Routes = () => {
       <Route path="/dashboard/admin/audit-logs" element={<AuditLogs />} />
       <Route path="/author/:username" element={<AuthorDetail />} />
       <Route path="/explore-listings" element={<ExploreListings />} />
-      <Route path="/business/:id" element={<BusinessDetails />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="*" element={<NotFound />} />
