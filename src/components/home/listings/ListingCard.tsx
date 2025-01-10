@@ -2,6 +2,11 @@ import { Link } from "react-router-dom";
 import { Heart, Mail, Star, Wifi, Car, Dog, Wind } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Database } from "@/integrations/supabase/types";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { isBusinessOpen } from "@/lib/utils/businessHours";
 
 type Business = Database["public"]["Tables"]["businesses"]["Row"];
 
@@ -10,6 +15,88 @@ interface ListingCardProps {
 }
 
 export const ListingCard = ({ business }: ListingCardProps) => {
+  const { toast } = useToast();
+
+  // Fetch business hours
+  const { data: hours, refetch: refetchHours } = useQuery({
+    queryKey: ['business-hours', business.id],
+    queryFn: async () => {
+      console.log('Fetching business hours for:', business.id);
+      const { data, error } = await supabase
+        .from('business_hours')
+        .select('*')
+        .eq('business_id', business.id)
+        .order('day_of_week');
+
+      if (error) {
+        console.error('Error fetching business hours:', error);
+        throw error;
+      }
+      return data;
+    }
+  });
+
+  // Fetch reviews count and average rating
+  const { data: reviewStats, refetch: refetchReviews } = useQuery({
+    queryKey: ['business-reviews', business.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('rating')
+        .eq('business_id', business.id);
+
+      if (error) {
+        console.error('Error fetching reviews:', error);
+        throw error;
+      }
+
+      const avgRating = data.reduce((acc, review) => acc + review.rating, 0) / (data.length || 1);
+      return {
+        count: data.length,
+        rating: Number(avgRating.toFixed(1))
+      };
+    }
+  });
+
+  // Subscribe to real-time updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('business_updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'business_hours',
+          filter: `business_id=eq.${business.id}`
+        },
+        () => {
+          console.log('Business hours changed, refreshing...');
+          refetchHours();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'reviews',
+          filter: `business_id=eq.${business.id}`
+        },
+        () => {
+          console.log('Reviews changed, refreshing...');
+          refetchReviews();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [business.id, refetchHours, refetchReviews]);
+
+  const isOpen = isBusinessOpen(hours || null);
+
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
       <div className="relative">
@@ -22,27 +109,29 @@ export const ListingCard = ({ business }: ListingCardProps) => {
         </Button>
         
         <div className="absolute top-3 left-3 z-10 flex gap-2">
-          <span className="bg-green-500 text-white px-2 py-1 rounded text-sm">
-            Open
+          <span className={`px-2 py-1 text-xs text-white rounded ${isOpen ? 'bg-green-500' : 'bg-blue-500'}`}>
+            {isOpen ? 'Open' : 'Closed'}
           </span>
-          <span className="bg-primary text-white px-2 py-1 rounded text-sm">
-            Featured
-          </span>
+          {business.status === 'approved' && (
+            <span className="bg-primary text-white px-2 py-1 rounded text-sm">
+              Featured
+            </span>
+          )}
         </div>
 
         <Link to={`/business/${business.id}`}>
           <img 
-            src="/placeholder.svg"
+            src={business.business_photos?.[0]?.photo_url || "/placeholder.svg"}
             alt={business.name}
             className="w-full h-48 object-cover"
           />
         </Link>
 
         <div className="absolute bottom-3 right-3 bg-white/90 rounded-full p-2 flex items-center gap-2">
-          <div className="text-yellow-500 font-bold">4.5</div>
+          <div className="text-yellow-500 font-bold">{reviewStats?.rating || 0}</div>
           <div className="flex items-center">
             <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-            <span className="text-sm ml-1">(32)</span>
+            <span className="text-sm ml-1">({reviewStats?.count || 0})</span>
           </div>
         </div>
       </div>
