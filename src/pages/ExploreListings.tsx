@@ -89,14 +89,14 @@ const ExploreListings = () => {
 
       <section className="py-8">
         <div className="container mx-auto px-4">
-          <div className={`flex ${showMap ? 'flex-row' : 'flex-col'} gap-6 relative min-h-[800px]`}>
+          <div className="flex flex-col lg:flex-row gap-6">
             {/* Filters Sidebar */}
-            <div className={`${showMap ? 'w-1/4' : 'w-full lg:w-1/4'}`}>
+            <div className="w-full lg:w-1/4">
               <SearchFilters />
             </div>
 
-            {/* Main Content Area */}
-            <div className={`${showMap ? 'w-3/4' : 'w-full lg:w-3/4'} flex flex-col`}>
+            {/* Listings Grid */}
+            <div className="w-full lg:w-3/4">
               <ListingGrid 
                 showMap={showMap} 
                 onToggleMap={() => setShowMap(!showMap)}
@@ -104,19 +104,6 @@ const ExploreListings = () => {
                 businesses={businesses}
               />
             </div>
-
-            {/* Map Section */}
-            {showMap && (
-              <div className="fixed top-[200px] right-0 w-1/2 bottom-0 z-10">
-                <Map 
-                  markers={businesses?.map(business => ({
-                    lat: Number(business.latitude) || 0,
-                    lng: Number(business.longitude) || 0
-                  }))}
-                  className="h-full rounded-l-xl shadow-xl"
-                />
-              </div>
-            )}
           </div>
         </div>
       </section>
