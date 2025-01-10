@@ -6,6 +6,9 @@ import { CategoryCard } from "@/components/home/CategoryCard";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { INITIAL_CATEGORIES, ADDITIONAL_CATEGORIES } from "@/components/home/CategoryData";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Loader2 } from "lucide-react";
 
 const BrowseCategories = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,12 +19,42 @@ const BrowseCategories = () => {
     { label: "Browse Categories", href: "#", active: true },
   ];
 
+  // Fetch category counts from Supabase
+  const { data: categoryCounts, isLoading } = useQuery({
+    queryKey: ['category-counts'],
+    queryFn: async () => {
+      console.log('Fetching category counts...');
+      const { data: businesses, error } = await supabase
+        .from('businesses')
+        .select('category')
+        .eq('status', 'approved');
+
+      if (error) {
+        console.error('Error fetching category counts:', error);
+        throw error;
+      }
+
+      // Count businesses per category
+      const counts = businesses.reduce((acc: Record<string, number>, business) => {
+        acc[business.category] = (acc[business.category] || 0) + 1;
+        return acc;
+      }, {});
+
+      console.log('Category counts:', counts);
+      return counts;
+    },
+    refetchInterval: 30000 // Refetch every 30 seconds
+  });
+
   const allCategories = [...INITIAL_CATEGORIES, ...ADDITIONAL_CATEGORIES];
   const displayedCategories = showAll ? allCategories : INITIAL_CATEGORIES;
 
   const filteredCategories = displayedCategories.filter(category =>
     category.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ).map(category => ({
+    ...category,
+    count: categoryCounts?.[category.name] || 0
+  }));
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -50,20 +83,25 @@ const BrowseCategories = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredCategories.map((category, index) => (
-              <CategoryCard
-                key={index}
-                name={category.name}
-                Icon={category.icon}
-                count={category.count}
-                onClick={() => {
-                  // Navigate to category page
-                  window.location.href = `/search?category=${encodeURIComponent(category.name)}`;
-                }}
-              />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center items-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredCategories.map((category, index) => (
+                <CategoryCard
+                  key={index}
+                  name={category.name}
+                  Icon={category.icon}
+                  count={category.count}
+                  onClick={() => {
+                    window.location.href = `/explore-listings?category=${encodeURIComponent(category.name)}`;
+                  }}
+                />
+              ))}
+            </div>
+          )}
 
           {!showAll && ADDITIONAL_CATEGORIES.length > 0 && (
             <div className="text-center mt-12">
