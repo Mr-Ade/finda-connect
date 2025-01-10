@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "@/pages/Home";
+import Index from "@/pages/Index";
 import Shop from "@/pages/Shop";
 import Checkout from "@/pages/Checkout";
 import PaymentLinks from "@/pages/PaymentLinks";
@@ -10,7 +10,7 @@ const AppRoutes = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Index />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/payment-links" element={<PaymentLinks />} />
