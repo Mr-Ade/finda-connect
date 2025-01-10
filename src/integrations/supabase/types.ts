@@ -320,23 +320,91 @@ export type Database = {
           },
         ]
       }
+      business_reviews: {
+        Row: {
+          business_id: string | null
+          created_at: string | null
+          helpful_votes: number | null
+          id: string
+          rating: number | null
+          reply_date: string | null
+          reply_text: string | null
+          review_date: string | null
+          review_text: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          business_id?: string | null
+          created_at?: string | null
+          helpful_votes?: number | null
+          id?: string
+          rating?: number | null
+          reply_date?: string | null
+          reply_text?: string | null
+          review_date?: string | null
+          review_text?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          business_id?: string | null
+          created_at?: string | null
+          helpful_votes?: number | null
+          id?: string
+          rating?: number | null
+          reply_date?: string | null
+          reply_text?: string | null
+          review_date?: string | null
+          review_text?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       businesses: {
         Row: {
           address: string
+          amenities: Json | null
           approved_at: string | null
           approved_by: string | null
+          business_hours: Json | null
           category: string
           city: string
           created_at: string
+          delivery_info: Json | null
           description: string | null
           email: string | null
+          faqs: Json | null
+          gallery_images: string[] | null
+          hero_image: string | null
           id: string
           latitude: number | null
           longitude: number | null
+          menu_categories: string[] | null
           name: string
           owner_id: string | null
           payment_methods: Json | null
           phone: string | null
+          social_links: Json | null
           state: string
           status: string
           updated_at: string
@@ -345,20 +413,28 @@ export type Database = {
         }
         Insert: {
           address: string
+          amenities?: Json | null
           approved_at?: string | null
           approved_by?: string | null
+          business_hours?: Json | null
           category: string
           city: string
           created_at?: string
+          delivery_info?: Json | null
           description?: string | null
           email?: string | null
+          faqs?: Json | null
+          gallery_images?: string[] | null
+          hero_image?: string | null
           id?: string
           latitude?: number | null
           longitude?: number | null
+          menu_categories?: string[] | null
           name: string
           owner_id?: string | null
           payment_methods?: Json | null
           phone?: string | null
+          social_links?: Json | null
           state: string
           status?: string
           updated_at?: string
@@ -367,20 +443,28 @@ export type Database = {
         }
         Update: {
           address?: string
+          amenities?: Json | null
           approved_at?: string | null
           approved_by?: string | null
+          business_hours?: Json | null
           category?: string
           city?: string
           created_at?: string
+          delivery_info?: Json | null
           description?: string | null
           email?: string | null
+          faqs?: Json | null
+          gallery_images?: string[] | null
+          hero_image?: string | null
           id?: string
           latitude?: number | null
           longitude?: number | null
+          menu_categories?: string[] | null
           name?: string
           owner_id?: string | null
           payment_methods?: Json | null
           phone?: string | null
+          social_links?: Json | null
           state?: string
           status?: string
           updated_at?: string
@@ -1099,6 +1183,42 @@ export type Database = {
           zip_code?: string | null
         }
         Relationships: []
+      }
+      recently_viewed: {
+        Row: {
+          business_id: string | null
+          id: string
+          user_id: string | null
+          viewed_at: string | null
+        }
+        Insert: {
+          business_id?: string | null
+          id?: string
+          user_id?: string | null
+          viewed_at?: string | null
+        }
+        Update: {
+          business_id?: string | null
+          id?: string
+          user_id?: string | null
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recently_viewed_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recently_viewed_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       review_photos: {
         Row: {
