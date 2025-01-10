@@ -15,6 +15,9 @@ type BusinessPhoto = {
 
 type Business = Database["public"]["Tables"]["businesses"]["Row"] & {
   business_photos?: BusinessPhoto[];
+  reviews?: {
+    rating: number;
+  }[];
 };
 
 interface ListingCardProps {
