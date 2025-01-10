@@ -5,12 +5,15 @@ import { BusinessHeader } from "@/components/business/BusinessHeader";
 import { BusinessGallery } from "@/components/business/BusinessGallery";
 import { BusinessMainContent } from "@/components/business/details/BusinessMainContent";
 import { BusinessRightSidebar } from "@/components/business/details/BusinessRightSidebar";
+import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 import type { Business } from "@/types/business";
 
 const BusinessDetails = () => {
   const { id } = useParams();
+  const { toast } = useToast();
 
-  const { data: business, isLoading } = useQuery({
+  const { data: business, isLoading, refetch } = useQuery({
     queryKey: ['business', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -38,17 +41,69 @@ const BusinessDetails = () => {
         .eq('id', id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching business:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load business details"
+        });
+        throw error;
+      }
       return data as unknown as Business;
     }
   });
 
+  // Subscribe to real-time changes
+  useEffect(() => {
+    const channel = supabase
+      .channel('business_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'businesses',
+          filter: `id=eq.${id}`
+        },
+        () => {
+          console.log('Business details changed, refreshing...');
+          refetch();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [id, refetch]);
+
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="animate-pulse">
+        <div className="h-64 bg-gray-200 w-full" />
+        <div className="container py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-8">
+              <div className="h-32 bg-gray-200 rounded-lg mb-4" />
+              <div className="h-64 bg-gray-200 rounded-lg" />
+            </div>
+            <div className="lg:col-span-4">
+              <div className="h-96 bg-gray-200 rounded-lg" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!business) {
-    return <div>Business not found</div>;
+    return (
+      <div className="container py-8 text-center">
+        <h2 className="text-2xl font-semibold mb-2">Business Not Found</h2>
+        <p className="text-gray-600">The business you're looking for doesn't exist or has been removed.</p>
+      </div>
+    );
   }
 
   return (
