@@ -63,7 +63,7 @@ export const BusinessRightSidebar = ({ business }: BusinessRightSidebarProps) =>
   }, [business.owner_id, refetchOwner]);
 
   return (
-    <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 h-fit">
+    <div className="sticky top-4">
       <BusinessSidebar 
         business={{
           id: business.id,

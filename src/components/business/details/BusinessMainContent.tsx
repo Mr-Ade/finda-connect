@@ -13,7 +13,7 @@ interface BusinessMainContentProps {
 export const BusinessMainContent = ({ business }: BusinessMainContentProps) => {
   return (
     <>
-      <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12">
+      <div className="space-y-8">
         {/* About Section */}
         <BusinessInfo 
           business={{
@@ -94,7 +94,7 @@ export const BusinessMainContent = ({ business }: BusinessMainContentProps) => {
       </div>
 
       {/* Recently Viewed Section */}
-      <div className="w-full -mx-4">
+      <div className="mt-12 -mx-4">
         <RecentlyViewedListings />
       </div>
     </>
