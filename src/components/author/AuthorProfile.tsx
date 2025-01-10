@@ -14,7 +14,7 @@ interface AuthorProfileProps {
   author: Profile;
 }
 
-const AuthorProfile = ({ author }: AuthorProfileProps) => {
+export default function AuthorProfile({ author }: AuthorProfileProps) {
   return (
     <div className="bg-white rounded-lg shadow-sm">
       <div className="relative p-6">
@@ -112,6 +112,4 @@ const AuthorProfile = ({ author }: AuthorProfileProps) => {
       </div>
     </div>
   );
-};
-
-export default AuthorProfile;
+}
