@@ -26,6 +26,7 @@ import SavedPlaces from "@/pages/SavedPlaces";
 import Shortlisted from "@/pages/Shortlisted";
 import SiteMap from "@/pages/SiteMap";
 import SubmitListing from "@/pages/SubmitListing";
+import BusinessDetail from "@/pages/BusinessDetail";
 
 // Dashboard
 import Dashboard from "@/pages/dashboard/Dashboard";
@@ -95,6 +96,7 @@ export default function Routes() {
       <Route path="/shortlisted" element={<Shortlisted />} />
       <Route path="/site-map" element={<SiteMap />} />
       <Route path="/submit-listing" element={<SubmitListing />} />
+      <Route path="/business/:id" element={<BusinessDetail />} />
     </RouterRoutes>
   );
 }
