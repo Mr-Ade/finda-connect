@@ -59,16 +59,16 @@ export default function BusinessDetail() {
               full_name
             )
           ),
-          owner:profiles (
+          owner:profiles!businesses_owner_id_fkey (
             username,
             avatar_url,
             full_name,
-            email,
-            phone,
-            website,
             city,
             state,
-            address
+            address,
+            phone,
+            website,
+            email
           )
         `)
         .eq('id', id)
