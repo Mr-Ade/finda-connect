@@ -8,7 +8,14 @@ import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { isBusinessOpen } from "@/lib/utils/businessHours";
 
-type Business = Database["public"]["Tables"]["businesses"]["Row"];
+type BusinessPhoto = {
+  id: string;
+  photo_url: string;
+};
+
+type Business = Database["public"]["Tables"]["businesses"]["Row"] & {
+  business_photos?: BusinessPhoto[];
+};
 
 interface ListingCardProps {
   business: Business;
