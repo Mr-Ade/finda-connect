@@ -4,9 +4,7 @@ import { ListingCard } from "@/components/home/listings/ListingCard";
 import { Button } from "@/components/ui/button";
 import { MapIcon, List } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { Database } from "@/integrations/supabase/types";
-
-type Business = Database["public"]["Tables"]["businesses"]["Row"];
+import type { Business } from "@/types/business";
 
 interface ListingGridProps {
   showMap: boolean;
@@ -50,9 +48,18 @@ export const ListingGrid = ({ showMap, onToggleMap, isLoading, businesses }: Lis
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {businesses.map((business) => (
-            <ListingCard key={business.id} business={business} />
-          ))}
+          {businesses.map((business) => {
+            // Transform the data to match our Business type
+            const transformedBusiness: Business = {
+              ...business,
+              business_hours: business.business_hours as Business['business_hours'],
+              amenities: business.amenities as Business['amenities'],
+              faqs: business.faqs as Business['faqs'],
+              delivery_info: business.delivery_info as Business['delivery_info'],
+              social_links: business.social_links as Business['social_links']
+            };
+            return <ListingCard key={business.id} business={transformedBusiness} />;
+          })}
         </div>
       )}
     </div>

@@ -5,6 +5,7 @@ import { CheckInButton } from "@/components/business/CheckInButton";
 import { Button } from "@/components/ui/button";
 import { Share2, MapPin, Star } from "lucide-react";
 import type { Business } from "@/types/business";
+import type { Database } from "@/integrations/supabase/types";
 
 interface BusinessHeroProps {
   businessId: string;
@@ -25,7 +26,19 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
         .single();
 
       if (error) throw error;
-      return data as Business;
+
+      // Transform the data to match our Business type
+      const transformedData: Business = {
+        ...data,
+        business_hours: data.business_hours as Business['business_hours'],
+        amenities: data.amenities as Business['amenities'],
+        faqs: data.faqs as Business['faqs'],
+        delivery_info: data.delivery_info as Business['delivery_info'],
+        social_links: data.social_links as Business['social_links'],
+        business_reviews: data.business_reviews as Business['business_reviews']
+      };
+
+      return transformedData;
     }
   });
 
