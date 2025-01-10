@@ -1,4 +1,6 @@
 import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { BusinessHero } from "@/components/business/BusinessHero";
 import { BusinessSidebar } from "@/components/business/BusinessSidebar";
 import { BusinessHours } from "@/components/business/BusinessHours";
@@ -7,9 +9,8 @@ import { Amenities } from "@/components/business/Amenities";
 import { FAQ } from "@/components/business/FAQ";
 import { ReviewSection } from "@/components/business/ReviewSection";
 import { RecentlyViewedListings } from "@/components/home/RecentlyViewedListings";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AuthorProfile } from "@/components/author/AuthorProfile";
 
 export default function BusinessDetail() {
   const { id } = useParams<{ id: string }>();
@@ -54,13 +55,20 @@ export default function BusinessDetail() {
             user_id,
             profiles (
               username,
-              avatar_url
+              avatar_url,
+              full_name
             )
           ),
           owner:profiles (
             username,
             avatar_url,
-            full_name
+            full_name,
+            email,
+            phone,
+            website,
+            city,
+            state,
+            address
           )
         `)
         .eq('id', id)
@@ -88,11 +96,11 @@ export default function BusinessDetail() {
   const amenitiesList = business.amenities ? 
     (typeof business.amenities === 'string' ? 
       JSON.parse(business.amenities) : 
-      Object.entries(business.amenities)
-    ).map(([name, available]) => ({
-      name,
-      available: !!available
-    })) : [];
+      Object.entries(business.amenities || {}).map(([name, available]) => ({
+        name,
+        available: !!available
+      }))
+    ) : [];
 
   // Transform FAQs from JSON to array format
   const faqsList = business.faqs ? 
@@ -140,8 +148,11 @@ export default function BusinessDetail() {
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-8">
             <BusinessSidebar business={business} />
+            {business.owner && (
+              <AuthorProfile author={business.owner} />
+            )}
           </div>
         </div>
 
