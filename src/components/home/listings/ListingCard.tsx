@@ -20,7 +20,7 @@ export const ListingCard = ({ business }: ListingCardProps) => {
   const queryClient = useQueryClient();
 
   // Fetch business hours
-  const { data: hours, refetch: refetchHours } = useQuery({
+  const { data: hours } = useQuery({
     queryKey: ['business-hours', business.id],
     queryFn: async () => {
       console.log('Fetching business hours for:', business.id);
@@ -39,7 +39,7 @@ export const ListingCard = ({ business }: ListingCardProps) => {
   });
 
   // Fetch reviews count and average rating
-  const { data: reviewStats, refetch: refetchReviews } = useQuery({
+  const { data: reviewStats } = useQuery({
     queryKey: ['business-reviews', business.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -121,60 +121,10 @@ export const ListingCard = ({ business }: ListingCardProps) => {
     }
   });
 
-  // Subscribe to real-time updates
-  useEffect(() => {
-    const channel = supabase
-      .channel('business_updates')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'business_hours',
-          filter: `business_id=eq.${business.id}`
-        },
-        () => {
-          console.log('Business hours changed, refreshing...');
-          refetchHours();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'reviews',
-          filter: `business_id=eq.${business.id}`
-        },
-        () => {
-          console.log('Reviews changed, refreshing...');
-          refetchReviews();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'bookmarks',
-          filter: `business_id=eq.${business.id}`
-        },
-        () => {
-          console.log('Bookmarks changed, refreshing...');
-          refetchBookmark();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [business.id, refetchHours, refetchReviews, refetchBookmark]);
-
   const isOpen = isBusinessOpen(hours || null);
 
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="bg-white rounded-lg shadow-lg overflow-hidden group relative hover:shadow-xl transition-shadow duration-300">
       <BusinessHeader
         business={business}
         isOpen={isOpen}
