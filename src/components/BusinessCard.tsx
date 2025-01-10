@@ -15,6 +15,8 @@ interface BusinessCardProps {
   reviewCount: number;
   location: string;
   isFeatured?: boolean;
+  description?: string;
+  tags?: string[];
 }
 
 export const BusinessCard = ({
@@ -26,6 +28,8 @@ export const BusinessCard = ({
   reviewCount,
   location,
   isFeatured,
+  description,
+  tags = [],
 }: BusinessCardProps) => {
   const { data: hours } = useQuery({
     queryKey: ['business-hours', id],
@@ -50,41 +54,66 @@ export const BusinessCard = ({
 
   return (
     <Link to={`/business/${id}`}>
-      <Card className="overflow-hidden group">
+      <Card className="overflow-hidden group relative">
         <div className="relative">
           <img
             src={image}
             alt={name}
             className="w-full h-48 object-cover"
           />
-          <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-lg">
+          <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-lg z-10">
             <Heart className="w-5 h-5 text-gray-600" />
           </button>
+          
+          {/* Status badges */}
           <div className="absolute top-3 left-3 flex gap-2">
-            <span className={`px-2 py-1 text-xs text-white rounded ${isOpen ? 'bg-green-500' : 'bg-blue-500'}`}>
-              {isOpen ? 'OPEN' : 'CLOSED'}
+            <span className={`px-3 py-1 text-xs font-medium text-white rounded ${isOpen ? 'bg-green-500' : 'bg-blue-500'} uppercase`}>
+              {isOpen ? 'Open' : 'Closed'}
             </span>
             {isFeatured && (
-              <span className="px-2 py-1 text-xs bg-red-500 text-white rounded">
-                FEATURED
+              <span className="px-3 py-1 text-xs font-medium bg-red-500 text-white rounded uppercase">
+                Featured
               </span>
             )}
           </div>
-          <div className="absolute bottom-3 right-3 bg-white rounded-full px-3 py-1 flex items-center gap-1">
-            <Star className="w-4 h-4 text-yellow-400 fill-current" />
-            <span className="text-sm font-medium">{rating}</span>
+
+          {/* Rating badge */}
+          <div className="absolute bottom-3 left-3 bg-white/90 rounded px-2 py-1 flex items-center gap-1">
+            <span className={`text-lg font-bold ${rating >= 4 ? 'text-green-500' : rating >= 3 ? 'text-orange-500' : 'text-red-500'}`}>
+              {rating}
+            </span>
+            <div className="flex items-center gap-1">
+              <Star className="w-4 h-4 text-yellow-400 fill-current" />
+              <span className="text-sm text-gray-600">
+                {reviewCount} Reviews
+              </span>
+            </div>
           </div>
         </div>
 
         <div className="p-4">
-          <h3 className="text-lg font-semibold mb-2">{name}</h3>
-          <div className="flex items-center text-gray-600 mb-2">
-            <span className="text-sm">({reviewCount} Reviews)</span>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-lg font-semibold">{name}</h3>
           </div>
-          <div className="flex items-center text-gray-600 mb-4">
-            <MapPin className="w-4 h-4 mr-1" />
-            <span className="text-sm">{location}</span>
-          </div>
+
+          {tags.length > 0 && (
+            <div className="flex gap-2 mb-3">
+              {tags.map((tag, index) => (
+                <span 
+                  key={index}
+                  className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {description && (
+            <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+              {description}
+            </p>
+          )}
 
           <div className="flex gap-3 mb-4">
             <Wifi className="w-4 h-4 text-gray-400" />
@@ -93,9 +122,12 @@ export const BusinessCard = ({
             <Fan className="w-4 h-4 text-gray-400" />
           </div>
 
-          <div className="flex items-center justify-between">
-            <span className="text-sm bg-gray-100 px-3 py-1 rounded-full">{category}</span>
-            <Mail className="w-5 h-5 text-gray-400" />
+          <div className="flex items-center justify-between text-gray-600">
+            <div className="flex items-center gap-1">
+              <MapPin className="w-4 h-4" />
+              <span className="text-sm">{location}</span>
+            </div>
+            <Mail className="w-5 h-5" />
           </div>
         </div>
       </Card>
