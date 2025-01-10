@@ -63,9 +63,38 @@ export interface Business {
   updated_at: string;
   latitude?: number;
   longitude?: number;
-  status: string; // Added this field
+  status: string;
   approved_at?: string;
   approved_by?: string;
+  hero_image?: string;
+  gallery_images?: string[];
+  menu_categories?: string[];
+  business_hours?: {
+    id: string;
+    day_of_week: number;
+    open_time: string;
+    close_time: string;
+    is_closed: boolean;
+  }[];
+  amenities?: {
+    [key: string]: boolean;
+  };
+  faqs?: {
+    question: string;
+    answer: string;
+  }[];
+  delivery_info?: {
+    available: boolean;
+    minimum_order?: number;
+    fee?: number;
+    estimated_time?: string;
+  };
+  social_links?: {
+    facebook?: string;
+    twitter?: string;
+    instagram?: string;
+    linkedin?: string;
+  };
   
   // Related tables
   business_photos?: {
@@ -84,32 +113,16 @@ export interface Business {
     category?: string;
   }[];
   
-  business_hours?: {
-    id: string;
-    day_of_week: number;
-    open_time: string;
-    close_time: string;
-    is_closed: boolean;
-  }[];
-  
-  reviews?: {
+  business_reviews?: {
     id: string;
     rating: number;
-    comment: string;
-    created_at: string;
-    profiles?: {
-      username?: string;
-      avatar_url?: string;
-    };
-    review_responses?: {
-      id: string;
-      response_text: string;
-      created_at: string;
-    }[];
-    review_photos?: {
-      id: string;
-      photo_url: string;
-    }[];
+    review_text?: string;
+    review_date?: string;
+    helpful_votes?: number;
+    user_id?: string;
+    status?: string;
+    created_at?: string;
+    updated_at?: string;
   }[];
   
   owner?: {
