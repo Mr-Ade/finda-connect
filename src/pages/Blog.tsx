@@ -5,12 +5,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import type { Database } from "@/integrations/supabase/types";
+
+type BlogPost = Database['public']['Tables']['blog_posts']['Row'] & {
+  author: Database['public']['Tables']['profiles']['Row'] | null;
+  views: { count: number }[];
+};
 
 const Blog = () => {
   const [page, setPage] = useState(1);
   const postsPerPage = 6;
 
-  const { data: blogPosts, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useQuery({
+  const { data: blogPosts, isLoading, isError } = useQuery({
     queryKey: ['blog-posts', page],
     queryFn: async () => {
       console.log('Fetching blog posts for page:', page);
@@ -34,17 +40,24 @@ const Blog = () => {
 
       console.log('Blog posts fetched:', data);
       return {
-        posts: data || [],
+        posts: (data || []) as BlogPost[],
         totalCount: count || 0,
-        hasMore: (count || 0) > (page * postsPerPage)
+        hasMore: (count || 0) > ((page + 1) * postsPerPage)
       };
-    },
-    keepPreviousData: true
+    }
   });
 
   const handleLoadMore = () => {
     setPage(prev => prev + 1);
   };
+
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-red-500">Error loading blog posts</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -136,22 +149,12 @@ const Blog = () => {
                   <Button
                     variant="outline"
                     onClick={handleLoadMore}
-                    disabled={isFetchingNextPage}
                     className="inline-flex items-center"
                   >
-                    {isFetchingNextPage ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Loading...
-                      </>
-                    ) : (
-                      <>
-                        Load More Blogs
-                        <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </>
-                    )}
+                    Load More Blogs
+                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </Button>
                 </div>
               )}
