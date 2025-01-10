@@ -81,9 +81,9 @@ export const ListingCard = ({ business }: ListingCardProps) => {
         .select('id')
         .eq('business_id', business.id)
         .eq('user_id', user?.id)
-        .single();
+        .maybeSingle(); // Changed from .single() to .maybeSingle()
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         console.error('Error fetching bookmark:', error);
         throw error;
       }
