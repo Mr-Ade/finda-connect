@@ -1,6 +1,6 @@
 import { Eye, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,11 +10,11 @@ const Blog = () => {
   const [page, setPage] = useState(1);
   const postsPerPage = 6;
 
-  const { data: blogPosts, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useQuery({
-    queryKey: ['blog-posts', page],
-    queryFn: async () => {
-      console.log('Fetching blog posts for page:', page);
-      const start = (page - 1) * postsPerPage;
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery({
+    queryKey: ['blog-posts'],
+    queryFn: async ({ pageParam = 1 }) => {
+      console.log('Fetching blog posts for page:', pageParam);
+      const start = (pageParam - 1) * postsPerPage;
       const end = start + postsPerPage - 1;
 
       const { data, error, count } = await supabase
@@ -36,15 +36,19 @@ const Blog = () => {
       return {
         posts: data || [],
         totalCount: count || 0,
-        hasMore: (count || 0) > (page * postsPerPage)
+        hasMore: (count || 0) > ((pageParam) * postsPerPage),
+        nextPage: (count || 0) > ((pageParam) * postsPerPage) ? pageParam + 1 : undefined
       };
     },
-    keepPreviousData: true
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+    initialPageParam: 1
   });
 
   const handleLoadMore = () => {
-    setPage(prev => prev + 1);
+    fetchNextPage();
   };
+
+  const allPosts = data?.pages.flatMap(page => page.posts) || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -78,7 +82,7 @@ const Blog = () => {
             <>
               {/* Blog Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {blogPosts?.posts.map((post) => (
+                {allPosts.map((post) => (
                   <div key={post.id} className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform hover:translate-y-[-5px]">
                     {/* Blog Image */}
                     <Link to={`/blog/${post.id}`}>
@@ -131,7 +135,7 @@ const Blog = () => {
               </div>
 
               {/* Load More Button */}
-              {blogPosts?.hasMore && (
+              {hasNextPage && (
                 <div className="text-center mt-12">
                   <Button
                     variant="outline"
