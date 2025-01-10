@@ -63,6 +63,9 @@ export interface Business {
   updated_at: string;
   latitude?: number;
   longitude?: number;
+  status: string; // Added this field
+  approved_at?: string;
+  approved_by?: string;
   
   // Related tables
   business_photos?: {
