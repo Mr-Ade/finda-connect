@@ -116,7 +116,7 @@ export const ListingCard = ({ business }: ListingCardProps) => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['bookmark', business.id, user?.id]);
+      queryClient.invalidateQueries({ queryKey: ['bookmark', business.id, user?.id] });
       toast({
         title: isBookmarked ? "Bookmark removed" : "Business bookmarked",
         description: isBookmarked ? "Business removed from your bookmarks" : "Business added to your bookmarks",
