@@ -81,8 +81,8 @@ const BusinessDetails = () => {
   if (isLoading) {
     return (
       <div className="animate-pulse">
-        <div className="h-64 bg-gray-200 w-full" />
-        <div className="container py-8">
+        <div className="h-[400px] bg-gray-200 w-full" />
+        <div className="container mx-auto py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-8">
               <div className="h-32 bg-gray-200 rounded-lg mb-4" />
@@ -107,32 +107,39 @@ const BusinessDetails = () => {
   }
 
   return (
-    <div>
-      <BusinessHeader 
-        business={{
-          name: business.name,
-          description: business.description || "",
-          category: business.category,
-          reviews_count: business.reviews?.length,
-          rating: business.reviews?.reduce((acc, review) => acc + review.rating, 0) / (business.reviews?.length || 1),
-          is_claimed: true,
-          is_open: true
-        }}
-      />
-      <BusinessGallery photos={business.business_photos || []} />
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section with Gallery */}
+      <div className="relative">
+        <BusinessHeader 
+          business={{
+            name: business.name,
+            description: business.description || "",
+            category: business.category,
+            reviews_count: business.reviews?.length,
+            rating: business.reviews?.reduce((acc, review) => acc + review.rating, 0) / (business.reviews?.length || 1),
+            is_claimed: true,
+            is_open: true,
+            opening_time: "11:00 AM",
+            closing_time: "10:00 PM"
+          }}
+        />
+        <BusinessGallery photos={business.business_photos || []} />
+      </div>
 
-      <section className="gray py-5 position-relative">
-        <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-8">
-              <BusinessMainContent business={business} />
-            </div>
-            <div className="lg:col-span-4 relative z-10">
-              <BusinessRightSidebar business={business} />
-            </div>
+      {/* Main Content Area */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left Column - Main Content */}
+          <div className="lg:col-span-8 space-y-8">
+            <BusinessMainContent business={business} />
+          </div>
+
+          {/* Right Column - Sidebar */}
+          <div className="lg:col-span-4 space-y-6">
+            <BusinessRightSidebar business={business} />
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 };
