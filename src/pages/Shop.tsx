@@ -13,7 +13,7 @@ const Shop = () => {
   const [page, setPage] = useState(1);
   const productsPerPage = 12;
 
-  const { data: products, isLoading, isError } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['products', page],
     queryFn: async () => {
       console.log('Fetching products for page:', page);
@@ -67,10 +67,10 @@ const Shop = () => {
           </div>
         ) : (
           <>
-            {products?.products && products.products.length > 0 ? (
+            {data?.products && data.products.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {products.products.map((product) => (
+                  {data.products.map((product) => (
                     <div 
                       key={product.id} 
                       className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
@@ -100,7 +100,7 @@ const Shop = () => {
                   ))}
                 </div>
 
-                {products.hasMore && (
+                {data.hasMore && (
                   <div className="flex justify-center mt-8">
                     <Button
                       variant="outline"
