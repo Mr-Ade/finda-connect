@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CategoryCard } from "./CategoryCard";
@@ -14,7 +13,6 @@ interface CategoryCount {
 }
 
 export const PopularCategories = () => {
-  const navigate = useNavigate();
   const [showAll, setShowAll] = useState(false);
   const { toast } = useToast();
   
@@ -52,9 +50,9 @@ export const PopularCategories = () => {
     refetchInterval: 30000, // Refetch every 30 seconds
   });
 
-  const handleCategoryClick = (categoryName: string) => {
-    navigate(`/search?category=${encodeURIComponent(categoryName)}`);
-  };
+  if (error) {
+    console.error('Error in businesses query:', error);
+  }
 
   const displayedCategories = showAll 
     ? [...INITIAL_CATEGORIES, ...ADDITIONAL_CATEGORIES]
@@ -90,21 +88,6 @@ export const PopularCategories = () => {
     );
   }
 
-  if (error) {
-    return (
-      <section className="py-16 px-4 bg-gray-50">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Popular Categories</h2>
-            <p className="text-red-600">
-              Unable to load categories. Please try again later.
-            </p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section className="py-16 px-4 bg-gray-50">
       <div className="container mx-auto">
@@ -121,7 +104,7 @@ export const PopularCategories = () => {
               name={category.name}
               Icon={category.icon}
               count={category.count}
-              onClick={() => handleCategoryClick(category.name)}
+              onClick={() => {}} // TODO: Implement category click handler
             />
           ))}
         </div>
