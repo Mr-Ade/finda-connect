@@ -1,42 +1,32 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { ListingsHeader } from "./listings/ListingsHeader";
-import { ListingsGrid } from "./listings/ListingsGrid";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/hooks/use-toast";
+import { BusinessCard } from "@/components/BusinessCard";
 import type { Business } from "@/types/business";
 
 export const RecentListings = () => {
-  const [showAll, setShowAll] = useState(false);
-  const { toast } = useToast();
-
-  const { data: businesses, isLoading, error } = useQuery({
+  const { data: businesses, isLoading } = useQuery({
     queryKey: ['recentListings'],
     queryFn: async () => {
       console.log('Fetching recent listings...');
-      const oneWeekAgo = new Date();
-      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-      
       const { data, error } = await supabase
         .from('businesses')
-        .select('*')
-        .gte('created_at', oneWeekAgo.toISOString())
+        .select(`
+          *,
+          business_photos (
+            id,
+            photo_url,
+            caption,
+            order_index
+          )
+        `)
+        .limit(4)
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Error fetching listings:', error);
-        toast({
-          title: "Error loading listings",
-          description: error.message,
-          variant: "destructive",
-        });
+        console.error('Error fetching recent listings:', error);
         throw error;
       }
 
-      console.log('Fetched listings:', data?.length);
-      
       // Transform the data to match our Business type
       const transformedData: Business[] = data.map(business => ({
         ...business,
@@ -44,82 +34,44 @@ export const RecentListings = () => {
         amenities: business.amenities as Business['amenities'],
         faqs: business.faqs as Business['faqs'],
         delivery_info: business.delivery_info as Business['delivery_info'],
-        social_links: business.social_links as Business['social_links']
+        social_links: business.social_links as Business['social_links'],
+        business_photos: business.business_photos as Business['business_photos']
       }));
 
       return transformedData;
-    },
-    refetchInterval: 30000, // Refetch every 30 seconds
+    }
   });
 
-  if (isLoading) {
-    return (
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <ListingsHeader />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="bg-white rounded-lg shadow-lg p-4">
-                <Skeleton className="h-48 w-full mb-4" />
-                <Skeleton className="h-4 w-3/4 mb-2" />
-                <Skeleton className="h-4 w-1/2" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
+  if (isLoading || !businesses) {
+    return null;
   }
-
-  if (error) {
-    return (
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4 text-center">
-          <ListingsHeader />
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-8">
-            <p className="text-red-600">Unable to load listings. Please try again later.</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (!businesses?.length) {
-    return (
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4 text-center">
-          <ListingsHeader />
-          <div className="bg-gray-100 border border-gray-200 rounded-lg p-8 mt-8">
-            <p className="text-gray-600">No recent listings found.</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  const hasMore = businesses.length > 8;
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="w-full bg-gray-50 py-16 -mx-4">
       <div className="container mx-auto px-4">
-        <ListingsHeader />
-        
-        <ListingsGrid 
-          businesses={businesses} 
-          showAll={showAll} 
-        />
+        <div className="flex flex-col items-center mb-12 text-center">
+          <span className="text-primary text-sm font-semibold uppercase tracking-wide">
+            Related Listing
+          </span>
+          <h2 className="mt-2 text-3xl font-bold text-gray-900">
+            Recently Viewed Listing
+          </h2>
+        </div>
 
-        {hasMore && (
-          <div className="mt-8 text-center">
-            <Button 
-              variant="outline"
-              onClick={() => setShowAll(!showAll)}
-              className="px-8"
-            >
-              {showAll ? 'Show Less' : 'See More'}
-            </Button>
-          </div>
-        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {businesses.map((business) => (
+            <BusinessCard
+              key={business.id}
+              id={business.id}
+              name={business.name}
+              image={business.business_photos?.[0]?.photo_url || '/placeholder.svg'}
+              category={business.category}
+              rating={4.5} // TODO: Calculate from reviews
+              reviewCount={30} // TODO: Get from reviews count
+              location={`${business.city}, ${business.state}`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

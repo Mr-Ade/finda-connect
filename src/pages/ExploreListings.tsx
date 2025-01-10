@@ -50,7 +50,10 @@ const ExploreListings = () => {
         .select(`
           *,
           business_photos (
-            photo_url
+            id,
+            photo_url,
+            caption,
+            order_index
           ),
           reviews (
             rating
@@ -80,7 +83,8 @@ const ExploreListings = () => {
         amenities: business.amenities as Business['amenities'],
         faqs: business.faqs as Business['faqs'],
         delivery_info: business.delivery_info as Business['delivery_info'],
-        social_links: business.social_links as Business['social_links']
+        social_links: business.social_links as Business['social_links'],
+        business_photos: business.business_photos as Business['business_photos']
       }));
 
       return transformedData;
