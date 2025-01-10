@@ -14,6 +14,7 @@ export const BusinessMainContent = ({ business }: BusinessMainContentProps) => {
   return (
     <>
       <div className="col-xl-8 col-lg-8 col-md-12 col-sm-12">
+        {/* About Section */}
         <BusinessInfo 
           business={{
             id: business.id,
@@ -30,7 +31,11 @@ export const BusinessMainContent = ({ business }: BusinessMainContentProps) => {
           }} 
           isOwner={false} 
         />
+
+        {/* Menu Section */}
         <MenuItems businessId={business.id} />
+
+        {/* Amenities Section */}
         <Amenities amenities={[
           { name: "Health Score 8.7/10", available: true },
           { name: "Offers Delivery", available: true },
@@ -57,6 +62,8 @@ export const BusinessMainContent = ({ business }: BusinessMainContentProps) => {
           { name: "Happy Hour", available: false },
           { name: "Pets Allow", available: false }
         ]} />
+
+        {/* FAQ Section */}
         <FAQ faqs={[
           {
             question: "Can I get GoodUP listing for free?",
@@ -67,10 +74,12 @@ export const BusinessMainContent = ({ business }: BusinessMainContentProps) => {
             answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
           },
           {
-            question: "For GoodUp which license is better for business purpose?",
+            question: "For GoodUp which licence is better for business purpose?",
             answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
           }
         ]} />
+
+        {/* Reviews Section */}
         <ReviewSection 
           businessId={business.id} 
           isOwner={false} 
@@ -83,6 +92,8 @@ export const BusinessMainContent = ({ business }: BusinessMainContentProps) => {
           })) || []}
         />
       </div>
+
+      {/* Recently Viewed Section */}
       <div className="w-full -mx-4">
         <RecentlyViewedListings />
       </div>
