@@ -84,25 +84,22 @@ export default function BusinessDetail() {
     return <div>Business not found</div>;
   }
 
-  const amenities = business.amenities || [
-    { name: "Free WiFi", available: true },
-    { name: "Parking", available: true },
-    { name: "Pet Friendly", available: false },
-    { name: "Air Conditioning", available: true },
-    { name: "Outdoor Seating", available: true },
-    { name: "Delivery", available: false },
-  ];
+  // Transform amenities from JSON to array format
+  const amenitiesList = business.amenities ? 
+    (typeof business.amenities === 'string' ? 
+      JSON.parse(business.amenities) : 
+      Object.entries(business.amenities)
+    ).map(([name, available]) => ({
+      name,
+      available: !!available
+    })) : [];
 
-  const faqs = business.faqs || [
-    {
-      question: "What are your opening hours?",
-      answer: "We are open Monday to Friday 9am-6pm, Saturday 10am-4pm, and closed on Sundays."
-    },
-    {
-      question: "Do you accept credit cards?",
-      answer: "Yes, we accept all major credit cards including Visa, Mastercard, and American Express."
-    }
-  ];
+  // Transform FAQs from JSON to array format
+  const faqsList = business.faqs ? 
+    (typeof business.faqs === 'string' ? 
+      JSON.parse(business.faqs) : 
+      business.faqs
+    ) : [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -126,10 +123,10 @@ export default function BusinessDetail() {
             <MenuItems businessId={id} />
 
             {/* Amenities */}
-            <Amenities amenities={amenities} />
+            <Amenities amenities={amenitiesList} />
 
             {/* FAQs */}
-            <FAQ faqs={faqs} />
+            <FAQ faqs={faqsList} />
 
             {/* Reviews */}
             <ReviewSection 
