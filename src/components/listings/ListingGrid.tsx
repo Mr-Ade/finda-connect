@@ -3,29 +3,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { ListingCard } from "@/components/home/listings/ListingCard";
 import { Button } from "@/components/ui/button";
 import { MapIcon, List } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { Database } from "@/integrations/supabase/types";
+
+type Business = Database["public"]["Tables"]["businesses"]["Row"];
 
 interface ListingGridProps {
   showMap: boolean;
   onToggleMap: () => void;
+  isLoading?: boolean;
+  businesses?: Business[];
 }
 
-export const ListingGrid = ({ showMap, onToggleMap }: ListingGridProps) => {
-  const { data: businesses, isLoading } = useQuery({
-    queryKey: ['businesses'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('businesses')
-        .select(`
-          *,
-          business_photos (photo_url),
-          reviews (rating)
-        `);
-
-      if (error) throw error;
-      return data;
-    }
-  });
-
+export const ListingGrid = ({ showMap, onToggleMap, isLoading, businesses }: ListingGridProps) => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -49,7 +39,11 @@ export const ListingGrid = ({ showMap, onToggleMap }: ListingGridProps) => {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-8">Loading listings...</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <Skeleton key={i} className="h-[300px] w-full" />
+          ))}
+        </div>
       ) : !businesses?.length ? (
         <div className="text-center py-8">
           <p className="text-gray-500">No listings found.</p>

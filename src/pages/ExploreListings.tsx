@@ -1,15 +1,90 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Map } from "@/components/Map";
 import { SearchFilters } from "@/components/search/SearchFilters";
 import { ListingGrid } from "@/components/listings/ListingGrid";
 import { CategoryFilters } from "@/components/search/CategoryFilters";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useSearchParams } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import type { Database } from "@/integrations/supabase/types";
+
+type Business = Database["public"]["Tables"]["businesses"]["Row"];
 
 const ExploreListings = () => {
   const [showMap, setShowMap] = useState(true);
+  const [searchParams] = useSearchParams();
+  const { toast } = useToast();
+  const category = searchParams.get('category');
+
+  // Real-time subscription setup
+  useEffect(() => {
+    const channel = supabase
+      .channel('public:businesses')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'businesses'
+        },
+        (payload) => {
+          console.log('Real-time update:', payload);
+          // Invalidate and refetch data
+          refetch();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  // Fetch businesses with filters
+  const { data: businesses, isLoading, error, refetch } = useQuery({
+    queryKey: ['businesses', category],
+    queryFn: async () => {
+      console.log('Fetching businesses with category:', category);
+      
+      let query = supabase
+        .from('businesses')
+        .select(`
+          *,
+          business_photos (
+            photo_url
+          ),
+          reviews (
+            rating
+          )
+        `);
+
+      if (category) {
+        query = query.eq('category', category);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching businesses:', error);
+        toast({
+          title: "Error loading listings",
+          description: error.message,
+          variant: "destructive",
+        });
+        throw error;
+      }
+
+      return data as Business[];
+    },
+  });
+
+  if (error) {
+    console.error('Error in businesses query:', error);
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Category Filters */}
       <CategoryFilters />
 
       <section className="py-8">
@@ -24,7 +99,9 @@ const ExploreListings = () => {
             <div className="w-full lg:w-3/4">
               <ListingGrid 
                 showMap={showMap} 
-                onToggleMap={() => setShowMap(!showMap)} 
+                onToggleMap={() => setShowMap(!showMap)}
+                isLoading={isLoading}
+                businesses={businesses}
               />
             </div>
           </div>
