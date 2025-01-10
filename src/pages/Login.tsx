@@ -4,17 +4,31 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { AuthError, AuthApiError } from '@supabase/supabase-js';
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
 
+  // Handle auth state changes
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
+    // Check initial session
+    const checkSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (session) {
+        const returnUrl = location.state?.returnUrl || "/";
+        navigate(returnUrl);
+      }
+    };
+    checkSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log("Auth state changed:", event);
-        if (event === "SIGNED_IN") {
+        console.log("Auth state changed:", event, session);
+
+        if (event === "SIGNED_IN" && session) {
           console.log("User signed in, redirecting");
           const returnUrl = location.state?.returnUrl || "/";
           navigate(returnUrl);
@@ -22,14 +36,37 @@ const Login = () => {
             title: "Welcome back!",
             description: "You have successfully signed in.",
           });
+        } else if (event === 'TOKEN_REFRESHED') {
+          console.log('Token refreshed successfully');
+        } else if (event === 'SIGNED_OUT') {
+          console.log('User signed out');
+          toast({
+            title: "Signed out",
+            description: "You have been signed out successfully.",
+          });
         }
       }
     );
 
+    // Cleanup subscription
     return () => {
-      authListener.subscription.unsubscribe();
+      subscription.unsubscribe();
     };
   }, [navigate, location.state?.returnUrl, toast]);
+
+  const getErrorMessage = (error: AuthError) => {
+    if (error instanceof AuthApiError) {
+      switch (error.status) {
+        case 400:
+          return 'Invalid credentials. Please check your email and password.';
+        case 422:
+          return 'Invalid email format.';
+        default:
+          return error.message;
+      }
+    }
+    return 'An unexpected error occurred. Please try again.';
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -39,7 +76,7 @@ const Login = () => {
             <div className="bg-white rounded-lg shadow-sm p-8">
               <div className="text-center mb-6">
                 <h1 className="text-2xl font-semibold text-gray-900">
-                  Login Your Account
+                  Login to Your Account
                 </h1>
               </div>
 
