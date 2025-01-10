@@ -25,6 +25,7 @@ import Privacy from "@/pages/Privacy";
 import WhoWeAre from "@/pages/WhoWeAre";
 import OurMission from "@/pages/OurMission";
 import OurTeam from "@/pages/OurTeam";
+import Shop from "@/pages/Shop";
 // Admin pages
 import AdminDashboard from "@/pages/dashboard/admin/Dashboard";
 import Users from "@/pages/dashboard/admin/Users";
@@ -68,6 +69,7 @@ const Routes = () => {
       <Route path="/business/:id" element={<BusinessDetails />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/shop" element={<Shop />} />
       <Route path="*" element={<NotFound />} />
     </RouterRoutes>
   );
