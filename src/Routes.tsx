@@ -48,6 +48,7 @@ import AdminUsers from "@/pages/dashboard/admin/Users";
 import AdminSettings from "@/pages/dashboard/admin/Settings";
 import AdminAnalytics from "@/pages/dashboard/admin/Analytics";
 import AuditLogs from "@/pages/dashboard/admin/AuditLogs";
+import AdminEditListing from "@/pages/dashboard/admin/EditListing";
 
 export default function Routes() {
   return (
@@ -66,6 +67,7 @@ export default function Routes() {
       <Route path="/dashboard/wallet" element={<Wallet />} />
       <Route path="/dashboard/admin" element={<AdminDashboard />} />
       <Route path="/dashboard/admin/listings" element={<AdminListings />} />
+      <Route path="/dashboard/admin/listings/:id/edit" element={<AdminEditListing />} />
       <Route path="/dashboard/admin/users" element={<AdminUsers />} />
       <Route path="/dashboard/admin/settings" element={<AdminSettings />} />
       <Route path="/dashboard/admin/analytics" element={<AdminAnalytics />} />
