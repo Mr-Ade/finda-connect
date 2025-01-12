@@ -169,7 +169,7 @@ export const AdminListingsTable = ({ listings }: AdminListingsTableProps) => {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to={`/business/${listing.id}/edit`}>
+                    <Link to={`/dashboard/admin/listings/${listing.id}/edit`}>
                       <Edit className="w-4 h-4 mr-2" />
                       Edit
                     </Link>
