@@ -66,8 +66,7 @@ export default function BusinessDetail() {
             city,
             state,
             address,
-            mobile,
-            email
+            mobile
           )
         `)
         .eq('id', id)
