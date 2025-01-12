@@ -69,6 +69,7 @@ export const RecentListings = () => {
               rating={4.5} // TODO: Calculate from reviews
               reviewCount={30} // TODO: Get from reviews count
               location={`${business.city}, ${business.state}`}
+              description={business.description}
             />
           ))}
         </div>
