@@ -60,13 +60,26 @@ export default function BusinessDetail() {
             )
           ),
           owner:profiles!businesses_owner_id_fkey (
+            id,
             username,
             avatar_url,
             full_name,
             city,
             state,
             address,
-            mobile
+            mobile,
+            bio,
+            business_owner,
+            created_at,
+            updated_at,
+            location_data,
+            preferred_currency,
+            preferred_language,
+            timezone,
+            is_admin,
+            last_seen,
+            super_admin,
+            zip_code
           )
         `)
         .eq('id', id)
@@ -164,10 +177,7 @@ export default function BusinessDetail() {
               } : undefined
             }} />
             {business.owner && (
-              <AuthorProfile author={{
-                ...business.owner,
-                phone: business.owner.mobile
-              }} />
+              <AuthorProfile author={business.owner} />
             )}
           </div>
         </div>
