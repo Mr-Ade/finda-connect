@@ -103,9 +103,19 @@ export const BusinessCard = ({
 
         {/* Content */}
         <div className="p-4">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex flex-col gap-1 mb-2">
             <h3 className="text-lg font-semibold">{name}</h3>
+            {category && (
+              <span className="text-sm text-primary">{category}</span>
+            )}
           </div>
+
+          {/* Description */}
+          {description && (
+            <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+              {description}
+            </p>
+          )}
 
           {/* Tags */}
           {tags.length > 0 && (
@@ -119,13 +129,6 @@ export const BusinessCard = ({
                 </span>
               ))}
             </div>
-          )}
-
-          {/* Description */}
-          {description && (
-            <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-              {description}
-            </p>
           )}
 
           {/* Facilities */}
