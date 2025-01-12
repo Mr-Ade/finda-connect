@@ -79,7 +79,12 @@ export default function BusinessDetail() {
             is_admin,
             last_seen,
             super_admin,
-            zip_code
+            zip_code,
+            businesses:businesses (count),
+            followers:follows (count),
+            email:mobile,
+            phone:mobile,
+            website
           )
         `)
         .eq('id', id)
