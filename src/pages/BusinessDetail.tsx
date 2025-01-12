@@ -67,7 +67,6 @@ export default function BusinessDetail() {
             state,
             address,
             mobile,
-            website,
             email
           )
         `)
@@ -158,7 +157,6 @@ export default function BusinessDetail() {
               state: business.state,
               zip_code: business.zip_code,
               phone: business.phone,
-              website: business.website,
               email: business.email,
               owner: business.owner ? {
                 username: business.owner.username,
@@ -169,7 +167,7 @@ export default function BusinessDetail() {
             {business.owner && (
               <AuthorProfile author={{
                 ...business.owner,
-                phone: business.owner.mobile // Map mobile to phone for AuthorProfile
+                phone: business.owner.mobile
               }} />
             )}
           </div>
