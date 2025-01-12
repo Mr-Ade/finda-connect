@@ -1154,6 +1154,7 @@ export type Database = {
           timezone: string | null
           updated_at: string
           username: string | null
+          website: string | null
           zip_code: string | null
         }
         Insert: {
@@ -1176,6 +1177,7 @@ export type Database = {
           timezone?: string | null
           updated_at?: string
           username?: string | null
+          website?: string | null
           zip_code?: string | null
         }
         Update: {
@@ -1198,6 +1200,7 @@ export type Database = {
           timezone?: string | null
           updated_at?: string
           username?: string | null
+          website?: string | null
           zip_code?: string | null
         }
         Relationships: []

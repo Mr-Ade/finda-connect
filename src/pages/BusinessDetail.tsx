@@ -80,11 +80,11 @@ export default function BusinessDetail() {
             last_seen,
             super_admin,
             zip_code,
+            website,
             businesses:businesses (count),
             followers:follows (count),
             email:mobile,
-            phone:mobile,
-            website
+            phone:mobile
           )
         `)
         .eq('id', id)
