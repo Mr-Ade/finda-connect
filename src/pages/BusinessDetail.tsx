@@ -81,8 +81,8 @@ export default function BusinessDetail() {
             super_admin,
             zip_code,
             website,
-            businesses:businesses (count),
-            followers:follows (count),
+            businesses:businesses(count),
+            followers:follows!follows_following_id_fkey(count),
             email:mobile,
             phone:mobile
           )
