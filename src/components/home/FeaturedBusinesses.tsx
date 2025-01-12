@@ -19,8 +19,8 @@ export const FeaturedBusinesses = () => {
         .from('businesses')
         .select(`
           *,
-          reviews (rating),
-          business_photos (photo_url)
+          business_photos (photo_url),
+          business_reviews (rating)
         `);
 
       // Filter by location if available
@@ -43,10 +43,11 @@ export const FeaturedBusinesses = () => {
       return data.map(business => ({
         id: business.id,
         name: business.name,
-        image: business.business_photos?.[0]?.photo_url || "https://images.unsplash.com/photo-1560066984-138dadb4c035",
+        description: business.description,
+        image: business.business_photos?.[0]?.photo_url || "/placeholder.svg",
         category: business.category,
-        rating: business.reviews?.reduce((acc: number, review: any) => acc + review.rating, 0) / (business.reviews?.length || 1) || 0,
-        reviewCount: business.reviews?.length || 0,
+        rating: business.business_reviews?.reduce((acc: number, review: any) => acc + review.rating, 0) / (business.business_reviews?.length || 1) || 0,
+        reviewCount: business.business_reviews?.length || 0,
         location: `${business.city}, ${business.state}`,
         isOpen: true, // This should be calculated based on business hours
         isFeatured: true
