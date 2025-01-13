@@ -22,7 +22,7 @@ export const RecentlyViewedListings = () => {
             photo_url
           )
         `)
-        .limit(8) // Changed to show 8 items (4x2 grid)
+        .limit(4)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -50,7 +50,7 @@ export const RecentlyViewedListings = () => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {businesses.map((business) => (
             <BusinessCard
               key={business.id}

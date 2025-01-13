@@ -14,6 +14,7 @@ interface CategoryCount {
 
 export const PopularCategories = () => {
   const navigate = useNavigate();
+  const [showAll, setShowAll] = useState(false);
   const { toast } = useToast();
   
   const { data: categoryCounts, isLoading, error } = useQuery({
@@ -35,6 +36,7 @@ export const PopularCategories = () => {
         throw error;
       }
 
+      // Count occurrences of each category
       const counts = data.reduce((acc: { [key: string]: number }, curr) => {
         acc[curr.category] = (acc[curr.category] || 0) + 1;
         return acc;
@@ -66,8 +68,9 @@ export const PopularCategories = () => {
     navigate(`/explore-listings?category=${encodeURIComponent(categoryName)}`);
   };
 
-  // Show 12 categories (6x2 grid) instead of showing all
-  const displayedCategories = INITIAL_CATEGORIES.slice(0, 12);
+  const displayedCategories = showAll 
+    ? [...INITIAL_CATEGORIES, ...ADDITIONAL_CATEGORIES]
+    : INITIAL_CATEGORIES;
 
   // Update counts from database
   displayedCategories.forEach(category => {
@@ -82,8 +85,8 @@ export const PopularCategories = () => {
             <h2 className="text-3xl font-bold mb-4">Popular Categories</h2>
             <p>Loading categories...</p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[...Array(12)].map((_, i) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {[...Array(6)].map((_, i) => (
               <div key={i} className="bg-white p-6 rounded-lg shadow-sm animate-pulse">
                 <div className="w-16 h-16 bg-gray-200 rounded-lg mx-auto mb-4"></div>
                 <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
@@ -106,7 +109,7 @@ export const PopularCategories = () => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {displayedCategories.map((category) => (
             <CategoryCard
               key={category.name}
@@ -117,6 +120,8 @@ export const PopularCategories = () => {
             />
           ))}
         </div>
+
+        <ShowMoreButton showAll={showAll} onClick={() => setShowAll(!showAll)} />
       </div>
     </section>
   );
