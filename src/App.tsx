@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { LocationProvider } from "@/contexts/LocationContext";
 import { Navbar } from "@/components/Navbar";
+import { DraggableAiChat } from "@/components/DraggableAiChat";
 import Routes from "./Routes";
 
 const queryClient = new QueryClient();
@@ -17,6 +18,7 @@ function App() {
             <main className="flex-grow pt-16">
               <Routes />
             </main>
+            <DraggableAiChat />
           </div>
           <Toaster />
         </BrowserRouter>

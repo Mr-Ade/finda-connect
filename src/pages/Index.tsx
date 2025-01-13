@@ -6,13 +6,11 @@ import { LocationSearch } from "@/components/home/LocationSearch";
 import { CustomerReviews } from "@/components/home/CustomerReviews";
 import { Newsletter } from "@/components/home/Newsletter";
 import { Footer } from "@/components/Footer";
-import { AiChat } from "@/components/AiChat";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Hero />
-      <AiChat />
       <OffersSection />
       <RecentListings />
       <PopularCategories />
