@@ -14,7 +14,6 @@ interface CategoryCount {
 
 export const PopularCategories = () => {
   const navigate = useNavigate();
-  const [showAll, setShowAll] = useState(false);
   const { toast } = useToast();
   
   const { data: categoryCounts, isLoading, error } = useQuery({
@@ -83,7 +82,7 @@ export const PopularCategories = () => {
             <h2 className="text-3xl font-bold mb-4">Popular Categories</h2>
             <p>Loading categories...</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {[...Array(12)].map((_, i) => (
               <div key={i} className="bg-white p-6 rounded-lg shadow-sm animate-pulse">
                 <div className="w-16 h-16 bg-gray-200 rounded-lg mx-auto mb-4"></div>
@@ -107,7 +106,7 @@ export const PopularCategories = () => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           {displayedCategories.map((category) => (
             <CategoryCard
               key={category.name}
