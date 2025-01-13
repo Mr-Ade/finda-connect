@@ -22,7 +22,7 @@ export const RecentlyViewedListings = () => {
             photo_url
           )
         `)
-        .limit(4)
+        .limit(8) // Changed to show 8 items (4x2 grid)
         .order('created_at', { ascending: false });
 
       if (error) {
