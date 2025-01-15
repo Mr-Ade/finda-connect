@@ -2376,6 +2376,12 @@ export type Database = {
         }
         Returns: unknown
       }
+      get_location_business_count: {
+        Args: {
+          location_name: string
+        }
+        Returns: number
+      }
       get_proj4_from_srid: {
         Args: {
           "": number
