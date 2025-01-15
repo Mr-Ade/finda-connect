@@ -12,7 +12,7 @@ import {
   CarouselPrevious 
 } from "@/components/ui/carousel";
 import { LocationCard, LocationCardSkeleton } from "./LocationCard";
-import { LocationData } from "@/data/popularLocations";
+import { LocationData, POPULAR_LOCATIONS } from "@/data/popularLocations";
 
 export const LocationCarousel = () => {
   const { toast } = useToast();
@@ -35,32 +35,30 @@ export const LocationCarousel = () => {
 
   const [api, setApi] = useState<UseEmblaCarouselType[1] | null>(null);
 
+  useEffect(() => {
+    if (emblaApi) {
+      setApi(emblaApi);
+    }
+  }, [emblaApi]);
+
   const { data: locations, isLoading, error } = useQuery({
     queryKey: ['popularLocations'],
     queryFn: async () => {
       console.log('Fetching popular locations...');
-      try {
-        const { data, error } = await supabase
-          .from('popular_locations')
-          .select('*')
-          .eq('is_active', true)
-          .order('businesses', { ascending: false });
+      const { data, error } = await supabase
+        .from('popular_locations')
+        .select('*')
+        .eq('is_active', true)
+        .order('businesses', { ascending: false });
 
-        if (error) {
-          console.error('Error fetching popular locations:', error);
-          throw error;
-        }
-
-        console.log('Fetched popular locations:', data);
-        return data as LocationData[];
-      } catch (err) {
-        console.error('Error in popular locations query:', err);
-        throw err;
+      if (error) {
+        console.error('Error fetching popular locations:', error);
+        throw error;
       }
-    },
-    retry: 1,
-    retryDelay: 1000,
-    refetchOnWindowFocus: false
+
+      console.log('Fetched popular locations:', data);
+      return (data || []) as LocationData[];
+    }
   });
 
   // Handle error state with toast
@@ -69,44 +67,16 @@ export const LocationCarousel = () => {
       console.error('Error in popular locations query:', error);
       toast({
         title: "Error loading locations",
-        description: "Unable to load locations. Please try again later.",
+        description: "Using fallback data. Please try again later.",
         variant: "destructive",
       });
     }
   }, [error, toast]);
 
-  // Handle Embla initialization and cleanup
-  useEffect(() => {
-    if (emblaApi) {
-      setApi(emblaApi);
-    }
+  const displayLocations = locations?.length ? locations : POPULAR_LOCATIONS;
 
-    return () => {
-      if (emblaApi) {
-        emblaApi.destroy();
-      }
-      if (autoplay) {
-        autoplay.stop();
-      }
-    };
-  }, [emblaApi, autoplay]);
-
-  // Show loading state
-  if (isLoading) {
-    return (
-      <div className="w-full max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <LocationCardSkeleton key={index} />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // Don't render anything if there's no data
-  if (!locations || locations.length === 0) {
-    return null;
+  if (error) {
+    console.error('Rendering with fallback data due to error:', error);
   }
 
   return (
@@ -118,11 +88,20 @@ export const LocationCarousel = () => {
       className="w-full max-w-7xl mx-auto"
     >
       <CarouselContent ref={emblaRef}>
-        {locations.map((location) => (
-          <CarouselItem key={location.id} className="md:basis-1/4 lg:basis-1/4">
-            <LocationCard location={location} />
-          </CarouselItem>
-        ))}
+        {isLoading ? (
+          // Show skeletons while loading
+          Array.from({ length: 4 }).map((_, index) => (
+            <CarouselItem key={index} className="md:basis-1/4 lg:basis-1/4">
+              <LocationCardSkeleton />
+            </CarouselItem>
+          ))
+        ) : (
+          displayLocations.map((location) => (
+            <CarouselItem key={location.id} className="md:basis-1/4 lg:basis-1/4">
+              <LocationCard location={location} />
+            </CarouselItem>
+          ))
+        )}
       </CarouselContent>
       <CarouselPrevious />
       <CarouselNext />
