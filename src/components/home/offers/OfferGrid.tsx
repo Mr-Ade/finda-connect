@@ -1,3 +1,5 @@
+import { OfferCard } from "./OfferCard";
+
 interface Offer {
   id: string;
   title: string;
