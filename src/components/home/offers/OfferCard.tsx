@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Offer {
@@ -15,35 +15,42 @@ interface OfferCardProps {
 }
 
 export const OfferCard = ({ offer, onOfferClick }: OfferCardProps) => {
+  const { toast } = useToast();
+
+  const handleClick = async () => {
+    try {
+      onOfferClick(offer.id);
+    } catch (error) {
+      console.error('Error tracking offer click:', error);
+      toast({
+        title: "Error",
+        description: "Failed to track offer click",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div 
-      key={offer.id}
-      className="relative overflow-hidden rounded-lg bg-primary text-white p-8"
+      onClick={handleClick}
+      className="relative overflow-hidden rounded-xl cursor-pointer group"
+      style={{
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${offer.background_image})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        height: '300px'
+      }}
     >
-      <div className="relative z-10">
-        <span className="inline-block px-4 py-1 bg-white/20 rounded-full text-sm mb-4">
-          {offer.title}
-        </span>
-        <h4 className="text-2xl font-bold mb-4">
-          {offer.discount_amount}% Off on {offer.subtitle}
-        </h4>
-        <Button 
-          variant="secondary" 
-          size="lg" 
-          className="bg-white text-primary hover:bg-gray-100"
-          onClick={() => onOfferClick(offer.id)}
-        >
-          View Offer
-        </Button>
+      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors" />
+      <div className="relative h-full p-6 flex flex-col justify-between text-white">
+        <div>
+          <h3 className="text-2xl font-bold mb-2">{offer.title}</h3>
+          <p className="text-lg opacity-90">{offer.subtitle}</p>
+        </div>
+        <div className="text-3xl font-bold">
+          {offer.discount_amount}% OFF
+        </div>
       </div>
-      <div 
-        className="absolute inset-0 w-full h-full opacity-20"
-        style={{
-          backgroundImage: `url(${offer.background_image})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
-      />
     </div>
   );
 };
