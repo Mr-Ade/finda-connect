@@ -35,22 +35,6 @@ export const LocationCarousel = () => {
 
   const [api, setApi] = useState<UseEmblaCarouselType[1] | null>(null);
 
-  useEffect(() => {
-    if (emblaApi) {
-      setApi(emblaApi);
-    }
-
-    // Cleanup function
-    return () => {
-      if (emblaApi) {
-        emblaApi.destroy();
-      }
-      if (autoplay) {
-        autoplay.stop();
-      }
-    };
-  }, [emblaApi, autoplay]);
-
   const { data: locations, isLoading, error } = useQuery({
     queryKey: ['popularLocations'],
     queryFn: async () => {
@@ -86,18 +70,32 @@ export const LocationCarousel = () => {
     }
   }, [error, toast]);
 
+  // Handle Embla initialization and cleanup
+  useEffect(() => {
+    if (emblaApi) {
+      setApi(emblaApi);
+    }
+
+    return () => {
+      if (emblaApi) {
+        emblaApi.destroy();
+      }
+      if (autoplay) {
+        autoplay.stop();
+      }
+    };
+  }, [emblaApi, autoplay]);
+
   // Show loading state
   if (isLoading) {
     return (
-      <Carousel className="w-full max-w-7xl mx-auto">
-        <CarouselContent>
+      <div className="w-full max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, index) => (
-            <CarouselItem key={index} className="md:basis-1/4 lg:basis-1/4">
-              <LocationCardSkeleton />
-            </CarouselItem>
+            <LocationCardSkeleton key={index} />
           ))}
-        </CarouselContent>
-      </Carousel>
+        </div>
+      </div>
     );
   }
 
