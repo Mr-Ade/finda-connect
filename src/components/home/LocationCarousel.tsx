@@ -12,7 +12,7 @@ import {
   CarouselPrevious 
 } from "@/components/ui/carousel";
 import { LocationCard, LocationCardSkeleton } from "./LocationCard";
-import { LocationData, POPULAR_LOCATIONS } from "@/data/popularLocations";
+import { LocationData } from "@/data/popularLocations";
 
 export const LocationCarousel = () => {
   const { toast } = useToast();
@@ -59,9 +59,9 @@ export const LocationCarousel = () => {
       console.log('Fetched popular locations:', data);
       return data as LocationData[];
     },
-    retry: 1, // Only retry once
+    retry: 1,
     retryDelay: 1000,
-    refetchOnWindowFocus: false // Prevent unnecessary refetches
+    refetchOnWindowFocus: false
   });
 
   // Handle error state with toast
@@ -70,16 +70,14 @@ export const LocationCarousel = () => {
       console.error('Error in popular locations query:', error);
       toast({
         title: "Error loading locations",
-        description: "Using fallback data. Please try again later.",
+        description: "Unable to load locations. Please try again later.",
         variant: "destructive",
       });
     }
   }, [error, toast]);
 
-  const displayLocations = locations?.length ? locations : POPULAR_LOCATIONS;
-
-  if (error) {
-    console.error('Rendering with fallback data due to error:', error);
+  if (!locations && !isLoading) {
+    return null;
   }
 
   return (
@@ -92,19 +90,16 @@ export const LocationCarousel = () => {
     >
       <CarouselContent ref={emblaRef}>
         {isLoading ? (
-          // Show skeletons while loading
           Array.from({ length: 4 }).map((_, index) => (
             <CarouselItem key={index} className="md:basis-1/4 lg:basis-1/4">
               <LocationCardSkeleton />
             </CarouselItem>
           ))
-        ) : (
-          displayLocations.map((location) => (
-            <CarouselItem key={location.id} className="md:basis-1/4 lg:basis-1/4">
-              <LocationCard location={location} />
-            </CarouselItem>
-          ))
-        )}
+        ) : locations?.map((location) => (
+          <CarouselItem key={location.id} className="md:basis-1/4 lg:basis-1/4">
+            <LocationCard location={location} />
+          </CarouselItem>
+        ))}
       </CarouselContent>
       <CarouselPrevious />
       <CarouselNext />
