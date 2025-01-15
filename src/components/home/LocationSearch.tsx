@@ -1,8 +1,40 @@
 import { useToast } from "@/hooks/use-toast";
 import { LocationCarousel } from "./LocationCarousel";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const LocationSearch = () => {
   const { toast } = useToast();
+
+  // Fetch popular locations data
+  const { data: locations, isLoading, error } = useQuery({
+    queryKey: ['popularLocations'],
+    queryFn: async () => {
+      console.log('Fetching popular locations...');
+      const { data, error } = await supabase
+        .from('popular_locations')
+        .select('*')
+        .eq('is_active', true)
+        .order('businesses', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching popular locations:', error);
+        throw error;
+      }
+
+      console.log('Fetched popular locations:', data);
+      return data;
+    }
+  });
+
+  // Handle error state with toast
+  if (error) {
+    toast({
+      title: "Error loading locations",
+      description: "There was a problem loading the locations. Please try again later.",
+      variant: "destructive",
+    });
+  }
 
   return (
     <section className="py-16 bg-white">
