@@ -2,15 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { CategoryCard } from "./CategoryCard";
-import { ShowMoreButton } from "./ShowMoreButton";
 import { useToast } from "@/hooks/use-toast";
-import { INITIAL_CATEGORIES, ADDITIONAL_CATEGORIES } from "./CategoryData";
-
-interface CategoryCount {
-  category: string;
-  count: number;
-}
+import { CategoryGrid } from "./categories/CategoryGrid";
+import { CategoryStats } from "./categories/CategoryStats";
+import { CategoryFilters } from "./categories/CategoryFilters";
 
 export const PopularCategories = () => {
   const navigate = useNavigate();
@@ -68,23 +63,12 @@ export const PopularCategories = () => {
     navigate(`/explore-listings?category=${encodeURIComponent(categoryName)}`);
   };
 
-  const displayedCategories = showAll 
-    ? [...INITIAL_CATEGORIES, ...ADDITIONAL_CATEGORIES]
-    : INITIAL_CATEGORIES;
-
-  // Update counts from database
-  displayedCategories.forEach(category => {
-    category.count = categoryCounts?.[category.name] || 0;
-  });
-
-  if (isLoading) {
-    return (
-      <section className="py-16 px-4 bg-gray-50">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Popular Categories</h2>
-            <p>Loading categories...</p>
-          </div>
+  return (
+    <section className="py-16 px-4 bg-gray-50">
+      <div className="container mx-auto">
+        <CategoryStats isLoading={isLoading} />
+        
+        {isLoading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="bg-white p-6 rounded-lg shadow-sm animate-pulse">
@@ -94,34 +78,19 @@ export const PopularCategories = () => {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section className="py-16 px-4 bg-gray-50">
-      <div className="container mx-auto">
-        <div className="text-center mb-12">
-          <h6 className="text-primary text-sm font-medium">What We Offer</h6>
-          <h2 className="text-3xl font-bold mt-2">
-            Popular <span className="text-primary">Categories</span>
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {displayedCategories.map((category) => (
-            <CategoryCard
-              key={category.name}
-              name={category.name}
-              Icon={category.icon}
-              count={category.count}
-              onClick={() => handleCategoryClick(category.name)}
+        ) : (
+          <>
+            <CategoryGrid 
+              showAll={showAll} 
+              categoryCounts={categoryCounts || {}} 
+              onCategoryClick={handleCategoryClick} 
             />
-          ))}
-        </div>
-
-        <ShowMoreButton showAll={showAll} onClick={() => setShowAll(!showAll)} />
+            <CategoryFilters 
+              showAll={showAll} 
+              onToggleShowAll={() => setShowAll(!showAll)} 
+            />
+          </>
+        )}
       </div>
     </section>
   );
