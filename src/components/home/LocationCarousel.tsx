@@ -57,8 +57,11 @@ export const LocationCarousel = () => {
       }
 
       console.log('Fetched popular locations:', data);
-      return (data || []) as LocationData[];
-    }
+      return data as LocationData[];
+    },
+    retry: 1, // Only retry once
+    retryDelay: 1000,
+    refetchOnWindowFocus: false // Prevent unnecessary refetches
   });
 
   // Handle error state with toast
