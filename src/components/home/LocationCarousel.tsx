@@ -39,7 +39,17 @@ export const LocationCarousel = () => {
     if (emblaApi) {
       setApi(emblaApi);
     }
-  }, [emblaApi]);
+
+    // Cleanup function
+    return () => {
+      if (emblaApi) {
+        emblaApi.destroy();
+      }
+      if (autoplay) {
+        autoplay.stop();
+      }
+    };
+  }, [emblaApi, autoplay]);
 
   const { data: locations, isLoading, error } = useQuery({
     queryKey: ['popularLocations'],
@@ -76,7 +86,23 @@ export const LocationCarousel = () => {
     }
   }, [error, toast]);
 
-  if (!locations && !isLoading) {
+  // Show loading state
+  if (isLoading) {
+    return (
+      <Carousel className="w-full max-w-7xl mx-auto">
+        <CarouselContent>
+          {Array.from({ length: 4 }).map((_, index) => (
+            <CarouselItem key={index} className="md:basis-1/4 lg:basis-1/4">
+              <LocationCardSkeleton />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
+    );
+  }
+
+  // Don't render anything if there's no data
+  if (!locations || locations.length === 0) {
     return null;
   }
 
@@ -89,13 +115,7 @@ export const LocationCarousel = () => {
       className="w-full max-w-7xl mx-auto"
     >
       <CarouselContent ref={emblaRef}>
-        {isLoading ? (
-          Array.from({ length: 4 }).map((_, index) => (
-            <CarouselItem key={index} className="md:basis-1/4 lg:basis-1/4">
-              <LocationCardSkeleton />
-            </CarouselItem>
-          ))
-        ) : locations?.map((location) => (
+        {locations.map((location) => (
           <CarouselItem key={location.id} className="md:basis-1/4 lg:basis-1/4">
             <LocationCard location={location} />
           </CarouselItem>
