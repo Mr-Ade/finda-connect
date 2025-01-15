@@ -96,7 +96,7 @@ export default function Routes() {
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/saved-places" element={<SavedPlaces />} />
       <Route path="/shortlisted" element={<Shortlisted />} />
-      <Route path="/site-map" element={<SiteMap />} />
+      <Route path="/sitemap" element={<SiteMap />} />
       <Route path="/submit-listing" element={<SubmitListing />} />
       <Route path="/business/:id" element={<BusinessDetail />} />
     </RouterRoutes>
