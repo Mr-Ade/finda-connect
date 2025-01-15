@@ -39,19 +39,24 @@ export const LocationCarousel = () => {
     queryKey: ['popularLocations'],
     queryFn: async () => {
       console.log('Fetching popular locations...');
-      const { data, error } = await supabase
-        .from('popular_locations')
-        .select('*')
-        .eq('is_active', true)
-        .order('businesses', { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from('popular_locations')
+          .select('*')
+          .eq('is_active', true)
+          .order('businesses', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching popular locations:', error);
-        throw error;
+        if (error) {
+          console.error('Error fetching popular locations:', error);
+          throw error;
+        }
+
+        console.log('Fetched popular locations:', data);
+        return data as LocationData[];
+      } catch (err) {
+        console.error('Error in popular locations query:', err);
+        throw err;
       }
-
-      console.log('Fetched popular locations:', data);
-      return data as LocationData[];
     },
     retry: 1,
     retryDelay: 1000,
