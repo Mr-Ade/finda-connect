@@ -48,11 +48,27 @@ export const Navbar = () => {
 
   const handleLogout = async () => {
     try {
+      // First check if we have a valid session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        // If no session, just redirect to login
+        setIsAuthenticated(false);
+        navigate("/login");
+        return;
+      }
+
       const { error } = await supabase.auth.signOut();
       
-      // Only show error toast if there's an actual error
       if (error) {
         console.error("Error signing out:", error);
+        // If error is session related, force cleanup anyway
+        if (error.message.includes('session')) {
+          setIsAuthenticated(false);
+          navigate("/login");
+          return;
+        }
+        
         toast({
           title: "Error",
           description: "Failed to sign out. Please try again.",
