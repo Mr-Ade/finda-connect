@@ -1,9 +1,12 @@
 import { NewsletterForm } from "./newsletter/NewsletterForm";
 import { SubscriptionStatus } from "./newsletter/SubscriptionStatus";
 
-export const Newsletter = () => {
+const Newsletter = () => {
   return (
-    <section className="py-16 bg-primary">
+    <section 
+      className="py-16 bg-primary"
+      aria-labelledby="newsletter-heading"
+    >
       <div className="container mx-auto px-4">
         <div className="max-w-2xl mx-auto">
           <SubscriptionStatus 
@@ -16,3 +19,5 @@ export const Newsletter = () => {
     </section>
   );
 };
+
+export default Newsletter;

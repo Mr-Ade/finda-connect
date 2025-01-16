@@ -35,7 +35,7 @@ async function fetchTestimonials() {
   return data;
 }
 
-export const CustomerReviews = () => {
+const CustomerReviews = () => {
   const { toast } = useToast();
   const { data: testimonials, isLoading, error } = useQuery({
     queryKey: ["testimonials"],
@@ -54,17 +54,19 @@ export const CustomerReviews = () => {
   }, [error, toast]);
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section 
+      className="py-16 bg-gray-50"
+      aria-labelledby="reviews-heading"
+    >
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h6 className="text-gray-500 mb-2">Our Reviews</h6>
-          <h2 className="text-3xl font-bold">
+          <h2 id="reviews-heading" className="text-3xl font-bold">
             What Our Customer <span className="text-primary">Saying</span>
           </h2>
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6" role="status" aria-label="Loading reviews">
             {[1, 2, 3].map((i) => (
               <div key={i} className="p-6 bg-white rounded-lg shadow-sm">
                 <div className="flex flex-col items-center">
@@ -77,7 +79,11 @@ export const CustomerReviews = () => {
             ))}
           </div>
         ) : testimonials?.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div 
+            className="text-center py-8 text-gray-500"
+            role="status"
+            aria-label="No reviews available"
+          >
             No reviews available yet
           </div>
         ) : (
@@ -90,7 +96,12 @@ export const CustomerReviews = () => {
           >
             <CarouselContent>
               {testimonials?.map((testimonial) => (
-                <CarouselItem key={testimonial.id} className="md:basis-1/3">
+                <CarouselItem 
+                  key={testimonial.id} 
+                  className="md:basis-1/3"
+                  role="article"
+                  aria-label={`Review by ${testimonial.name}`}
+                >
                   <div className="p-6 bg-white rounded-lg shadow-sm text-center">
                     <Avatar className="w-20 h-20 mx-auto mb-4">
                       {testimonial.image_url ? (
@@ -111,7 +122,10 @@ export const CustomerReviews = () => {
                         <span className="text-primary text-sm">{testimonial.role}</span>
                       )}
                       {testimonial.rating && (
-                        <div className="flex items-center justify-center mt-2 space-x-1">
+                        <div 
+                          className="flex items-center justify-center mt-2 space-x-1"
+                          aria-label={`Rating: ${testimonial.rating} out of 5 stars`}
+                        >
                           {[...Array(testimonial.rating)].map((_, i) => (
                             <Star 
                               key={i}
@@ -139,3 +153,5 @@ export const CustomerReviews = () => {
     </section>
   );
 };
+
+export default CustomerReviews;

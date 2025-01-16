@@ -1,4 +1,4 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 
 interface Props {
@@ -31,10 +31,20 @@ export class CategoryErrorBoundary extends Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="text-center p-4">
-          <h2 className="text-xl font-semibold mb-2">Category Error</h2>
-          <p className="text-gray-600 mb-4">Unable to load categories. Please try again.</p>
-          <Button onClick={this.handleRetry}>Retry Loading</Button>
+        <div 
+          className="text-center py-8 px-4"
+          role="alert"
+          aria-live="polite"
+        >
+          <h2 className="text-xl font-semibold mb-4">
+            Categories Temporarily Unavailable
+          </h2>
+          <p className="text-gray-600 mb-6">
+            We're having trouble loading the categories. Please try again.
+          </p>
+          <Button onClick={this.handleRetry}>
+            Reload Categories
+          </Button>
         </div>
       );
     }

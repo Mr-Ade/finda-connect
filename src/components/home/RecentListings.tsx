@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { BusinessCard } from "@/components/BusinessCard";
 import type { Business } from "@/types/business";
 
-export const RecentListings = () => {
+const RecentListings = () => {
   const { data: businesses, isLoading } = useQuery({
     queryKey: ['recentListings'],
     queryFn: async () => {
@@ -47,18 +47,28 @@ export const RecentListings = () => {
   }
 
   return (
-    <section className="w-full bg-gray-50 py-16 -mx-4">
+    <section 
+      className="w-full bg-gray-50 py-16 -mx-4"
+      aria-labelledby="recent-listings-heading"
+    >
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center mb-12 text-center">
           <span className="text-primary text-sm font-semibold uppercase tracking-wide">
             Related Listing
           </span>
-          <h2 className="mt-2 text-3xl font-bold text-gray-900">
+          <h2 
+            id="recent-listings-heading"
+            className="mt-2 text-3xl font-bold text-gray-900"
+          >
             Recently Viewed Listing
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          role="feed"
+          aria-label="Recent listings"
+        >
           {businesses.map((business) => (
             <BusinessCard
               key={business.id}
@@ -77,3 +87,5 @@ export const RecentListings = () => {
     </section>
   );
 };
+
+export default RecentListings;

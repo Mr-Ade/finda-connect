@@ -3,7 +3,7 @@ import { LocationCarousel } from "./LocationCarousel";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export const LocationSearch = () => {
+const LocationSearch = () => {
   const { toast } = useToast();
 
   // Fetch popular locations data
@@ -37,10 +37,18 @@ export const LocationSearch = () => {
   }
 
   return (
-    <section className="py-16 bg-white">
+    <section 
+      className="py-16 bg-white"
+      aria-labelledby="location-search-heading"
+    >
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h6 className="text-primary text-sm font-medium">Explore</h6>
+          <h6 
+            id="location-search-heading" 
+            className="text-primary text-sm font-medium"
+          >
+            Explore
+          </h6>
           <h2 className="text-3xl font-bold mt-2">
             Popular <span className="text-primary">Locations</span>
           </h2>
@@ -54,3 +62,5 @@ export const LocationSearch = () => {
     </section>
   );
 };
+
+export default LocationSearch;
