@@ -6,14 +6,16 @@ import { Loader2 } from "lucide-react";
 
 interface AdminRouteProps {
   children: React.ReactNode;
+  requireSuperAdmin?: boolean;
 }
 
-export const AdminRoute = ({ children }: AdminRouteProps) => {
+export const AdminRoute = ({ children, requireSuperAdmin = false }: AdminRouteProps) => {
   const navigate = useNavigate();
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['profile'],
     queryFn: async () => {
+      console.log('Checking admin status...');
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) throw new Error('No user session found');
       
@@ -29,10 +31,14 @@ export const AdminRoute = ({ children }: AdminRouteProps) => {
   });
 
   useEffect(() => {
-    if (!isLoading && !profile?.is_admin) {
-      navigate('/dashboard');
+    if (!isLoading) {
+      if (!profile?.is_admin) {
+        navigate('/dashboard');
+      } else if (requireSuperAdmin && !profile?.super_admin) {
+        navigate('/dashboard/admin');
+      }
     }
-  }, [profile, isLoading, navigate]);
+  }, [profile, isLoading, navigate, requireSuperAdmin]);
 
   if (isLoading) {
     return (
@@ -42,7 +48,7 @@ export const AdminRoute = ({ children }: AdminRouteProps) => {
     );
   }
 
-  if (!profile?.is_admin) {
+  if (!profile?.is_admin || (requireSuperAdmin && !profile?.super_admin)) {
     return null;
   }
 

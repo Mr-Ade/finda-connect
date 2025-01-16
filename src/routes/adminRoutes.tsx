@@ -5,6 +5,7 @@ import AdminSettings from "@/pages/dashboard/admin/Settings";
 import AdminAnalytics from "@/pages/dashboard/admin/Analytics";
 import AuditLogs from "@/pages/dashboard/admin/AuditLogs";
 import AdminEditListing from "@/pages/dashboard/admin/EditListing";
+import SuperAdminDashboard from "@/pages/dashboard/admin/SuperAdmin";
 
 export const adminRoutes = [
   { path: "/dashboard/admin", element: <AdminDashboard /> },
@@ -14,4 +15,5 @@ export const adminRoutes = [
   { path: "/dashboard/admin/settings", element: <AdminSettings /> },
   { path: "/dashboard/admin/analytics", element: <AdminAnalytics /> },
   { path: "/dashboard/admin/audit-logs", element: <AuditLogs /> },
+  { path: "/dashboard/admin/super", element: <SuperAdminDashboard /> },
 ];
