@@ -2,10 +2,11 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
+import { AdminRoute } from "@/components/auth/AdminRoute";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2, Users, Shield, Building2, Settings } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Users, Building2, Shield, Settings } from "lucide-react";
 
 const SuperAdminDashboard = () => {
   const navigate = useNavigate();
