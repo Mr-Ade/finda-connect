@@ -1,7 +1,7 @@
 import { NewsletterForm } from "./newsletter/NewsletterForm";
 import { SubscriptionStatus } from "./newsletter/SubscriptionStatus";
 
-const Newsletter = () => {
+export const Newsletter = () => {
   return (
     <section 
       className="py-16 bg-primary"
