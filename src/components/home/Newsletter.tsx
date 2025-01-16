@@ -20,4 +20,5 @@ export const Newsletter = () => {
   );
 };
 
+// Add default export to support both import styles
 export default Newsletter;
