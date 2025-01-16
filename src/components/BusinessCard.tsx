@@ -58,16 +58,57 @@ export const BusinessCard = ({
     return 'bg-red-500';
   };
 
+  // Generate blur placeholder
+  const blurDataURL = `data:image/svg+xml;base64,${btoa(
+    `<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100%" height="100%" fill="#f3f4f6"/>
+    </svg>`
+  )}`;
+
+  // Generate srcset for responsive images
+  const generateSrcSet = (baseUrl: string) => {
+    const sizes = [400, 600, 800];
+    return sizes
+      .map(size => {
+        // If using a CDN that supports on-the-fly resizing, modify URL accordingly
+        // For this example, we'll append a width parameter
+        const url = `${baseUrl}?width=${size}`;
+        return `${url} ${size}w`;
+      })
+      .join(', ');
+  };
+
   return (
     <Link to={`/business/${id}`}>
       <Card className="overflow-hidden group relative">
         {/* Image container */}
         <div className="relative">
-          <img
-            src={image}
-            alt={name}
-            className="w-full h-48 object-cover"
-          />
+          <picture>
+            <source
+              type="image/webp"
+              srcSet={generateSrcSet(image.replace(/\.[^.]+$/, '.webp'))}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
+            <img
+              src={image}
+              alt={name}
+              className="w-full h-48 object-cover"
+              loading="lazy"
+              decoding="async"
+              style={{
+                backgroundColor: '#f3f4f6',
+                backgroundImage: `url(${blurDataURL})`,
+                backgroundSize: 'cover'
+              }}
+              onLoad={(e) => {
+                const img = e.target as HTMLImageElement;
+                img.style.backgroundImage = 'none';
+              }}
+              srcSet={generateSrcSet(image)}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
+          </picture>
+
           <button 
             className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
             aria-label="Add to favorites"
