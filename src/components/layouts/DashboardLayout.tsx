@@ -52,10 +52,7 @@ export const DashboardLayout = ({ children, loading }: DashboardLayoutProps) => 
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar 
-        isAdmin={profile?.is_admin} 
-        isSuperAdmin={profile?.super_admin} 
-      />
+      <Sidebar isAdmin={profile?.is_admin} />
       <main className="flex-1 overflow-hidden">
         <ScrollArea className="h-screen">
           <div className="container mx-auto py-6 px-4 md:px-6">

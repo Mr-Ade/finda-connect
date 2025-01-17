@@ -4,7 +4,7 @@ import { authRoutes } from "./routes/authRoutes";
 import { dashboardRoutes } from "./routes/dashboardRoutes";
 import { mainRoutes } from "./routes/mainRoutes";
 
-export function Routes() {
+export default function Routes() {
   const allRoutes = [...mainRoutes, ...authRoutes, ...dashboardRoutes, ...adminRoutes];
   
   return (

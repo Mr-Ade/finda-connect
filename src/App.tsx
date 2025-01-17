@@ -1,62 +1,29 @@
-import { useEffect } from 'react';
-import { Routes } from './Routes';
-import { Toaster } from '@/components/ui/sonner';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { BrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/toaster";
+import { LocationProvider } from "@/contexts/LocationContext";
+import { Navbar } from "@/components/Navbar";
+import { DraggableAiChat } from "@/components/DraggableAiChat";
+import Routes from "./Routes";
+
+const queryClient = new QueryClient();
 
 function App() {
-  const { toast } = useToast();
-
-  useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT') {
-        console.log('User signed out');
-        toast({
-          title: "Signed out",
-          description: "You have been signed out successfully."
-        });
-      } else if (event === 'SIGNED_IN') {
-        console.log('User signed in:', session?.user?.email);
-        toast({
-          title: "Signed in",
-          description: "Welcome back!"
-        });
-      } else if (event === 'TOKEN_REFRESHED') {
-        console.log('Token refreshed successfully');
-      } else if (event === 'USER_UPDATED') {
-        console.log('User updated');
-      }
-    });
-
-    // Initialize auth state
-    const initializeAuth = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error('Error getting session:', error.message);
-        toast({
-          title: "Authentication Error",
-          description: error.message,
-          variant: "destructive"
-        });
-      }
-      if (session) {
-        console.log('Initial session:', session);
-      }
-    };
-
-    initializeAuth();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [toast]);
-
   return (
-    <>
-      <Routes />
-      <Toaster />
-    </>
+    <QueryClientProvider client={queryClient}>
+      <LocationProvider>
+        <BrowserRouter>
+          <div className="min-h-screen bg-gray-50 flex flex-col">
+            <Navbar />
+            <main className="flex-grow pt-16">
+              <Routes />
+            </main>
+            <DraggableAiChat />
+          </div>
+          <Toaster />
+        </BrowserRouter>
+      </LocationProvider>
+    </QueryClientProvider>
   );
 }
 
