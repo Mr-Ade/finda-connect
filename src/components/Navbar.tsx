@@ -48,11 +48,40 @@ export const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
+      // First check if we have a valid session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
-      // Only show error toast if there's an actual error
+      if (sessionError) {
+        console.error("Error checking session:", sessionError);
+        // If session check fails, clean up local state
+        setIsAuthenticated(false);
+        navigate("/login");
+        return;
+      }
+
+      if (!session) {
+        // No valid session, just clean up local state
+        console.log("No active session found, cleaning up state");
+        setIsAuthenticated(false);
+        navigate("/login");
+        return;
+      }
+
+      // Attempt to sign out
+      const { error } = await supabase.auth.signOut({
+        scope: 'local' // Only clear local session, don't try to invalidate on server
+      });
+      
       if (error) {
         console.error("Error signing out:", error);
+        // If error is session related, force cleanup anyway
+        if (error.message.toLowerCase().includes('session')) {
+          console.log("Session-related error, forcing cleanup");
+          setIsAuthenticated(false);
+          navigate("/login");
+          return;
+        }
+        
         toast({
           title: "Error",
           description: "Failed to sign out. Please try again.",
