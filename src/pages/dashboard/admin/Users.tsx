@@ -8,6 +8,19 @@ import { UserManagementFilters } from "@/components/admin/users/UserManagementFi
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
+type UserRole = 'user' | 'admin' | 'super_admin' | 'business_owner';
+
+interface User {
+  id: string;
+  username: string | null;
+  full_name: string | null;
+  avatar_url: string | null;
+  role: UserRole;
+  is_active: boolean;
+  created_at: string;
+  last_seen: string | null;
+}
+
 const Users = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
@@ -18,7 +31,7 @@ const Users = () => {
     queryKey: ['admin-users'],
     queryFn: async () => {
       console.log('Fetching users for admin...');
-      const { data: profiles, error } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select(`
           id,
@@ -41,7 +54,7 @@ const Users = () => {
         throw error;
       }
 
-      return profiles;
+      return data as User[];
     }
   });
 

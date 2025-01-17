@@ -10,9 +10,11 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
+type UserRole = 'user' | 'admin' | 'super_admin' | 'business_owner';
+
 interface UserRoleManagerProps {
   userId: string;
-  currentRole: string;
+  currentRole: UserRole;
   isActive?: boolean;
   onUpdate: () => void;
 }
@@ -23,11 +25,11 @@ export const UserRoleManager = ({
   isActive = true,
   onUpdate 
 }: UserRoleManagerProps) => {
-  const [role, setRole] = useState(currentRole);
+  const [role, setRole] = useState<UserRole>(currentRole);
   const [updating, setUpdating] = useState(false);
   const { toast } = useToast();
 
-  const handleRoleChange = async (newRole: string) => {
+  const handleRoleChange = async (newRole: UserRole) => {
     setUpdating(true);
     try {
       const { error } = await supabase
@@ -92,7 +94,7 @@ export const UserRoleManager = ({
     <div className="flex items-center gap-4">
       <Select
         value={role}
-        onValueChange={handleRoleChange}
+        onValueChange={(value: UserRole) => handleRoleChange(value)}
         disabled={updating}
       >
         <SelectTrigger className="w-[180px]">
@@ -102,6 +104,7 @@ export const UserRoleManager = ({
           <SelectItem value="user">User</SelectItem>
           <SelectItem value="admin">Admin</SelectItem>
           <SelectItem value="super_admin">Super Admin</SelectItem>
+          <SelectItem value="business_owner">Business Owner</SelectItem>
         </SelectContent>
       </Select>
 
