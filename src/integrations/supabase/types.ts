@@ -1149,6 +1149,7 @@ export type Database = {
           mobile: string | null
           preferred_currency: string | null
           preferred_language: string | null
+          role: Database["public"]["Enums"]["user_role"]
           state: string | null
           super_admin: boolean | null
           timezone: string | null
@@ -1172,6 +1173,7 @@ export type Database = {
           mobile?: string | null
           preferred_currency?: string | null
           preferred_language?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
           state?: string | null
           super_admin?: boolean | null
           timezone?: string | null
@@ -1195,6 +1197,7 @@ export type Database = {
           mobile?: string | null
           preferred_currency?: string | null
           preferred_language?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
           state?: string | null
           super_admin?: boolean | null
           timezone?: string | null
@@ -4617,7 +4620,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      user_role: "user" | "business_owner" | "admin" | "super_admin"
     }
     CompositeTypes: {
       geometry_dump: {
