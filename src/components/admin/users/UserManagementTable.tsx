@@ -33,24 +33,26 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { UserRoleManager } from "./UserRoleManager";
 
 interface User {
   id: string;
   username: string | null;
   full_name: string | null;
   avatar_url: string | null;
-  is_admin: boolean;
+  role: 'user' | 'admin' | 'super_admin';
+  is_active: boolean;
   created_at: string;
   last_seen: string | null;
-  businesses: { id: string }[] | null;
 }
 
 interface UserManagementTableProps {
   users: User[];
   isLoading: boolean;
+  onUserUpdated: () => void;
 }
 
-export const UserManagementTable = ({ users, isLoading }: UserManagementTableProps) => {
+export const UserManagementTable = ({ users, isLoading, onUserUpdated }: UserManagementTableProps) => {
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -62,6 +64,7 @@ export const UserManagementTable = ({ users, isLoading }: UserManagementTablePro
       toast({
         title: "User deleted successfully",
       });
+      onUserUpdated();
     } catch (error) {
       console.error('Error deleting user:', error);
       toast({
@@ -71,28 +74,6 @@ export const UserManagementTable = ({ users, isLoading }: UserManagementTablePro
       });
     } finally {
       setDeletingUserId(null);
-    }
-  };
-
-  const handleToggleAdmin = async (userId: string, currentStatus: boolean) => {
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ is_admin: !currentStatus })
-        .eq('id', userId);
-
-      if (error) throw error;
-
-      toast({
-        title: `Admin status ${currentStatus ? 'removed' : 'granted'}`,
-      });
-    } catch (error) {
-      console.error('Error updating admin status:', error);
-      toast({
-        title: "Error updating admin status",
-        description: "Please try again later",
-        variant: "destructive",
-      });
     }
   };
 
@@ -111,6 +92,7 @@ export const UserManagementTable = ({ users, isLoading }: UserManagementTablePro
           <TableRow>
             <TableHead>User</TableHead>
             <TableHead>Role</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Last Active</TableHead>
             <TableHead>Joined</TableHead>
             <TableHead className="w-[70px]"></TableHead>
@@ -136,16 +118,17 @@ export const UserManagementTable = ({ users, isLoading }: UserManagementTablePro
                 </div>
               </TableCell>
               <TableCell>
-                <div className="flex gap-2">
-                  {user.is_admin && (
-                    <Badge variant="default">Admin</Badge>
-                  )}
-                  {user.businesses?.length ? (
-                    <Badge variant="secondary">Business Owner</Badge>
-                  ) : (
-                    <Badge variant="outline">User</Badge>
-                  )}
-                </div>
+                <UserRoleManager
+                  userId={user.id}
+                  currentRole={user.role}
+                  isActive={user.is_active}
+                  onUpdate={onUserUpdated}
+                />
+              </TableCell>
+              <TableCell>
+                <Badge variant={user.is_active ? "default" : "secondary"}>
+                  {user.is_active ? "Active" : "Inactive"}
+                </Badge>
               </TableCell>
               <TableCell>
                 {user.last_seen ? (
@@ -172,11 +155,6 @@ export const UserManagementTable = ({ users, isLoading }: UserManagementTablePro
                         <UserCog className="w-4 h-4 mr-2" />
                         Edit User
                       </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleToggleAdmin(user.id, user.is_admin)}
-                    >
-                      {user.is_admin ? "Remove Admin" : "Make Admin"}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <AlertDialog>

@@ -14,7 +14,7 @@ const Users = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const { toast } = useToast();
 
-  const { data: users, isLoading, error } = useQuery({
+  const { data: users, isLoading, error, refetch } = useQuery({
     queryKey: ['admin-users'],
     queryFn: async () => {
       console.log('Fetching users for admin...');
@@ -25,14 +25,10 @@ const Users = () => {
           username,
           full_name,
           avatar_url,
-          is_admin,
-          super_admin,
           role,
+          is_active,
           created_at,
-          last_seen,
-          businesses (
-            id
-          )
+          last_seen
         `);
 
       if (error) {
@@ -54,13 +50,10 @@ const Users = () => {
       user.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.full_name?.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesRole = roleFilter === 'all' || 
-      (roleFilter === 'super_admin' && user.super_admin) ||
-      (roleFilter === 'admin' && user.is_admin && !user.super_admin) ||
-      (roleFilter === 'business_owner' && user.businesses?.length > 0) ||
-      (roleFilter === 'user' && !user.is_admin && !user.super_admin && !user.businesses?.length);
-
-    const matchesStatus = statusFilter === 'all';  // Implement status filtering when status field is added
+    const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+    const matchesStatus = statusFilter === 'all' || 
+      (statusFilter === 'active' && user.is_active) ||
+      (statusFilter === 'inactive' && !user.is_active);
 
     return matchesSearch && matchesRole && matchesStatus;
   });
@@ -95,6 +88,7 @@ const Users = () => {
           <UserManagementTable 
             users={filteredUsers || []}
             isLoading={isLoading}
+            onUserUpdated={refetch}
           />
         </div>
       </DashboardLayout>
