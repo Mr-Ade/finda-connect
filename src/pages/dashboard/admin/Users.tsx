@@ -7,8 +7,9 @@ import { UserManagementHeader } from "@/components/admin/users/UserManagementHea
 import { UserManagementFilters } from "@/components/admin/users/UserManagementFilters";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Database } from "@/integrations/supabase/types";
 
-type UserRole = 'user' | 'admin' | 'super_admin' | 'business_owner';
+type UserRole = Database["public"]["Enums"]["user_role"];
 
 interface User {
   id: string;

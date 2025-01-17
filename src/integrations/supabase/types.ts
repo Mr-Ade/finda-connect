@@ -1143,6 +1143,7 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          is_active: boolean
           is_admin: boolean | null
           last_seen: string | null
           location_data: Json | null
@@ -1167,6 +1168,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
+          is_active?: boolean
           is_admin?: boolean | null
           last_seen?: string | null
           location_data?: Json | null
@@ -1191,6 +1193,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          is_active?: boolean
           is_admin?: boolean | null
           last_seen?: string | null
           location_data?: Json | null

@@ -9,8 +9,9 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 
-type UserRole = 'user' | 'admin' | 'super_admin' | 'business_owner';
+type UserRole = Database["public"]["Enums"]["user_role"];
 
 interface UserRoleManagerProps {
   userId: string;
