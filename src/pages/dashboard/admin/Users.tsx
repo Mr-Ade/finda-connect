@@ -9,17 +9,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Database } from "@/integrations/supabase/types";
 
-type UserRole = Database["public"]["Enums"]["user_role"];
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
-interface User {
-  id: string;
-  username: string | null;
-  full_name: string | null;
-  avatar_url: string | null;
-  role: UserRole;
-  is_active: boolean;
-  created_at: string;
-  last_seen: string | null;
+interface User extends Profile {
+  role: Database["public"]["Enums"]["user_role"];
 }
 
 const Users = () => {
