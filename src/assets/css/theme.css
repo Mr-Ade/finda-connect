@@ -1,5 +1,5 @@
-/* Original imports */
-@import url(plugins/animation.css);
+/* Remove original imports since files don't exist */
+/* @import url(plugins/animation.css);
 @import url(plugins/bootstrap.min.css);
 @import url(plugins/slick.css);
 @import url(plugins/slick-theme.css);
@@ -10,9 +10,9 @@
 @import url(plugins/line-icons.css);
 @import url(plugins/iconfont.css);
 @import url(plugins/font-awesome.css);
-@import url(plugins/flaticon.css);
+@import url(plugins/flaticon.css); */
 
-/* New component imports */
+/* Keep component imports */
 @import url(components/buttons.css);
 @import url(components/modal.css);
 @import url(components/pagination.css);
