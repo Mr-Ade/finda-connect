@@ -6,13 +6,15 @@ import { UserManagementTable } from "@/components/admin/users/UserManagementTabl
 import { UserManagementHeader } from "@/components/admin/users/UserManagementHeader";
 import { UserManagementFilters } from "@/components/admin/users/UserManagementFilters";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Users = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const { toast } = useToast();
 
-  const { data: users, isLoading } = useQuery({
+  const { data: users, isLoading, error } = useQuery({
     queryKey: ['admin-users'],
     queryFn: async () => {
       console.log('Fetching users for admin...');
@@ -24,6 +26,8 @@ const Users = () => {
           full_name,
           avatar_url,
           is_admin,
+          super_admin,
+          role,
           created_at,
           last_seen,
           businesses (
@@ -33,6 +37,11 @@ const Users = () => {
 
       if (error) {
         console.error('Error fetching users:', error);
+        toast({
+          title: "Error fetching users",
+          description: error.message,
+          variant: "destructive",
+        });
         throw error;
       }
 
@@ -46,15 +55,30 @@ const Users = () => {
       user.full_name?.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesRole = roleFilter === 'all' || 
-      (roleFilter === 'admin' && user.is_admin) ||
+      (roleFilter === 'super_admin' && user.super_admin) ||
+      (roleFilter === 'admin' && user.is_admin && !user.super_admin) ||
       (roleFilter === 'business_owner' && user.businesses?.length > 0) ||
-      (roleFilter === 'user' && !user.is_admin && !user.businesses?.length);
+      (roleFilter === 'user' && !user.is_admin && !user.super_admin && !user.businesses?.length);
 
-    return matchesSearch && matchesRole;
+    const matchesStatus = statusFilter === 'all';  // Implement status filtering when status field is added
+
+    return matchesSearch && matchesRole && matchesStatus;
   });
 
+  if (error) {
+    return (
+      <AdminRoute requireSuperAdmin>
+        <DashboardLayout>
+          <div className="p-4 text-red-500">
+            Error loading users. Please try again later.
+          </div>
+        </DashboardLayout>
+      </AdminRoute>
+    );
+  }
+
   return (
-    <AdminRoute>
+    <AdminRoute requireSuperAdmin>
       <DashboardLayout>
         <div className="space-y-6">
           <UserManagementHeader />

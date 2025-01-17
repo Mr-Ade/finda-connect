@@ -42,6 +42,7 @@ export const UserManagementFilters = ({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Roles</SelectItem>
+          <SelectItem value="super_admin">Super Admin</SelectItem>
           <SelectItem value="admin">Administrators</SelectItem>
           <SelectItem value="business_owner">Business Owners</SelectItem>
           <SelectItem value="user">Regular Users</SelectItem>
@@ -59,6 +60,7 @@ export const UserManagementFilters = ({
           <SelectItem value="all">All Status</SelectItem>
           <SelectItem value="active">Active</SelectItem>
           <SelectItem value="inactive">Inactive</SelectItem>
+          <SelectItem value="banned">Banned</SelectItem>
         </SelectContent>
       </Select>
     </div>
