@@ -11,14 +11,16 @@ import {
   Users,
   FileText,
   BarChart3,
-  Shield
+  Shield,
+  Database
 } from "lucide-react";
 
 interface SidebarProps {
   isAdmin?: boolean;
+  isSuperAdmin?: boolean;
 }
 
-export const Sidebar = ({ isAdmin }: SidebarProps) => {
+export const Sidebar = ({ isAdmin, isSuperAdmin }: SidebarProps) => {
   return (
     <div className="hidden border-r bg-gray-100/40 lg:block dark:bg-gray-800/40">
       <div className="flex flex-col gap-2">
@@ -97,7 +99,7 @@ export const Sidebar = ({ isAdmin }: SidebarProps) => {
               Bookmarks
             </NavLink>
 
-            {isAdmin && (
+            {(isAdmin || isSuperAdmin) && (
               <>
                 <div className="mt-6 border-t pt-6">
                   <h3 className="mb-2 px-3 text-sm font-semibold">Admin</h3>
@@ -134,6 +136,14 @@ export const Sidebar = ({ isAdmin }: SidebarProps) => {
                     <BarChart3 className="h-4 w-4" />
                     Analytics
                   </NavLink>
+                </div>
+              </>
+            )}
+
+            {isSuperAdmin && (
+              <>
+                <div className="mt-6 border-t pt-6">
+                  <h3 className="mb-2 px-3 text-sm font-semibold">Super Admin</h3>
                   <NavLink
                     className={({ isActive }) =>
                       `flex items-center gap-2 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 ${
@@ -155,6 +165,17 @@ export const Sidebar = ({ isAdmin }: SidebarProps) => {
                   >
                     <Shield className="h-4 w-4" />
                     Audit Logs
+                  </NavLink>
+                  <NavLink
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 ${
+                        isActive ? "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50" : ""
+                      }`
+                    }
+                    to="/dashboard/admin/database"
+                  >
+                    <Database className="h-4 w-4" />
+                    Database
                   </NavLink>
                 </div>
               </>
