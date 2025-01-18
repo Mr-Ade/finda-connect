@@ -7,6 +7,7 @@ import AuditLogs from "@/pages/dashboard/admin/AuditLogs";
 import AdminEditListing from "@/pages/dashboard/admin/EditListing";
 import SuperAdminDashboard from "@/pages/dashboard/admin/SuperAdminDashboard";
 import Reviews from "@/pages/dashboard/admin/Reviews";
+import CMSPage from "@/pages/dashboard/admin/cms/CMSPage";
 
 export const adminRoutes = [
   { path: "/dashboard/admin", element: <AdminDashboard /> },
@@ -18,4 +19,6 @@ export const adminRoutes = [
   { path: "/dashboard/admin/analytics", element: <AdminAnalytics /> },
   { path: "/dashboard/admin/audit-logs", element: <AuditLogs /> },
   { path: "/dashboard/admin/super", element: <SuperAdminDashboard /> },
+  { path: "/dashboard/admin/cms", element: <CMSPage /> },
+  { path: "/dashboard/admin/cms/:id", element: <CMSPage /> },
 ];

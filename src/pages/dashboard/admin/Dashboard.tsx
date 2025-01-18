@@ -3,7 +3,7 @@ import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Users, Building2, BarChart2, Settings } from "lucide-react";
+import { Loader2, Users, Building2, BarChart2, Settings, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const AdminDashboard = () => {
@@ -41,6 +41,13 @@ const AdminDashboard = () => {
       description: "Total businesses",
       icon: Building2,
       link: "/dashboard/admin/listings"
+    },
+    {
+      title: "Content",
+      value: "Manage",
+      description: "CMS Pages",
+      icon: FileText,
+      link: "/dashboard/admin/cms"
     },
     {
       title: "Analytics",

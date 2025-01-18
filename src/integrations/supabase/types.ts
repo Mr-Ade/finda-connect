@@ -609,6 +609,51 @@ export type Database = {
           },
         ]
       }
+      cms_pages: {
+        Row: {
+          content: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          meta_description: string | null
+          meta_keywords: string | null
+          page_type: string
+          published_at: string | null
+          slug: string
+          status: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          meta_description?: string | null
+          meta_keywords?: string | null
+          page_type?: string
+          published_at?: string | null
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          meta_description?: string | null
+          meta_keywords?: string | null
+          page_type?: string
+          published_at?: string | null
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       follows: {
         Row: {
           created_at: string
