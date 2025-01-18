@@ -24,6 +24,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { ReviewReportDialog } from "./ReviewReportDialog";
 
 interface Review {
   id: string;
@@ -45,6 +46,7 @@ interface ReviewManagementTableProps {
 export const ReviewManagementTable = ({ reviews, isLoading, onReviewUpdated }: ReviewManagementTableProps) => {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [editingReview, setEditingReview] = useState<Review | null>(null);
+  const [reportingReview, setReportingReview] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleUpdateStatus = async (reviewId: string, newStatus: string) => {
@@ -93,6 +95,36 @@ export const ReviewManagementTable = ({ reviews, isLoading, onReviewUpdated }: R
       console.error('Error updating review:', error);
       toast({
         title: "Error updating review",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleReport = async (reason: string) => {
+    if (!reportingReview) return;
+
+    try {
+      const { error } = await supabase
+        .from('business_reviews')
+        .update({ 
+          status: 'flagged',
+          flag_reason: reason,
+          flagged_at: new Date().toISOString()
+        })
+        .eq('id', reportingReview);
+
+      if (error) throw error;
+
+      toast({
+        title: "Review reported successfully",
+      });
+      setReportingReview(null);
+      onReviewUpdated();
+    } catch (error) {
+      console.error('Error reporting review:', error);
+      toast({
+        title: "Error reporting review",
         description: "Please try again later",
         variant: "destructive",
       });
@@ -178,35 +210,15 @@ export const ReviewManagementTable = ({ reviews, isLoading, onReviewUpdated }: R
                         </Button>
                       </>
                     )}
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-destructive"
-                        >
-                          <Flag className="w-4 h-4 mr-1" />
-                          Flag
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Flag Review</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to flag this review for further investigation?
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => handleUpdateStatus(review.id, 'flagged')}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          >
-                            Flag Review
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-destructive"
+                      onClick={() => setReportingReview(review.id)}
+                    >
+                      <Flag className="w-4 h-4 mr-1" />
+                      Flag
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>
@@ -223,6 +235,13 @@ export const ReviewManagementTable = ({ reviews, isLoading, onReviewUpdated }: R
           reviewText={editingReview.review_text || ''}
         />
       )}
+
+      <ReviewReportDialog
+        isOpen={!!reportingReview}
+        onClose={() => setReportingReview(null)}
+        onReport={handleReport}
+        reviewId={reportingReview || ''}
+      />
     </>
   );
 };

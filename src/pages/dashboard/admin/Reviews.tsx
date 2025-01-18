@@ -87,6 +87,8 @@ const Reviews = () => {
             <h1 className="text-3xl font-bold">Review Management</h1>
           </div>
           
+          <ReviewAnalytics />
+          
           <ReviewFilters onFilterChange={setFilters} />
           
           <ReviewManagementTable 
