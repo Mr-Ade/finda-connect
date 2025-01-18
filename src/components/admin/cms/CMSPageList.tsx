@@ -14,6 +14,7 @@ import {
 import { FileText, Plus, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const CMSPageList = () => {
   const { toast } = useToast();
@@ -48,8 +49,16 @@ export const CMSPageList = () => {
     page.slug.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const breadcrumbItems = [
+    { label: "Dashboard", href: "/dashboard" },
+    { label: "Admin", href: "/dashboard/admin" },
+    { label: "Content Management", href: "/dashboard/admin/cms", active: true }
+  ];
+
   return (
     <div className="space-y-4">
+      <Breadcrumb items={breadcrumbItems} className="mb-4" />
+      
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <FileText className="h-5 w-5" />

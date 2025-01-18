@@ -12,17 +12,20 @@ const AdminDashboard = () => {
     queryFn: async () => {
       console.log('Fetching admin dashboard stats...');
       
-      const [usersResponse, businessesResponse] = await Promise.all([
+      const [usersResponse, businessesResponse, pagesResponse] = await Promise.all([
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
-        supabase.from('businesses').select('*', { count: 'exact', head: true })
+        supabase.from('businesses').select('*', { count: 'exact', head: true }),
+        supabase.from('cms_pages').select('*', { count: 'exact', head: true })
       ]);
 
       if (usersResponse.error) throw usersResponse.error;
       if (businessesResponse.error) throw businessesResponse.error;
+      if (pagesResponse.error) throw pagesResponse.error;
 
       return {
         totalUsers: usersResponse.count || 0,
-        totalBusinesses: businessesResponse.count || 0
+        totalBusinesses: businessesResponse.count || 0,
+        totalPages: pagesResponse.count || 0
       };
     }
   });
@@ -44,7 +47,7 @@ const AdminDashboard = () => {
     },
     {
       title: "Content",
-      value: "Manage",
+      value: stats?.totalPages || 0,
       description: "CMS Pages",
       icon: FileText,
       link: "/dashboard/admin/cms"
