@@ -34,13 +34,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { UserRoleManager } from "./UserRoleManager";
+import { Database } from "@/integrations/supabase/types";
+
+type UserRole = Database["public"]["Enums"]["user_role"];
 
 interface User {
   id: string;
   username: string | null;
   full_name: string | null;
   avatar_url: string | null;
-  role: 'user' | 'admin' | 'super_admin';
+  role: UserRole;
   is_active: boolean;
   created_at: string;
   last_seen: string | null;
