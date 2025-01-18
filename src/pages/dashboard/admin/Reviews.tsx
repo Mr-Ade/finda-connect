@@ -3,17 +3,29 @@ import { useQuery } from "@tanstack/react-query";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { AdminRoute } from "@/components/auth/AdminRoute";
 import { ReviewManagementTable } from "@/components/admin/reviews/ReviewManagementTable";
+import { ReviewFilters } from "@/components/admin/reviews/ReviewFilters";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
+interface Filters {
+  search: string;
+  status: string;
+  rating: string;
+}
+
 const Reviews = () => {
   const { toast } = useToast();
+  const [filters, setFilters] = useState<Filters>({
+    search: "",
+    status: "all",
+    rating: "all",
+  });
 
   const { data: reviews, isLoading, error, refetch } = useQuery({
-    queryKey: ['admin-reviews'],
+    queryKey: ['admin-reviews', filters],
     queryFn: async () => {
-      console.log('Fetching reviews for admin...');
-      const { data, error } = await supabase
+      console.log('Fetching reviews for admin with filters:', filters);
+      let query = supabase
         .from('business_reviews')
         .select(`
           id,
@@ -26,6 +38,20 @@ const Reviews = () => {
           helpful_votes
         `)
         .order('review_date', { ascending: false });
+
+      if (filters.status !== 'all') {
+        query = query.eq('status', filters.status);
+      }
+      
+      if (filters.rating !== 'all') {
+        query = query.eq('rating', parseInt(filters.rating));
+      }
+
+      if (filters.search) {
+        query = query.ilike('review_text', `%${filters.search}%`);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching reviews:', error);
@@ -60,6 +86,8 @@ const Reviews = () => {
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">Review Management</h1>
           </div>
+          
+          <ReviewFilters onFilterChange={setFilters} />
           
           <ReviewManagementTable 
             reviews={reviews || []}
