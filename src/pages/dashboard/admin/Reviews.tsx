@@ -4,6 +4,7 @@ import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { AdminRoute } from "@/components/auth/AdminRoute";
 import { ReviewManagementTable } from "@/components/admin/reviews/ReviewManagementTable";
 import { ReviewFilters } from "@/components/admin/reviews/ReviewFilters";
+import { ReviewAnalytics } from "@/components/admin/reviews/ReviewAnalytics"; // Added this import
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
