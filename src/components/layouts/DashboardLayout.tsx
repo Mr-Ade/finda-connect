@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Sidebar } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -15,11 +16,14 @@ export const DashboardLayout = ({ children, loading }: DashboardLayoutProps) => 
   const navigate = useNavigate();
 
   // Check if user is authenticated and get profile
-  const { data: profile, isLoading: profileLoading } = useQuery({
+  const { data: profile, isLoading: profileLoading, error } = useQuery({
     queryKey: ['profile'],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) throw new Error('No user session found');
+      if (!session?.user) {
+        console.log('No session found, redirecting to login');
+        throw new Error('No user session found');
+      }
       
       const { data, error } = await supabase
         .from('profiles')
@@ -27,20 +31,23 @@ export const DashboardLayout = ({ children, loading }: DashboardLayoutProps) => 
         .eq('id', session.user.id)
         .single();
         
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching profile:', error);
+        throw error;
+      }
+
+      console.log('Profile loaded:', data);
       return data;
     }
   });
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate('/login');
-      }
-    };
-    checkAuth();
-  }, [navigate]);
+    if (error) {
+      console.error('Auth error:', error);
+      toast.error('Authentication error. Please login again.');
+      navigate('/login');
+    }
+  }, [error, navigate]);
 
   if (profileLoading || loading) {
     return (
