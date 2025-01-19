@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Save } from "lucide-react";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 const CMSPage = () => {
   const { id } = useParams();
@@ -33,6 +34,13 @@ const CMSPage = () => {
     meta_keywords: "",
     page_type: "custom"
   });
+
+  const breadcrumbItems = [
+    { label: "Dashboard", href: "/dashboard" },
+    { label: "Admin", href: "/dashboard/admin" },
+    { label: "Content Management", href: "/dashboard/admin/cms" },
+    { label: isNewPage ? "New Page" : "Edit Page", href: "#", active: true }
+  ];
 
   const { data: page, isLoading } = useQuery({
     queryKey: ['cms-page', id],
@@ -114,6 +122,8 @@ const CMSPage = () => {
   return (
     <DashboardLayout>
       <div className="container mx-auto py-6 max-w-4xl">
+        <Breadcrumb items={breadcrumbItems} className="mb-6" />
+        
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
             <Button
