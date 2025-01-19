@@ -5,12 +5,11 @@ import { useParams } from "react-router-dom";
 
 const CMSPage = () => {
   const { id } = useParams();
-  const isNewPage = !id;
 
   return (
     <AdminRoute requireSuperAdmin>
-      {isNewPage || id ? (
-        <CMSPageForm id={id} isNewPage={isNewPage} />
+      {id ? (
+        <CMSPageForm id={id} />
       ) : (
         <CMSPageList />
       )}
