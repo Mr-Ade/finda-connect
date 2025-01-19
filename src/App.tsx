@@ -5,6 +5,7 @@ import { LocationProvider } from "@/contexts/LocationContext";
 import { Navbar } from "@/components/Navbar";
 import { DraggableAiChat } from "@/components/DraggableAiChat";
 import Routes from "./Routes";
+import "@/assets/css/components/editor.css";
 
 const queryClient = new QueryClient();
 

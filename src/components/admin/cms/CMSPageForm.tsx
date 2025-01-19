@@ -3,7 +3,7 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "./RichTextEditor";
 import { 
   Select,
   SelectContent,
@@ -134,11 +134,9 @@ export const CMSPageForm = ({ id, initialData, onSuccess }: CMSPageFormProps) =>
 
       <div className="space-y-2">
         <label className="text-sm font-medium">Content</label>
-        <Textarea
-          value={formData.content}
-          onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-          className="min-h-[200px]"
-          required
+        <RichTextEditor
+          content={formData.content}
+          onChange={(content) => setFormData({ ...formData, content })}
         />
       </div>
 
