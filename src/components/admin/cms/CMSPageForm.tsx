@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RichTextEditor } from "./RichTextEditor";
+import { VersionHistory } from "./VersionHistory";
 import { 
   Select,
   SelectContent,
@@ -75,9 +76,21 @@ export const CMSPageForm = ({ id, initialData, onSuccess }: CMSPageFormProps) =>
     saveMutation.mutate(formData);
   };
 
+  const handleRestoreVersion = (version: any) => {
+    setFormData({
+      title: version.title,
+      slug: version.slug,
+      content: version.content,
+      status: version.status,
+      meta_description: version.meta_description || "",
+      meta_keywords: version.meta_keywords || "",
+      page_type: version.page_type
+    });
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="flex justify-between items-center">
         <div className="space-y-2">
           <label className="text-sm font-medium">Title</label>
           <Input
@@ -86,14 +99,18 @@ export const CMSPageForm = ({ id, initialData, onSuccess }: CMSPageFormProps) =>
             required
           />
         </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Slug</label>
-          <Input
-            value={formData.slug}
-            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-            required
-          />
-        </div>
+        {!isNewPage && (
+          <VersionHistory pageId={id!} onRestore={handleRestoreVersion} />
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Slug</label>
+        <Input
+          value={formData.slug}
+          onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+          required
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-4">

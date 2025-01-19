@@ -609,6 +609,59 @@ export type Database = {
           },
         ]
       }
+      cms_page_revisions: {
+        Row: {
+          content: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          meta_description: string | null
+          meta_keywords: string | null
+          page_id: string | null
+          page_type: string
+          slug: string
+          status: string
+          title: string
+          version: number
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          meta_description?: string | null
+          meta_keywords?: string | null
+          page_id?: string | null
+          page_type: string
+          slug: string
+          status: string
+          title: string
+          version: number
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          meta_description?: string | null
+          meta_keywords?: string | null
+          page_id?: string | null
+          page_type?: string
+          slug?: string
+          status?: string
+          title?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cms_page_revisions_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "cms_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cms_pages: {
         Row: {
           content: string
