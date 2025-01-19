@@ -15,6 +15,7 @@ const CMSPage = () => {
     queryKey: ['cms-page', id],
     queryFn: async () => {
       if (isNewPage) return null;
+      if (!id) throw new Error('No ID provided');
       
       console.log('Fetching CMS page:', id);
       const { data, error } = await supabase
@@ -30,7 +31,7 @@ const CMSPage = () => {
 
       return data;
     },
-    enabled: !isNewPage
+    enabled: !isNewPage && !!id // Only run query if we have an ID and it's not a new page
   });
 
   if (isLoading) {
