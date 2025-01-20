@@ -55,6 +55,28 @@ export const DashboardLayout = ({ children, loading }: DashboardLayoutProps) => 
       <Sidebar 
         isAdmin={profile?.is_admin} 
         isSuperAdmin={profile?.super_admin} 
+        items={[
+          {
+            title: "Dashboard",
+            href: "/dashboard",
+            icon: "LayoutDashboard"
+          },
+          {
+            title: "Profile",
+            href: "/dashboard/profile",
+            icon: "User"
+          },
+          {
+            title: "Messages",
+            href: "/dashboard/messages",
+            icon: "MessageSquare"
+          },
+          {
+            title: "Settings",
+            href: "/dashboard/settings",
+            icon: "Settings"
+          }
+        ]}
       />
       <main className="flex-1 overflow-hidden">
         <ScrollArea className="h-screen">
@@ -65,4 +87,4 @@ export const DashboardLayout = ({ children, loading }: DashboardLayoutProps) => 
       </main>
     </div>
   );
-};
+}

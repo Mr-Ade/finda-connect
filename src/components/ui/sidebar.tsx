@@ -8,16 +8,18 @@ export interface SidebarProps {
     href: string;
     icon: string;
   }[];
+  isAdmin?: boolean;
+  isSuperAdmin?: boolean;
 }
 
-export function Sidebar({ items }: SidebarProps) {
+export function Sidebar({ items, isAdmin, isSuperAdmin }: SidebarProps) {
   return (
     <div className="pb-12 min-h-screen">
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           <div className="space-y-1">
             {items.map((item) => {
-              const Icon = Icons[item.icon as keyof typeof Icons];
+              const IconComponent = Icons[item.icon as keyof typeof Icons];
               return (
                 <Link
                   key={item.href}
@@ -27,7 +29,7 @@ export function Sidebar({ items }: SidebarProps) {
                     location.pathname === item.href ? "bg-accent" : "transparent"
                   )}
                 >
-                  {Icon && <Icon className="mr-2 h-4 w-4" />}
+                  {IconComponent && <IconComponent className="mr-2 h-4 w-4" />}
                   <span>{item.title}</span>
                 </Link>
               );
