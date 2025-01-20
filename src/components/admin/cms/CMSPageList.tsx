@@ -21,6 +21,23 @@ export const CMSPageList = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
+  const { data: profile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error('No user session found');
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+        
+      if (error) throw error;
+      return data;
+    }
+  });
+
   const { data: pages, isLoading } = useQuery({
     queryKey: ['cms-pages'],
     queryFn: async () => {
@@ -54,6 +71,22 @@ export const CMSPageList = () => {
     { label: "Admin", href: "/dashboard/admin" },
     { label: "Content Management", href: "/dashboard/admin/cms", active: true }
   ];
+
+  // Check if user has permission to manage CMS
+  const canManageCMS = profile?.role === 'super_admin' || profile?.role === 'admin';
+
+  if (!canManageCMS) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[50vh] space-y-4">
+        <FileText className="h-16 w-16 text-gray-400" />
+        <h2 className="text-2xl font-semibold">Access Denied</h2>
+        <p className="text-gray-500">You don't have permission to access the CMS.</p>
+        <Button onClick={() => navigate('/dashboard')}>
+          Return to Dashboard
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

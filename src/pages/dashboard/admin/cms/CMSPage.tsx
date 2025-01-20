@@ -5,11 +5,30 @@ import { AdminRoute } from "@/components/auth/AdminRoute";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { CMSPageForm } from "@/components/admin/cms/CMSPageForm";
 import { CMSPageHeader } from "@/components/admin/cms/CMSPageHeader";
+import { Button } from "@/components/ui/button";
+import { FileText } from "lucide-react";
 
 const CMSPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isNewPage = id === 'new';
+
+  const { data: profile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error('No user session found');
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+        
+      if (error) throw error;
+      return data;
+    }
+  });
 
   const { data: page, isLoading } = useQuery({
     queryKey: ['cms-page', id],
@@ -32,6 +51,24 @@ const CMSPage = () => {
     },
     enabled: !isNewPage
   });
+
+  // Check if user has permission to manage CMS
+  const canManageCMS = profile?.role === 'super_admin' || profile?.role === 'admin';
+
+  if (!canManageCMS) {
+    return (
+      <DashboardLayout>
+        <div className="flex flex-col items-center justify-center h-[50vh] space-y-4">
+          <FileText className="h-16 w-16 text-gray-400" />
+          <h2 className="text-2xl font-semibold">Access Denied</h2>
+          <p className="text-gray-500">You don't have permission to access the CMS.</p>
+          <Button onClick={() => navigate('/dashboard')}>
+            Return to Dashboard
+          </Button>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -66,7 +103,7 @@ const CMSPage = () => {
 };
 
 export default () => (
-  <AdminRoute requireSuperAdmin>
+  <AdminRoute>
     <CMSPage />
   </AdminRoute>
 );
