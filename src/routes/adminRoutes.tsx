@@ -8,6 +8,8 @@ import AdminEditListing from "@/pages/dashboard/admin/EditListing";
 import SuperAdminDashboard from "@/pages/dashboard/admin/SuperAdminDashboard";
 import Reviews from "@/pages/dashboard/admin/Reviews";
 import CMSPage from "@/pages/dashboard/admin/cms/CMSPage";
+import Categories from "@/pages/dashboard/admin/Categories";
+import Support from "@/pages/dashboard/admin/Support";
 
 export const adminRoutes = [
   { path: "/dashboard/admin", element: <AdminDashboard /> },
@@ -21,4 +23,6 @@ export const adminRoutes = [
   { path: "/dashboard/admin/super", element: <SuperAdminDashboard /> },
   { path: "/dashboard/admin/cms", element: <CMSPage /> },
   { path: "/dashboard/admin/cms/:id", element: <CMSPage /> },
+  { path: "/dashboard/admin/categories", element: <Categories /> },
+  { path: "/dashboard/admin/support", element: <Support /> },
 ];
