@@ -38,7 +38,7 @@ export const OfferCard = ({ offer, onOfferClick }: OfferCardProps) => {
         backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${offer.background_image})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        height: '300px'
+        height: '150px' // Changed from 300px to 150px
       }}
     >
       <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors" />
