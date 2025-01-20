@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import * as Icons from "lucide-react";
+import type { LucideIcon } from 'lucide-react';
 
 export interface SidebarProps {
   items: {
@@ -19,7 +20,7 @@ export function Sidebar({ items, isAdmin, isSuperAdmin }: SidebarProps) {
         <div className="px-3 py-2">
           <div className="space-y-1">
             {items.map((item) => {
-              const IconComponent = Icons[item.icon as keyof typeof Icons];
+              const IconComponent = Icons[item.icon as keyof typeof Icons] as LucideIcon;
               return (
                 <Link
                   key={item.href}

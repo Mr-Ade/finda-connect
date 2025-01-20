@@ -198,7 +198,7 @@ button.close {
     color:#F41b3b;
     cursor: pointer;
     background-color:transparent;
-    border-color#F41b3b;
+    border-color:#F41b3b;
 }
 
 .pagination li:first-child a {
@@ -411,4 +411,3 @@ button.close {
 .text-gray{
 	color:#e3ecfc;
 }
-
