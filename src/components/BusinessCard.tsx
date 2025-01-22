@@ -1,4 +1,4 @@
-import { Heart, MapPin, Mail, Star, Wifi, Car, Dog, Fan } from "lucide-react";
+import { Heart, MapPin, Mail, Star } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -49,6 +49,31 @@ export const BusinessCard = ({
       return data as BusinessHour[];
     },
   });
+
+  // Fetch reviews for this business
+  const { data: reviews } = useQuery({
+    queryKey: ['business-reviews', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('rating')
+        .eq('business_id', id);
+
+      if (error) {
+        console.error('Error fetching reviews:', error);
+        throw error;
+      }
+
+      return data;
+    },
+  });
+
+  // Calculate actual rating and review count
+  const actualRating = reviews?.length 
+    ? Number((reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1))
+    : 0;
+  
+  const actualReviewCount = reviews?.length || 0;
 
   const isOpen = isBusinessOpen(hours || null);
 
@@ -128,13 +153,13 @@ export const BusinessCard = ({
 
           {/* Rating badge */}
           <div className="absolute bottom-3 left-3 bg-white/90 rounded px-2 py-1 flex items-center gap-1">
-            <span className={`text-lg font-bold ${getRatingColor(rating)} text-white px-2 py-1 rounded`}>
-              {rating}
+            <span className={`text-lg font-bold ${getRatingColor(actualRating)} text-white px-2 py-1 rounded`}>
+              {actualRating}
             </span>
             <div className="flex items-center gap-1">
               <Star className="w-4 h-4 text-yellow-400 fill-current" />
               <span className="text-sm text-gray-600">
-                {reviewCount} Reviews
+                {actualReviewCount} Reviews
               </span>
             </div>
           </div>
