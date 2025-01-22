@@ -111,7 +111,7 @@ export const BusinessCard = ({
 
           {/* Status badge */}
           <div className="absolute top-3 left-3">
-            <span className={`px-3 py-1 text-xs font-medium text-white rounded ${isOpen ? 'bg-blue-500' : 'bg-blue-500'} uppercase`}>
+            <span className={`px-3 py-1 text-xs font-medium text-white rounded ${isOpen ? 'bg-green-500' : 'bg-red-500'} uppercase`}>
               {isOpen ? 'Open' : 'Closed'}
             </span>
           </div>
@@ -123,8 +123,18 @@ export const BusinessCard = ({
                 {actualRating}
               </span>
               <div className="flex items-center gap-1">
-                <span className="text-sm text-gray-600">
-                  {actualReviewCount} {actualReviewCount === 1 ? 'Review' : 'Reviews'}
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`w-4 h-4 ${
+                      star <= actualRating
+                        ? 'text-yellow-400 fill-yellow-400'
+                        : 'text-gray-300'
+                    }`}
+                  />
+                ))}
+                <span className="text-sm text-gray-600 ml-1">
+                  ({actualReviewCount})
                 </span>
               </div>
             </div>
@@ -149,11 +159,14 @@ export const BusinessCard = ({
             </div>
 
             {/* Amenities */}
-            <div className="flex gap-4 mt-4 text-gray-400">
-              <Wifi className="w-5 h-5" />
-              <Car className="w-5 h-5" />
-              <Dog className="w-5 h-5" />
-              <Fan className="w-5 h-5" />
+            <div className="flex justify-between mt-4">
+              <div className="flex gap-4 text-gray-400">
+                <Wifi className="w-5 h-5" />
+                <Car className="w-5 h-5" />
+                <Dog className="w-5 h-5" />
+                <Fan className="w-5 h-5" />
+              </div>
+              <Mail className="w-5 h-5 text-gray-400" />
             </div>
           </div>
         </div>
