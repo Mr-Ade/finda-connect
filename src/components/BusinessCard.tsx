@@ -70,8 +70,6 @@ export const BusinessCard = ({
     const sizes = [400, 600, 800];
     return sizes
       .map(size => {
-        // If using a CDN that supports on-the-fly resizing, modify URL accordingly
-        // For this example, we'll append a width parameter
         const url = `${baseUrl}?width=${size}`;
         return `${url} ${size}w`;
       })
@@ -79,10 +77,10 @@ export const BusinessCard = ({
   };
 
   return (
-    <Link to={`/business/${id}`}>
-      <Card className="overflow-hidden group relative">
+    <Link to={`/business/${id}`} className="block h-full">
+      <Card className="overflow-hidden group relative h-full transition-all duration-200 hover:shadow-lg">
         {/* Image container */}
-        <div className="relative">
+        <div className="relative h-48">
           <picture>
             <source
               type="image/webp"
@@ -92,7 +90,7 @@ export const BusinessCard = ({
             <img
               src={image}
               alt={name}
-              className="w-full h-48 object-cover"
+              className="w-full h-full object-cover"
               loading="lazy"
               decoding="async"
               style={{
@@ -145,7 +143,7 @@ export const BusinessCard = ({
         {/* Content */}
         <div className="p-4">
           <div className="flex flex-col gap-1 mb-2">
-            <h3 className="text-lg font-semibold">{name}</h3>
+            <h3 className="text-lg font-semibold line-clamp-1">{name}</h3>
             {category && (
               <span className="text-sm text-primary">{category}</span>
             )}
@@ -172,19 +170,11 @@ export const BusinessCard = ({
             </div>
           )}
 
-          {/* Facilities */}
-          <div className="flex gap-3 mb-4">
-            <Wifi className="w-4 h-4 text-gray-400" />
-            <Car className="w-4 h-4 text-gray-400" />
-            <Dog className="w-4 h-4 text-gray-400" />
-            <Fan className="w-4 h-4 text-gray-400" />
-          </div>
-
           {/* Location and contact */}
-          <div className="flex items-center justify-between text-gray-600">
+          <div className="flex items-center justify-between text-gray-600 mt-auto">
             <div className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
-              <span className="text-sm">{location}</span>
+              <span className="text-sm line-clamp-1">{location}</span>
             </div>
             <Mail className="w-5 h-5" />
           </div>
