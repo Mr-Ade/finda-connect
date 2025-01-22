@@ -111,14 +111,14 @@ export const BusinessCard = ({
 
           {/* Status badge */}
           <div className="absolute top-3 left-3">
-            <span className={`px-3 py-1 text-xs font-medium text-white rounded ${isOpen ? 'bg-green-500' : 'bg-blue-500'} uppercase`}>
+            <span className={`px-3 py-1 text-xs font-medium text-white rounded ${isOpen ? 'bg-blue-500' : 'bg-blue-500'} uppercase`}>
               {isOpen ? 'Open' : 'Closed'}
             </span>
           </div>
 
           {/* Rating badge */}
-          <div className="absolute bottom-3 left-3 bg-white rounded-lg shadow-md px-3 py-1.5">
-            <div className="flex items-center gap-2">
+          <div className="absolute bottom-3 left-3">
+            <div className="flex items-center gap-2 bg-white rounded-lg shadow-md px-3 py-1.5">
               <span className="bg-green-500 text-white text-sm font-bold px-2 py-1 rounded">
                 {actualRating}
               </span>
