@@ -17,6 +17,7 @@ interface BusinessCardProps {
   isFeatured?: boolean;
   description?: string;
   tags?: string[];
+  authorImage?: string;
 }
 
 export const BusinessCard = ({
@@ -30,6 +31,7 @@ export const BusinessCard = ({
   isFeatured,
   description,
   tags = [],
+  authorImage,
 }: BusinessCardProps) => {
   const { data: hours } = useQuery({
     queryKey: ['business-hours', id],
@@ -101,6 +103,17 @@ export const BusinessCard = ({
               backgroundSize: 'cover'
             }}
           />
+
+          {/* Author image */}
+          {authorImage && (
+            <div className="absolute -bottom-6 right-4">
+              <img 
+                src={authorImage} 
+                alt="Author"
+                className="w-12 h-12 rounded-full border-2 border-white shadow-md"
+              />
+            </div>
+          )}
 
           <button 
             className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
