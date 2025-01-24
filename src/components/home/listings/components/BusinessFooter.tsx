@@ -33,7 +33,7 @@ export const BusinessFooter = ({ business }: BusinessFooterProps) => {
   const handleMessageClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (business.owner_id) {
-      navigate(`/messages?userId=${business.owner_id}`);
+      navigate(`/dashboard/messages?userId=${business.owner_id}`);
     }
   };
 
