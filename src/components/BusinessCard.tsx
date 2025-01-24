@@ -1,10 +1,14 @@
 import { Heart, MapPin, Mail, Star, Wifi, Car, Dog, Fan } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { isBusinessOpen } from "@/lib/utils/businessHours";
 import type { BusinessHour } from "@/lib/utils/businessHours";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 interface BusinessCardProps {
   id: string;
@@ -18,6 +22,14 @@ interface BusinessCardProps {
   description?: string;
   tags?: string[];
   authorImage?: string;
+  amenities?: {
+    wifi: boolean;
+    parking: boolean;
+    petFriendly: boolean;
+    airConditioned: boolean;
+  };
+  email?: string;
+  authorId?: string;
 }
 
 export const BusinessCard = ({
@@ -32,7 +44,19 @@ export const BusinessCard = ({
   description,
   tags = [],
   authorImage,
+  amenities = {
+    wifi: false,
+    parking: false,
+    petFriendly: false,
+    airConditioned: false
+  },
+  email,
+  authorId
 }: BusinessCardProps) => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isContactOpen, setIsContactOpen] = useState(false);
+
   const { data: hours } = useQuery({
     queryKey: ['business-hours', id],
     queryFn: async () => {
@@ -85,6 +109,29 @@ export const BusinessCard = ({
       <rect width="100%" height="100%" fill="#f3f4f6"/>
     </svg>`
   )}`;
+
+  const handleContactClick = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to contact the business owner",
+        variant: "destructive"
+      });
+      return;
+    }
+    setIsContactOpen(true);
+  };
+
+  const handleMessageClick = () => {
+    if (authorId) {
+      navigate(`/messages?userId=${authorId}`);
+    }
+  };
+
+  const handleLocationClick = () => {
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`, '_blank');
+  };
 
   return (
     <Link to={`/business/${id}`} className="block h-full">
@@ -167,23 +214,59 @@ export const BusinessCard = ({
             )}
 
             <div className="flex items-center gap-2 text-gray-500 mt-2">
-              <MapPin className="w-4 h-4" />
+              <MapPin 
+                className="w-4 h-4 cursor-pointer hover:text-primary transition-colors" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleLocationClick();
+                }}
+              />
               <span className="text-sm line-clamp-1">{location}</span>
             </div>
 
             {/* Amenities */}
             <div className="flex justify-between mt-4">
               <div className="flex gap-4 text-gray-400">
-                <Wifi className="w-5 h-5" />
-                <Car className="w-5 h-5" />
-                <Dog className="w-5 h-5" />
-                <Fan className="w-5 h-5" />
+                {amenities.wifi && <Wifi className="w-5 h-5" />}
+                {amenities.parking && <Car className="w-5 h-5" />}
+                {amenities.petFriendly && <Dog className="w-5 h-5" />}
+                {amenities.airConditioned && <Fan className="w-5 h-5" />}
               </div>
-              <Mail className="w-5 h-5 text-gray-400" />
+              <Mail 
+                className="w-5 h-5 text-gray-400 cursor-pointer hover:text-primary transition-colors" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleContactClick();
+                }}
+              />
             </div>
           </div>
         </div>
       </Card>
+
+      <Dialog open={isContactOpen} onOpenChange={setIsContactOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Contact {name}</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-4 py-4">
+            {email && (
+              <Button
+                onClick={() => window.location.href = `mailto:${email}`}
+                className="w-full"
+              >
+                Send Email
+              </Button>
+            )}
+            <Button
+              onClick={handleMessageClick}
+              className="w-full"
+            >
+              Send Direct Message
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Link>
   );
 };
