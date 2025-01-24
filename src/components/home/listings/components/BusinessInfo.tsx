@@ -8,6 +8,7 @@ interface BusinessInfoProps {
 
 export const BusinessInfo = ({ business }: BusinessInfoProps) => {
   const tags = business.category ? business.category.split(',') : [];
+  const amenities = business.amenities || {};
 
   return (
     <>
@@ -40,10 +41,10 @@ export const BusinessInfo = ({ business }: BusinessInfoProps) => {
       )}
 
       <div className="flex gap-4 mb-4">
-        <Wifi className="w-5 h-5 text-gray-400" />
-        <Car className="w-5 h-5 text-gray-400" />
-        <Dog className="w-5 h-5 text-gray-400" />
-        <Fan className="w-5 h-5 text-gray-400" />
+        {amenities.wifi && <Wifi className="w-5 h-5 text-gray-400" />}
+        {amenities.parking && <Car className="w-5 h-5 text-gray-400" />}
+        {amenities.petFriendly && <Dog className="w-5 h-5 text-gray-400" />}
+        {amenities.airConditioned && <Fan className="w-5 h-5 text-gray-400" />}
       </div>
     </>
   );
