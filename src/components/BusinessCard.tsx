@@ -1,4 +1,4 @@
-import { Heart, MapPin, Mail, Star, Wifi, Car, Dog, Fan } from "lucide-react";
+import { Heart, MapPin, Mail, Star, Wifi, Car, Dog, Fan, MessageSquare } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -110,7 +110,8 @@ export const BusinessCard = ({
     </svg>`
   )}`;
 
-  const handleContactClick = async () => {
+  const handleContactClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
       toast({
@@ -123,13 +124,21 @@ export const BusinessCard = ({
     setIsContactOpen(true);
   };
 
-  const handleMessageClick = () => {
-    if (authorId) {
-      navigate(`/messages?userId=${authorId}`);
+  const handleMessageClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!authorId) {
+      toast({
+        title: "Error",
+        description: "Cannot start conversation with this business owner",
+        variant: "destructive"
+      });
+      return;
     }
+    navigate(`/messages?userId=${authorId}`);
   };
 
-  const handleLocationClick = () => {
+  const handleLocationClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`, '_blank');
   };
 
@@ -216,10 +225,7 @@ export const BusinessCard = ({
             <div className="flex items-center gap-2 text-gray-500 mt-2">
               <MapPin 
                 className="w-4 h-4 cursor-pointer hover:text-primary transition-colors" 
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleLocationClick();
-                }}
+                onClick={handleLocationClick}
               />
               <span className="text-sm line-clamp-1">{location}</span>
             </div>
@@ -232,13 +238,20 @@ export const BusinessCard = ({
                 {amenities.petFriendly && <Dog className="w-5 h-5" />}
                 {amenities.airConditioned && <Fan className="w-5 h-5" />}
               </div>
-              <Mail 
-                className="w-5 h-5 text-gray-400 cursor-pointer hover:text-primary transition-colors" 
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleContactClick();
-                }}
-              />
+              <div className="flex gap-2">
+                {email && (
+                  <Mail 
+                    className="w-5 h-5 text-gray-400 cursor-pointer hover:text-primary transition-colors" 
+                    onClick={handleContactClick}
+                  />
+                )}
+                {authorId && (
+                  <MessageSquare 
+                    className="w-5 h-5 text-gray-400 cursor-pointer hover:text-primary transition-colors"
+                    onClick={handleMessageClick}
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>
