@@ -19,6 +19,24 @@ export const MessageThread = ({ userId }: { userId: string }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
+  // Add query to check if user profile exists
+  const { data: userProfile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error('No user session found');
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    }
+  });
+
   const { data: messages, isLoading } = useQuery({
     queryKey: ['messages', userId],
     queryFn: async () => {
@@ -64,7 +82,6 @@ export const MessageThread = ({ userId }: { userId: string }) => {
           filter: `sender_id=eq.${userId},receiver_id=eq.${supabase.auth.getSession().then(({ data }) => data.session?.user.id)}`
         },
         () => {
-          // Invalidate and refetch messages
           queryClient.invalidateQueries({ queryKey: ['messages', userId] });
         }
       )
@@ -123,6 +140,16 @@ export const MessageThread = ({ userId }: { userId: string }) => {
 
     const { data: { session } } = await supabase.auth.getSession();
     if (!session?.user) return;
+
+    // Check if user profile exists
+    if (!userProfile) {
+      toast({
+        title: "Error",
+        description: "Please complete your profile before sending messages",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       const { error } = await supabase
