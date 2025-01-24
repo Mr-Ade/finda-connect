@@ -4,9 +4,13 @@ import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileSidebar } from "@/components/profile/ProfileSidebar";
 import { ConversationList } from "@/components/messages/ConversationList";
 import { MessageThread } from "@/components/messages/MessageThread";
+import { useSearchParams } from "react-router-dom";
 
 const Messages = () => {
-  const [selectedUserId, setSelectedUserId] = useState<string>();
+  const [searchParams] = useSearchParams();
+  const [selectedUserId, setSelectedUserId] = useState<string>(
+    searchParams.get("userId") || ""
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -25,7 +29,7 @@ const Messages = () => {
                 />
               </div>
               <div className="md:col-span-2">
-                <MessageThread userId={selectedUserId || ""} />
+                <MessageThread userId={selectedUserId} />
               </div>
             </Card>
           </div>
