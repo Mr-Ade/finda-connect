@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { MessageInput } from "./MessageInput";
+import { MessageAttachment } from "./MessageAttachment";
+import { MessageReactions } from "./MessageReactions";
 
 interface PresenceState {
   user_id: string;
@@ -14,12 +14,11 @@ interface PresenceState {
 }
 
 export const MessageThread = ({ userId }: { userId: string }) => {
-  const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<{ id: string; content: string } | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  // Add query to check if user profile exists
   const { data: userProfile } = useQuery({
     queryKey: ['profile'],
     queryFn: async () => {
@@ -32,11 +31,7 @@ export const MessageThread = ({ userId }: { userId: string }) => {
         .eq('id', session.user.id)
         .maybeSingle();
 
-      if (error) {
-        console.error('Error fetching profile:', error);
-        throw error;
-      }
-      
+      if (error) throw error;
       return data;
     }
   });
@@ -60,7 +55,8 @@ export const MessageThread = ({ userId }: { userId: string }) => {
             id,
             full_name,
             avatar_url
-          )
+          ),
+          reactions:message_reactions(*)
         `)
         .or(`and(sender_id.eq.${session.user.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${session.user.id})`)
         .order('created_at', { ascending: true });
@@ -74,7 +70,6 @@ export const MessageThread = ({ userId }: { userId: string }) => {
   useEffect(() => {
     if (!userId) return;
 
-    // Subscribe to new messages
     const channel = supabase
       .channel('messages_channel')
       .on(
@@ -91,7 +86,6 @@ export const MessageThread = ({ userId }: { userId: string }) => {
       )
       .subscribe();
 
-    // Subscribe to typing indicators
     const typingChannel = supabase
       .channel('typing_channel')
       .on(
@@ -115,37 +109,12 @@ export const MessageThread = ({ userId }: { userId: string }) => {
     };
   }, [userId, queryClient]);
 
-  // Handle typing indicator
-  useEffect(() => {
-    if (!userId || !newMessage) return;
-
-    const typingChannel = supabase.channel('typing_channel');
-    
-    const updateTypingStatus = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return;
-
-      await typingChannel.track({
-        user_id: session.user.id,
-        isTyping: newMessage.length > 0
-      });
-    };
-
-    updateTypingStatus();
-
-    return () => {
-      typingChannel.untrack();
-    };
-  }, [newMessage, userId]);
-
-  const sendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMessage.trim()) return;
+  const sendMessage = async (content: string, type = 'text', attachmentUrl?: string) => {
+    if (!content.trim() && !attachmentUrl) return;
 
     const { data: { session } } = await supabase.auth.getSession();
     if (!session?.user) return;
 
-    // Check if user profile exists
     if (!userProfile) {
       toast({
         title: "Error",
@@ -161,15 +130,18 @@ export const MessageThread = ({ userId }: { userId: string }) => {
         .insert({
           sender_id: session.user.id,
           receiver_id: userId,
-          content: newMessage.trim()
+          content: content.trim(),
+          message_type: type,
+          attachment_url: attachmentUrl,
+          reply_to: replyingTo?.id
         });
 
       if (error) throw error;
-      setNewMessage("");
+      setReplyingTo(null);
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to send message. Please try again.",
+        description: "Failed to send message",
         variant: "destructive",
       });
     }
@@ -193,6 +165,8 @@ export const MessageThread = ({ userId }: { userId: string }) => {
         <div className="space-y-4">
           {messages?.map((message) => {
             const isSentByMe = message.sender_id === userProfile?.id;
+            const replyingToMessage = messages.find(m => m.id === message.reply_to);
+
             return (
               <div
                 key={message.id}
@@ -205,19 +179,36 @@ export const MessageThread = ({ userId }: { userId: string }) => {
                     className="w-8 h-8 rounded-full"
                   />
                 )}
-                <div
-                  className={`max-w-[70%] rounded-lg p-3 ${
-                    isSentByMe
-                      ? 'bg-primary text-primary-foreground rounded-br-none'
-                      : 'bg-muted rounded-bl-none'
-                  }`}
-                >
-                  {!isSentByMe && message.sender?.full_name && (
-                    <div className="text-sm font-medium mb-1 text-muted-foreground">
-                      {message.sender.full_name}
+                <div className="flex flex-col gap-1">
+                  {replyingToMessage && (
+                    <div className={`text-sm ${isSentByMe ? 'text-right' : 'text-left'} text-muted-foreground`}>
+                      Replying to: {replyingToMessage.content}
                     </div>
                   )}
-                  <p>{message.content}</p>
+                  <div
+                    className={`max-w-[70%] rounded-lg p-3 ${
+                      isSentByMe
+                        ? 'bg-primary text-primary-foreground rounded-br-none'
+                        : 'bg-muted rounded-bl-none'
+                    }`}
+                  >
+                    {!isSentByMe && message.sender?.full_name && (
+                      <div className="text-sm font-medium mb-1 text-muted-foreground">
+                        {message.sender.full_name}
+                      </div>
+                    )}
+                    {message.content && <p>{message.content}</p>}
+                    {message.attachment_url && (
+                      <MessageAttachment 
+                        type={message.message_type} 
+                        url={message.attachment_url} 
+                      />
+                    )}
+                    <MessageReactions 
+                      messageId={message.id} 
+                      reactions={message.reactions || []} 
+                    />
+                  </div>
                 </div>
                 {isSentByMe && message.sender?.avatar_url && (
                   <img 
@@ -238,17 +229,11 @@ export const MessageThread = ({ userId }: { userId: string }) => {
           )}
         </div>
       </ScrollArea>
-      <form onSubmit={sendMessage} className="p-4 border-t flex gap-2">
-        <Input
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Type a message..."
-          className="flex-1"
-        />
-        <Button type="submit" size="icon">
-          <Send className="h-4 w-4" />
-        </Button>
-      </form>
+      <MessageInput 
+        onSend={sendMessage}
+        replyingTo={replyingTo}
+        onCancelReply={() => setReplyingTo(null)}
+      />
     </div>
   );
 };
