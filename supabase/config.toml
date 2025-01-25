@@ -2,8 +2,9 @@ project_id = "ycmugolragcyqogscqhl"
 
 [api]
 enabled = true
-url = "https://ycmugolragcyqogscqhl.supabase.co"
+port = 54321
+hostname = "localhost"
 
 [functions]
-[functions.process-payment]
+[functions.ai-chat]
 verify_jwt = false
