@@ -30,9 +30,13 @@ export const MessageThread = ({ userId }: { userId: string }) => {
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching profile:', error);
+        throw error;
+      }
+      
       return data;
     }
   });
