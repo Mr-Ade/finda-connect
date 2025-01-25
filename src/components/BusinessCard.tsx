@@ -94,7 +94,6 @@ export const BusinessCard = ({
     },
   });
 
-  // Calculate actual rating and review count
   const actualRating = reviews?.length 
     ? Number((reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1))
     : 0;
@@ -102,13 +101,6 @@ export const BusinessCard = ({
   const actualReviewCount = reviews?.length || 0;
 
   const isOpen = isBusinessOpen(hours || null);
-
-  // Generate blur placeholder
-  const blurDataURL = `data:image/svg+xml;base64,${btoa(
-    `<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100%" height="100%" fill="#f3f4f6"/>
-    </svg>`
-  )}`;
 
   const handleContactClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -153,11 +145,6 @@ export const BusinessCard = ({
             className="w-full h-full object-cover"
             loading="lazy"
             decoding="async"
-            style={{
-              backgroundColor: '#f3f4f6',
-              backgroundImage: `url(${blurDataURL})`,
-              backgroundSize: 'cover'
-            }}
           />
 
           {/* Author image */}
@@ -172,7 +159,7 @@ export const BusinessCard = ({
           )}
 
           <button 
-            className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
+            className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-full shadow-lg transition-colors"
             aria-label="Add to favorites"
           >
             <Heart className="w-5 h-5 text-gray-600" />
@@ -187,7 +174,7 @@ export const BusinessCard = ({
 
           {/* Rating badge */}
           <div className="absolute bottom-3 left-3">
-            <div className="flex items-center gap-2 bg-white rounded-lg shadow-md px-3 py-1.5">
+            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-md px-3 py-1.5">
               <span className="bg-green-500 text-white text-sm font-bold px-2 py-1 rounded">
                 {actualRating}
               </span>
@@ -220,6 +207,19 @@ export const BusinessCard = ({
               <p className="text-gray-600 text-sm line-clamp-2">
                 {description}
               </p>
+            )}
+
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {tags.map((tag, index) => (
+                  <span 
+                    key={index}
+                    className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             )}
 
             <div className="flex items-center gap-2 text-gray-500 mt-2">
