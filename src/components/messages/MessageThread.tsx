@@ -192,21 +192,40 @@ export const MessageThread = ({ userId }: { userId: string }) => {
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
           {messages?.map((message) => {
-            const isSentByUser = message.sender_id === message.sender.id;
+            const isSentByMe = message.sender_id === userProfile?.id;
             return (
               <div
                 key={message.id}
-                className={`flex ${isSentByUser ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${isSentByMe ? 'justify-end' : 'justify-start'} items-start gap-2`}
               >
+                {!isSentByMe && message.sender?.avatar_url && (
+                  <img 
+                    src={message.sender.avatar_url} 
+                    alt={message.sender.full_name || 'User avatar'} 
+                    className="w-8 h-8 rounded-full"
+                  />
+                )}
                 <div
                   className={`max-w-[70%] rounded-lg p-3 ${
-                    isSentByUser
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
+                    isSentByMe
+                      ? 'bg-primary text-primary-foreground rounded-br-none'
+                      : 'bg-muted rounded-bl-none'
                   }`}
                 >
+                  {!isSentByMe && message.sender?.full_name && (
+                    <div className="text-sm font-medium mb-1 text-muted-foreground">
+                      {message.sender.full_name}
+                    </div>
+                  )}
                   <p>{message.content}</p>
                 </div>
+                {isSentByMe && message.sender?.avatar_url && (
+                  <img 
+                    src={message.sender.avatar_url} 
+                    alt={message.sender.full_name || 'Your avatar'} 
+                    className="w-8 h-8 rounded-full"
+                  />
+                )}
               </div>
             );
           })}
