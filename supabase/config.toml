@@ -3,7 +3,6 @@ project_id = "ycmugolragcyqogscqhl"
 [api]
 enabled = true
 port = 54321
-hostname = "localhost"
 
 [functions]
 [functions.ai-chat]
