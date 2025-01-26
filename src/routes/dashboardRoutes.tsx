@@ -8,6 +8,8 @@ import Appointments from "@/pages/dashboard/Appointments";
 import MyBookings from "@/pages/dashboard/MyBookings";
 import Wallet from "@/pages/dashboard/Wallet";
 import ChangePassword from "@/pages/dashboard/ChangePassword";
+import AddListing from "@/pages/dashboard/AddListing";
+import EditListing from "@/pages/dashboard/EditListing";
 
 export const dashboardRoutes = [
   { path: "/dashboard", element: <Dashboard /> },
@@ -20,4 +22,6 @@ export const dashboardRoutes = [
   { path: "/dashboard/bookings", element: <MyBookings /> },
   { path: "/dashboard/wallet", element: <Wallet /> },
   { path: "/dashboard/change-password", element: <ChangePassword /> },
+  { path: "/dashboard/add-listing", element: <AddListing /> },
+  { path: "/dashboard/listings/:id/edit", element: <EditListing /> },
 ];
