@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import mapboxgl from 'mapbox-gl';
 import { supabase } from "@/integrations/supabase/client";
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { toast } from "@/hooks/use-toast";
 
 interface MapProps {
   center?: { lat: number; lng: number };
@@ -13,29 +12,15 @@ interface MapProps {
 
 // Create a loader function that gets the API key from Supabase
 const getMapboxToken = async () => {
-  try {
-    const { data, error } = await supabase.functions.invoke('get-config', {
-      body: { keys: ['MAPBOX_PUBLIC_TOKEN'] }
-    });
+  const { data: { MAPBOX_PUBLIC_TOKEN } } = await supabase.functions.invoke('get-config', {
+    body: { keys: ['MAPBOX_PUBLIC_TOKEN'] }
+  });
 
-    if (error) {
-      throw new Error('Failed to fetch Mapbox token');
-    }
-
-    if (!data.MAPBOX_PUBLIC_TOKEN) {
-      throw new Error('Mapbox token not found');
-    }
-
-    return data.MAPBOX_PUBLIC_TOKEN;
-  } catch (error) {
-    console.error('Error fetching Mapbox token:', error);
-    toast({
-      title: "Error",
-      description: "Failed to load map. Please try again later.",
-      variant: "destructive",
-    });
-    throw error;
+  if (!MAPBOX_PUBLIC_TOKEN) {
+    throw new Error('Mapbox token not found');
   }
+
+  return MAPBOX_PUBLIC_TOKEN;
 };
 
 export const Map = ({ center, markers = [], onMapClick, className = "" }: MapProps) => {

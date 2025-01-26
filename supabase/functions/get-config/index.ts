@@ -1,9 +1,5 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { corsHeaders } from '../_shared/cors.ts'
-
-interface RequestBody {
-  keys: string[]
-}
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { corsHeaders } from "../_shared/cors.ts"
 
 serve(async (req) => {
   // Handle CORS
@@ -12,37 +8,34 @@ serve(async (req) => {
   }
 
   try {
-    const { keys } = await req.json() as RequestBody
-    
+    // Parse the request body
+    const { keys } = await req.json()
+
+    // Only return specifically requested keys
     const config: Record<string, string> = {}
-    
-    // Only return requested keys
     for (const key of keys) {
-      if (Deno.env.has(key)) {
-        config[key] = Deno.env.get(key) as string
-      }
+      config[key] = Deno.env.get(key) || ''
     }
 
     return new Response(
       JSON.stringify({ data: config }),
-      {
+      { 
         headers: {
           ...corsHeaders,
           'Content-Type': 'application/json',
         },
-        status: 200,
-      }
+      },
     )
   } catch (error) {
     return new Response(
       JSON.stringify({ error: error.message }),
-      {
+      { 
+        status: 400,
         headers: {
           ...corsHeaders,
           'Content-Type': 'application/json',
         },
-        status: 400,
-      }
+      },
     )
   }
 })
