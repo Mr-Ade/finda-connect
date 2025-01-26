@@ -6,9 +6,13 @@ interface RequestBody {
 }
 
 serve(async (req) => {
-  // Handle CORS
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, {
+      headers: {
+        ...corsHeaders,
+      },
+    })
   }
 
   try {
@@ -24,7 +28,7 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ data: config }),
+      JSON.stringify(config),
       {
         headers: {
           ...corsHeaders,
@@ -34,6 +38,7 @@ serve(async (req) => {
       }
     )
   } catch (error) {
+    console.error('Error in get-config function:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {
