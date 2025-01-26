@@ -166,7 +166,7 @@ const Listings = () => {
                       <Button 
                         variant="outline" 
                         size="sm"
-                        onClick={() => navigate(`/business/${listing.id}/edit`)}
+                        onClick={() => navigate(`/dashboard/listings/${listing.id}/edit`)}
                       >
                         <Edit className="w-4 h-4 mr-1" />
                         Edit
