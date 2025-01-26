@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { ListingInfo } from "@/components/listings/ListingInfo";
@@ -13,13 +13,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { BusinessFormProvider, useBusinessForm } from "@/contexts/BusinessFormContext";
 import { Loader2 } from "lucide-react";
-import type { Business } from "@/types/business";
 
 const EditListingForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { formData, setFormData, isSubmitting, setIsSubmitting } = useBusinessForm();
+  const { formData, updateFormData, isSubmitting, setIsSubmitting } = useBusinessForm();
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -61,25 +60,23 @@ const EditListingForm = () => {
         }
 
         // Transform the data to match form structure
-        setFormData({
-          name: listing.name,
-          description: listing.description || "",
-          category: listing.category,
-          address: listing.address,
-          city: listing.city,
-          state: listing.state,
-          zipCode: listing.zip_code,
-          phone: listing.phone || "",
-          email: listing.email || "",
-          website: listing.website || "",
-          workingHours: listing.business_hours || [],
-          menuItems: listing.menu_items || [],
-          amenities: listing.amenities || [],
-          socialLinks: listing.social_links || {},
-          keywords: [],
-          latitude: listing.latitude || 0,
-          longitude: listing.longitude || 0
-        });
+        updateFormData('name', listing.name);
+        updateFormData('description', listing.description || "");
+        updateFormData('category', listing.category);
+        updateFormData('address', listing.address);
+        updateFormData('city', listing.city);
+        updateFormData('state', listing.state);
+        updateFormData('zipCode', listing.zip_code);
+        updateFormData('phone', listing.phone || "");
+        updateFormData('email', listing.email || "");
+        updateFormData('website', listing.website || "");
+        updateFormData('workingHours', listing.business_hours || []);
+        updateFormData('menuItems', listing.menu_items || []);
+        updateFormData('amenities', listing.amenities || []);
+        updateFormData('socialLinks', listing.social_links || {});
+        updateFormData('keywords', []);
+        updateFormData('latitude', listing.latitude || 0);
+        updateFormData('longitude', listing.longitude || 0);
 
         setIsLoading(false);
       } catch (error) {
@@ -94,7 +91,7 @@ const EditListingForm = () => {
     };
 
     fetchListing();
-  }, [id, navigate, toast, setFormData]);
+  }, [id, navigate, toast, updateFormData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

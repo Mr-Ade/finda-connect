@@ -69,6 +69,7 @@ interface BusinessFormContextType {
   ) => void;
   isSubmitting: boolean;
   setIsSubmitting: (value: boolean) => void;
+  setFormData: (data: BusinessFormData) => void;
 }
 
 const defaultFormData: BusinessFormData = {
@@ -111,7 +112,8 @@ export const BusinessFormProvider = ({ children }: { children: React.ReactNode }
   return (
     <BusinessFormContext.Provider value={{ 
       formData, 
-      updateFormData, 
+      updateFormData,
+      setFormData,
       isSubmitting, 
       setIsSubmitting 
     }}>
