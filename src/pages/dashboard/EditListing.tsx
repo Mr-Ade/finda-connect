@@ -14,6 +14,7 @@ import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { BusinessFormProvider, useBusinessForm } from "@/contexts/BusinessFormContext";
 import { Loader2 } from "lucide-react";
 import type { Business, WorkingHour, SocialLinks as SocialLinksType } from "@/types/business";
+import { Json } from "@/integrations/supabase/types";
 
 const EditListingForm = () => {
   const { id } = useParams();
@@ -77,19 +78,13 @@ const EditListingForm = () => {
           : [];
 
         // Transform social links to match frontend type
-        const transformedSocialLinks: SocialLinksType = typeof listing.social_links === 'object' && listing.social_links !== null
-          ? {
-              facebook: listing.social_links.facebook || '',
-              twitter: listing.social_links.twitter || '',
-              instagram: listing.social_links.instagram || '',
-              linkedin: listing.social_links.linkedin || ''
-            }
-          : {
-              facebook: '',
-              twitter: '',
-              instagram: '',
-              linkedin: ''
-            };
+        const socialLinksData = listing.social_links as { [key: string]: string } | null;
+        const transformedSocialLinks: SocialLinksType = {
+          facebook: socialLinksData?.facebook || '',
+          twitter: socialLinksData?.twitter || '',
+          instagram: socialLinksData?.instagram || '',
+          linkedin: socialLinksData?.linkedin || ''
+        };
 
         // Transform the data to match form structure
         updateFormData('name', listing.name);
@@ -276,7 +271,6 @@ const EditListingForm = () => {
       </div>
     </form>
   );
-
 };
 
 const EditListing = () => {
