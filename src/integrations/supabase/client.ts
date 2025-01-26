@@ -9,8 +9,5 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true
-  },
-  headers: {
-    'X-Client-Info': 'supabase-js-web'
   }
 });
