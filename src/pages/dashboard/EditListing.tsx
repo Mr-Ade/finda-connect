@@ -13,7 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { BusinessFormProvider, useBusinessForm } from "@/contexts/BusinessFormContext";
 import { Loader2 } from "lucide-react";
-import type { WorkingHour, SocialLinks as SocialLinksType } from "@/types/business";
+import type { Business, WorkingHour, SocialLinks as SocialLinksType } from "@/types/business";
 
 const EditListingForm = () => {
   const { id } = useParams();
@@ -69,10 +69,12 @@ const EditListingForm = () => {
         }));
 
         // Transform amenities to match frontend type
-        const transformedAmenities = (listing.amenities || []).map(amenity => ({
-          name: String(amenity),
-          available: true
-        }));
+        const transformedAmenities = Array.isArray(listing.amenities) 
+          ? listing.amenities.map(amenity => ({
+              name: String(amenity),
+              available: true
+            }))
+          : [];
 
         // Transform social links to match frontend type
         const transformedSocialLinks: SocialLinksType = listing.social_links || {};

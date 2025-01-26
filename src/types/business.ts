@@ -16,34 +16,47 @@ export interface BusinessFormData {
   email: string;
   website: string;
 
-  // Social Links
-  facebook?: string;
-  twitter?: string;
-  instagram?: string;
-  linkedin?: string;
-
   // Working Hours
-  workingHours: {
-    dayOfWeek: number;
-    openTime: string;
-    closeTime: string;
-    isClosed: boolean;
-  }[];
+  workingHours: WorkingHour[];
 
   // Menu Items
-  menuItems: {
-    name: string;
-    description?: string;
-    price: number;
-    category?: string;
-    imageUrl?: string;
-  }[];
+  menuItems: MenuItem[];
 
   // Amenities
   amenities: {
     name: string;
     available: boolean;
   }[];
+
+  // Social Links
+  socialLinks: SocialLinks;
+
+  // Photos
+  logo?: File;
+  featuredImage?: File;
+  galleryImages: File[];
+}
+
+export interface WorkingHour {
+  dayOfWeek: number;
+  openTime: string;
+  closeTime: string;
+  isClosed: boolean;
+}
+
+export interface MenuItem {
+  name: string;
+  description?: string;
+  price: number;
+  category?: string;
+  imageUrl?: string;
+}
+
+export interface SocialLinks {
+  facebook?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
 }
 
 export interface Business {
