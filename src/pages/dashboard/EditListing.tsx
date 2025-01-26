@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { BusinessFormProvider, useBusinessForm } from "@/contexts/BusinessFormContext";
 import { Loader2 } from "lucide-react";
+import type { WorkingHour, SocialLinks as SocialLinksType } from "@/types/business";
 
 const EditListingForm = () => {
   const { id } = useParams();
@@ -59,6 +60,23 @@ const EditListingForm = () => {
           return;
         }
 
+        // Transform working hours to match frontend type
+        const transformedHours: WorkingHour[] = (listing.business_hours || []).map(hour => ({
+          dayOfWeek: hour.day_of_week,
+          openTime: hour.open_time,
+          closeTime: hour.close_time,
+          isClosed: hour.is_closed
+        }));
+
+        // Transform amenities to match frontend type
+        const transformedAmenities = (listing.amenities || []).map(amenity => ({
+          name: String(amenity),
+          available: true
+        }));
+
+        // Transform social links to match frontend type
+        const transformedSocialLinks: SocialLinksType = listing.social_links || {};
+
         // Transform the data to match form structure
         updateFormData('name', listing.name);
         updateFormData('description', listing.description || "");
@@ -70,10 +88,10 @@ const EditListingForm = () => {
         updateFormData('phone', listing.phone || "");
         updateFormData('email', listing.email || "");
         updateFormData('website', listing.website || "");
-        updateFormData('workingHours', listing.business_hours || []);
+        updateFormData('workingHours', transformedHours);
         updateFormData('menuItems', listing.menu_items || []);
-        updateFormData('amenities', listing.amenities || []);
-        updateFormData('socialLinks', listing.social_links || {});
+        updateFormData('amenities', transformedAmenities);
+        updateFormData('socialLinks', transformedSocialLinks);
         updateFormData('keywords', []);
         updateFormData('latitude', listing.latitude || 0);
         updateFormData('longitude', listing.longitude || 0);
