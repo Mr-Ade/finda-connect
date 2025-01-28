@@ -5,6 +5,11 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
+// Extend MediaRecorder type to include our custom property
+interface CustomMediaRecorder extends MediaRecorder {
+  timerInterval?: number;
+}
+
 interface MessageInputProps {
   onSend: (content: string, type?: string, attachmentUrl?: string) => void;
   replyingTo?: { id: string; content: string } | null;
@@ -17,7 +22,7 @@ export const MessageInput = ({ onSend, replyingTo, onCancelReply }: MessageInput
   const [recordingTime, setRecordingTime] = useState(0);
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const mediaRecorderRef = useRef<CustomMediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
   const handleFileUpload = async (file: File) => {
@@ -56,7 +61,7 @@ export const MessageInput = ({ onSend, replyingTo, onCancelReply }: MessageInput
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      const mediaRecorder = new MediaRecorder(stream) as CustomMediaRecorder;
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
 
@@ -79,10 +84,8 @@ export const MessageInput = ({ onSend, replyingTo, onCancelReply }: MessageInput
         setRecordingTime(Math.floor((Date.now() - startTime) / 1000));
       }, 1000);
 
-      // Store interval ID to clear it later
-      mediaRecorder.onstart = () => {
-        mediaRecorder.timerInterval = timerInterval;
-      };
+      // Store interval ID
+      mediaRecorder.timerInterval = timerInterval;
     } catch (error) {
       console.error('Error starting recording:', error);
       toast({
@@ -96,7 +99,9 @@ export const MessageInput = ({ onSend, replyingTo, onCancelReply }: MessageInput
   const stopRecording = () => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
       mediaRecorderRef.current.stop();
-      clearInterval(mediaRecorderRef.current.timerInterval);
+      if (mediaRecorderRef.current.timerInterval) {
+        clearInterval(mediaRecorderRef.current.timerInterval);
+      }
       setIsRecording(false);
       setRecordingTime(0);
     }
