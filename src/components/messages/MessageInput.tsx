@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 // Extend MediaRecorder type to include our custom property
 interface CustomMediaRecorder extends MediaRecorder {
-  timerInterval?: number;
+  timerInterval?: NodeJS.Timeout;
 }
 
 interface MessageInputProps {
