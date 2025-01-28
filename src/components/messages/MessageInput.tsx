@@ -2,13 +2,8 @@ import { useState, useRef } from "react";
 import { Send, Image as ImageIcon, Paperclip, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-
-// Extend MediaRecorder type to include our custom property
-interface CustomMediaRecorder extends MediaRecorder {
-  timerInterval?: NodeJS.Timeout;
-}
+import { FileUploadHandler } from "./FileUploadHandler";
+import { VoiceRecorder } from "./VoiceRecorder";
 
 interface MessageInputProps {
   onSend: (content: string, type?: string, attachmentUrl?: string) => void;
@@ -18,94 +13,23 @@ interface MessageInputProps {
 
 export const MessageInput = ({ onSend, replyingTo, onCancelReply }: MessageInputProps) => {
   const [message, setMessage] = useState("");
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordingTime, setRecordingTime] = useState(0);
-  const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const mediaRecorderRef = useRef<CustomMediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
-
-  const handleFileUpload = async (file: File) => {
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      let type = 'file';
-      if (file.type.startsWith('image/')) type = 'image';
-      if (file.type.startsWith('video/')) type = 'video';
-      if (file.type.startsWith('audio/')) type = 'voice';
-
-      const { data, error } = await supabase.storage
-        .from('messages')
-        .upload(filePath, file);
-
-      if (error) throw error;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('messages')
-        .getPublicUrl(filePath);
-
-      onSend(message, type, publicUrl);
+  const { handleFileUpload } = FileUploadHandler({ 
+    onUploadComplete: (message, type, url) => {
+      onSend(message, type, url);
       setMessage("");
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      toast({
-        title: "Error",
-        description: "Failed to upload file",
-        variant: "destructive",
-      });
-    }
-  };
+    },
+    message 
+  });
 
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream) as CustomMediaRecorder;
-      mediaRecorderRef.current = mediaRecorder;
-      chunksRef.current = [];
-
-      mediaRecorder.ondataavailable = (e) => {
-        chunksRef.current.push(e.data);
-      };
-
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
-        await handleFileUpload(new File([audioBlob], 'voice-message.webm', { type: 'audio/webm' }));
-        stream.getTracks().forEach(track => track.stop());
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-      
-      // Start timer
-      const startTime = Date.now();
-      const timerInterval = setInterval(() => {
-        setRecordingTime(Math.floor((Date.now() - startTime) / 1000));
-      }, 1000);
-
-      // Store interval ID
-      mediaRecorder.timerInterval = timerInterval;
-    } catch (error) {
-      console.error('Error starting recording:', error);
-      toast({
-        title: "Error",
-        description: "Failed to start recording",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-      mediaRecorderRef.current.stop();
-      if (mediaRecorderRef.current.timerInterval) {
-        clearInterval(mediaRecorderRef.current.timerInterval);
-      }
-      setIsRecording(false);
-      setRecordingTime(0);
-    }
-  };
+  const { 
+    isRecording, 
+    recordingTime, 
+    startRecording, 
+    stopRecording 
+  } = VoiceRecorder({
+    onRecordingComplete: (file) => handleFileUpload(file)
+  });
 
   return (
     <div className="p-4 border-t flex flex-col gap-2">
