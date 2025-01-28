@@ -1,9 +1,1 @@
 project_id = "ycmugolragcyqogscqhl"
-
-[api]
-enabled = true
-port = 54321
-
-[functions]
-[functions.ai-chat]
-verify_jwt = false
