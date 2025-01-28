@@ -14,23 +14,7 @@ import {
   User,
   Users
 } from "lucide-react";
-
-interface Appointment {
-  id: string;
-  business_id: string;
-  user_id: string;
-  appointment_date: string;
-  name: string;
-  email: string;
-  phone: string;
-  status: string;
-  amount: number | null;
-  payment_method: string | null;
-  created_at: string;
-  business: {
-    name: string;
-  };
-}
+import type { Appointment, AppointmentStatus } from "@/types/supabase/appointment";
 
 interface AppointmentsListProps {
   isBusinessOwner?: boolean;
