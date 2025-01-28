@@ -19,7 +19,6 @@ export const MessageInput = ({ onSend, replyingTo, onCancelReply }: MessageInput
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
-  const timerIntervalRef = useRef<number>();
 
   const handleFileUpload = async (file: File) => {
     try {
@@ -69,21 +68,21 @@ export const MessageInput = ({ onSend, replyingTo, onCancelReply }: MessageInput
         const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
         await handleFileUpload(new File([audioBlob], 'voice-message.webm', { type: 'audio/webm' }));
         stream.getTracks().forEach(track => track.stop());
-        // Clear the timer interval
-        if (timerIntervalRef.current) {
-          clearInterval(timerIntervalRef.current);
-          timerIntervalRef.current = undefined;
-        }
       };
 
       mediaRecorder.start();
       setIsRecording(true);
       
-      // Start timer using the ref
+      // Start timer
       const startTime = Date.now();
-      timerIntervalRef.current = window.setInterval(() => {
+      const timerInterval = setInterval(() => {
         setRecordingTime(Math.floor((Date.now() - startTime) / 1000));
       }, 1000);
+
+      // Store interval ID to clear it later
+      mediaRecorder.onstart = () => {
+        mediaRecorder.timerInterval = timerInterval;
+      };
     } catch (error) {
       console.error('Error starting recording:', error);
       toast({
@@ -97,7 +96,7 @@ export const MessageInput = ({ onSend, replyingTo, onCancelReply }: MessageInput
   const stopRecording = () => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
       mediaRecorderRef.current.stop();
-      // Clear interval is handled in onstop handler
+      clearInterval(mediaRecorderRef.current.timerInterval);
       setIsRecording(false);
       setRecordingTime(0);
     }
