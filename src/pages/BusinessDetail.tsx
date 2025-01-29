@@ -175,8 +175,9 @@ export default function BusinessDetail() {
               city: business.city,
               state: business.state,
               zip_code: business.zip_code,
-              phone: business.phone,
-              email: business.email,
+              phone: business.phone || '',
+              email: business.email || '',
+              category: business.category,
               owner: business.owner ? {
                 username: business.owner.username,
                 avatar_url: business.owner.avatar_url,

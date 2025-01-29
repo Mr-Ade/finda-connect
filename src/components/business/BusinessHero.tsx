@@ -22,7 +22,7 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
         .select(`
           *,
           business_reviews(rating),
-          business_photos(id, photo_url),
+          business_photos(id, photo_url, order_index),
           owner:profiles(*)
         `)
         .eq('id', businessId)
@@ -30,18 +30,7 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
 
       if (error) throw error;
 
-      // Transform the data to match our Business type
-      const transformedData: Business = {
-        ...data,
-        business_hours: data.business_hours as Business['business_hours'],
-        amenities: data.amenities as Business['amenities'],
-        faqs: data.faqs as Business['faqs'],
-        delivery_info: data.delivery_info as Business['delivery_info'],
-        social_links: data.social_links as Business['social_links'],
-        business_reviews: data.business_reviews as Business['business_reviews']
-      };
-
-      return transformedData;
+      return data as Business;
     }
   });
 
