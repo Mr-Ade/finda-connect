@@ -12,7 +12,10 @@ import {
   FileText,
   BarChart3,
   Shield,
-  Database
+  Database,
+  Wallet,
+  KeyRound,
+  LogOut
 } from "lucide-react";
 
 interface SidebarProps {
@@ -97,6 +100,28 @@ export const Sidebar = ({ isAdmin, isSuperAdmin }: SidebarProps) => {
             >
               <Heart className="h-4 w-4" />
               Bookmarks
+            </NavLink>
+            <NavLink
+              className={({ isActive }) =>
+                `flex items-center gap-2 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 ${
+                  isActive ? "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50" : ""
+                }`
+              }
+              to="/dashboard/wallet"
+            >
+              <Wallet className="h-4 w-4" />
+              Wallet
+            </NavLink>
+            <NavLink
+              className={({ isActive }) =>
+                `flex items-center gap-2 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 ${
+                  isActive ? "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50" : ""
+                }`
+              }
+              to="/dashboard/change-password"
+            >
+              <KeyRound className="h-4 w-4" />
+              Change Password
             </NavLink>
 
             {(isAdmin || isSuperAdmin) && (
