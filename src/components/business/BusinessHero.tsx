@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BookmarkButton } from "@/components/business/BookmarkButton";
@@ -17,13 +18,36 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
   const { data: business, isLoading } = useQuery({
     queryKey: ['business', businessId],
     queryFn: async () => {
+      if (!businessId) throw new Error('Business ID is required');
+      
       const { data, error } = await supabase
         .from('businesses')
         .select(`
           *,
-          business_reviews(rating),
-          business_photos(id, photo_url, order_index),
-          owner:profiles(*)
+          business_photos (
+            id,
+            photo_url,
+            caption,
+            order_index
+          ),
+          business_hours (
+            id,
+            day_of_week,
+            open_time,
+            close_time,
+            is_closed
+          ),
+          business_reviews (
+            id,
+            rating,
+            review_text,
+            review_date,
+            helpful_votes,
+            user_id,
+            status,
+            created_at,
+            updated_at
+          )
         `)
         .eq('id', businessId)
         .single();
@@ -38,7 +62,17 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
         faqs: data.faqs ? data.faqs as Business['faqs'] : [],
         delivery_info: data.delivery_info ? data.delivery_info as Business['delivery_info'] : undefined,
         social_links: data.social_links ? data.social_links as Business['social_links'] : {},
-        business_reviews: data.business_reviews || [],
+        business_reviews: data.business_reviews ? data.business_reviews.map(review => ({
+          id: review.id,
+          rating: review.rating,
+          review_text: review.review_text,
+          review_date: review.review_date,
+          helpful_votes: review.helpful_votes,
+          user_id: review.user_id,
+          status: review.status,
+          created_at: review.created_at,
+          updated_at: review.updated_at
+        })) : [],
         business_photos: (data.business_photos || []).map(photo => ({
           ...photo,
           order_index: photo.order_index || 0
