@@ -130,4 +130,7 @@ export interface Business {
     avatar_url?: string;
     full_name?: string;
   };
+
+  is_open?: boolean;
+  price_range?: string | null;
 }

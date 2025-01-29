@@ -30,7 +30,24 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
 
       if (error) throw error;
 
-      return data as Business;
+      // Transform the data to match our Business type
+      const transformedData: Business = {
+        ...data,
+        business_hours: data.business_hours ? data.business_hours as Business['business_hours'] : [],
+        amenities: data.amenities ? data.amenities as Business['amenities'] : {},
+        faqs: data.faqs ? data.faqs as Business['faqs'] : [],
+        delivery_info: data.delivery_info ? data.delivery_info as Business['delivery_info'] : undefined,
+        social_links: data.social_links ? data.social_links as Business['social_links'] : {},
+        business_reviews: data.business_reviews || [],
+        business_photos: (data.business_photos || []).map(photo => ({
+          ...photo,
+          order_index: photo.order_index || 0
+        })),
+        is_open: data.is_open || false,
+        price_range: data.price_range || null
+      };
+
+      return transformedData;
     }
   });
 
