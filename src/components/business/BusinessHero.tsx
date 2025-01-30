@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Star, Clock, CheckCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, Clock, CheckCircle, Image } from "lucide-react";
 import type { Business } from "@/types/business";
 import { useState } from "react";
 
@@ -127,6 +127,16 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
           </>
         )}
 
+        {/* See Photos Button */}
+        <Button 
+          variant="secondary" 
+          className="absolute bottom-4 right-4 bg-white hover:bg-white/90 text-black flex items-center gap-2"
+          onClick={() => {/* Add photo gallery modal handler */}}
+        >
+          <Image className="w-4 h-4" />
+          See {photos.length}+ Photos
+        </Button>
+
         <div className="container mx-auto h-full flex flex-col justify-end pb-8">
           <div className="flex items-end gap-6">
             {/* Business Logo */}
@@ -181,17 +191,6 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
                 )}
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="container mx-auto">
-        <div className="bg-white shadow-lg rounded-lg -mt-8 p-4 relative z-10">
-          <div className="flex flex-wrap gap-4">
-            <Button variant="outline" className="ml-auto">
-              See {photos.length}+ Photos
-            </Button>
           </div>
         </div>
       </div>
