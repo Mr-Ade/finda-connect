@@ -33,6 +33,36 @@ interface BusinessSidebarProps {
   };
 }
 
+const AccommodationSection = () => {
+  return (
+    <div className="bg-white rounded-lg p-4 shadow-sm">
+      <h4 className="font-bold mb-4">Book Accommodation</h4>
+      <div className="space-y-4">
+        <div className="relative">
+          <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+          <Input className="pl-10" placeholder="Enter location" />
+        </div>
+        <Button className="w-full">Check Availability</Button>
+      </div>
+    </div>
+  );
+};
+
+const ServiceSection = () => {
+  return (
+    <div className="bg-white rounded-lg p-4 shadow-sm">
+      <h4 className="font-bold mb-4">Book Service</h4>
+      <div className="space-y-4">
+        <div className="relative">
+          <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+          <Input className="pl-10" placeholder="Enter your location" />
+        </div>
+        <Button className="w-full">Book Appointment</Button>
+      </div>
+    </div>
+  );
+};
+
 export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
   const isRestaurant = business.category.toLowerCase().includes('restaurant') || 
                       business.category.toLowerCase().includes('food');
