@@ -1,10 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { BookmarkButton } from "@/components/business/BookmarkButton";
-import { CheckInButton } from "@/components/business/CheckInButton";
 import { Button } from "@/components/ui/button";
-import { Share2, MapPin, Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Business } from "@/types/business";
 import { useState } from "react";
 
@@ -30,23 +28,10 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
             caption,
             order_index
           ),
-          business_hours (
-            id,
-            day_of_week,
-            open_time,
-            close_time,
-            is_closed
-          ),
-          business_reviews (
-            id,
-            rating,
-            review_text,
-            review_date,
-            helpful_votes,
-            user_id,
-            status,
-            created_at,
-            updated_at
+          owner:profiles!businesses_owner_id_fkey (
+            username,
+            avatar_url,
+            full_name
           )
         `)
         .eq('id', businessId)
@@ -62,17 +47,6 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
         faqs: data.faqs ? data.faqs as Business['faqs'] : [],
         delivery_info: data.delivery_info ? data.delivery_info as Business['delivery_info'] : undefined,
         social_links: data.social_links ? data.social_links as Business['social_links'] : {},
-        business_reviews: data.business_reviews ? data.business_reviews.map(review => ({
-          id: review.id,
-          rating: review.rating,
-          review_text: review.review_text,
-          review_date: review.review_date,
-          helpful_votes: review.helpful_votes,
-          user_id: review.user_id,
-          status: review.status,
-          created_at: review.created_at,
-          updated_at: review.updated_at
-        })) : [],
         business_photos: (data.business_photos || []).map(photo => ({
           ...photo,
           order_index: photo.order_index || 0
@@ -94,11 +68,6 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
   if (!business) {
     return null;
   }
-
-  // Calculate average rating
-  const reviews = business.business_reviews || [];
-  const totalRating = reviews.reduce((sum, review) => sum + (review.rating || 0), 0);
-  const averageRating = reviews.length > 0 ? (totalRating / reviews.length).toFixed(1) : 'N/A';
 
   const photos = business.business_photos || [];
   const defaultImage = '/placeholder.svg';
@@ -162,46 +131,14 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
                     Verified
                   </span>
                 )}
-                {business.is_open && (
-                  <span className="px-2 py-1 bg-green-500 text-white text-sm font-medium rounded">
-                    Open Now
-                  </span>
-                )}
-                {!business.is_open && (
-                  <span className="px-2 py-1 bg-red-500 text-white text-sm font-medium rounded">
-                    Closed
-                  </span>
-                )}
               </div>
               
               <h1 className="text-4xl font-bold">{business.name}</h1>
               
               <div className="flex items-center gap-6 text-sm">
                 <div className="flex items-center gap-1">
-                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                  <span>{averageRating}</span>
-                  <span className="text-gray-300">({reviews.length} reviews)</span>
-                </div>
-                
-                <div className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
                   <span>{business.city}, {business.state}</span>
                 </div>
-
-                {business.price_range && (
-                  <div className="text-gray-300">
-                    {business.price_range}
-                  </div>
-                )}
-              </div>
-
-              {/* Tags/Categories */}
-              <div className="flex items-center gap-2 text-sm">
-                {business.category.split(',').map((cat, index) => (
-                  <span key={index} className="text-gray-300">
-                    {cat.trim()}{index < business.category.split(',').length - 1 && '•'}
-                  </span>
-                ))}
               </div>
             </div>
           </div>
@@ -212,12 +149,6 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
       <div className="container mx-auto">
         <div className="bg-white shadow-lg rounded-lg -mt-8 p-4 relative z-10">
           <div className="flex flex-wrap gap-4">
-            <BookmarkButton businessId={businessId} />
-            <CheckInButton businessId={businessId} />
-            <Button variant="outline" className="flex items-center gap-2">
-              <Share2 className="w-4 h-4" />
-              Share
-            </Button>
             <Button variant="outline" className="ml-auto">
               See {photos.length}+ Photos
             </Button>
