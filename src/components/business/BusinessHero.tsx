@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, Clock, CheckCircle } from "lucide-react";
 import type { Business } from "@/types/business";
 import { useState } from "react";
 
@@ -32,6 +32,10 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
             username,
             avatar_url,
             full_name
+          ),
+          business_reviews (
+            id,
+            rating
           )
         `)
         .eq('id', businessId)
@@ -39,7 +43,6 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
 
       if (error) throw error;
 
-      // Transform the data to match our Business type
       const transformedData: Business = {
         ...data,
         business_hours: data.business_hours ? data.business_hours as Business['business_hours'] : [],
@@ -78,6 +81,23 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev === 0 ? photos.length - 1 : prev - 1));
+  };
+
+  const averageRating = business.business_reviews?.length 
+    ? business.business_reviews.reduce((acc, review) => acc + review.rating, 0) / business.business_reviews.length
+    : 0;
+
+  const renderStars = (rating: number) => {
+    return [...Array(5)].map((_, index) => (
+      <Star
+        key={index}
+        className={`w-4 h-4 ${index < rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
+      />
+    ));
+  };
+
+  const formatBusinessHours = (openTime: string, closeTime: string) => {
+    return `${openTime} - ${closeTime}`;
   };
 
   return (
@@ -122,23 +142,43 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
 
             <div className="text-white space-y-4 flex-1">
               <div className="flex items-center gap-2">
-                <span className="px-2 py-1 bg-primary text-white text-sm font-medium rounded">
-                  {business.category}
-                </span>
-                {business.status === 'approved' && (
-                  <span className="px-2 py-1 bg-green-500 text-white text-sm font-medium rounded flex items-center gap-1">
-                    <span className="w-2 h-2 bg-white rounded-full"></span>
-                    Verified
-                  </span>
+                <h1 className="text-4xl font-bold">{business.name}</h1>
+                {business.claimed && (
+                  <div className="flex items-center gap-1 text-sm bg-green-500/20 px-2 py-1 rounded">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <span>Claimed</span>
+                  </div>
                 )}
               </div>
               
-              <h1 className="text-4xl font-bold">{business.name}</h1>
-              
-              <div className="flex items-center gap-6 text-sm">
-                <div className="flex items-center gap-1">
-                  <span>{business.city}, {business.state}</span>
-                </div>
+              <div className="flex items-center gap-2">
+                <div className="flex">{renderStars(Math.round(averageRating))}</div>
+                <span className="text-sm">
+                  {business.business_reviews?.length || 0} Reviews
+                </span>
+                <span className="text-sm">
+                  {business.price_range && `• ${business.price_range}`}
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {business.category && (
+                  <span className="text-sm bg-white/20 px-2 py-1 rounded">
+                    {business.category}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 text-sm">
+                <Clock className="w-4 h-4" />
+                <span className={business.is_open ? "text-green-400" : "text-red-400"}>
+                  {business.is_open ? "Open" : "Closed"}
+                </span>
+                {business.business_hours && business.business_hours[0] && (
+                  <span>
+                    • {formatBusinessHours(business.business_hours[0].open_time, business.business_hours[0].close_time)}
+                  </span>
+                )}
               </div>
             </div>
           </div>
