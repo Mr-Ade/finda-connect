@@ -225,6 +225,45 @@ export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
       {isAccommodation && renderAccommodationSection()}
       {isService && renderServiceSection()}
 
+      {/* Business Owner Profile */}
+      {business.owner && (
+        <div className="bg-white rounded-lg p-6 text-center">
+          <div className="relative mb-4">
+            <img 
+              src={business.owner.avatar_url || "/placeholder.svg"}
+              alt={business.owner.full_name}
+              className="w-24 h-24 rounded-full mx-auto object-cover"
+            />
+          </div>
+          <h3 className="text-xl font-semibold mb-1">{business.owner.full_name}</h3>
+          <div className="flex items-center justify-center gap-1 text-gray-600 mb-6">
+            <MapPin className="w-4 h-4" />
+            <span>{business.city}</span>
+          </div>
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="text-center">
+              <div className="font-semibold text-xl">140+</div>
+              <div className="text-sm text-gray-500">Listings</div>
+            </div>
+            <div className="text-center">
+              <div className="font-semibold text-xl">4.7</div>
+              <div className="text-sm text-gray-500">Ratings</div>
+            </div>
+            <div className="text-center">
+              <div className="font-semibold text-xl">80K</div>
+              <div className="text-sm text-gray-500">Followers</div>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <Button variant="outline" className="w-full">Follow Now</Button>
+            <Button className="w-full">Send Message</Button>
+          </div>
+          <Button variant="default" className="w-full bg-red-500 hover:bg-red-600">
+            View Profile
+          </Button>
+        </div>
+      )}
+
       {/* Business Contact Details */}
       <div className="bg-white rounded-lg p-4 shadow-sm space-y-4">
         <div className="flex items-center gap-3">
