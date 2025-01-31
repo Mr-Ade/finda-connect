@@ -39,12 +39,12 @@ export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
   const [kids, setKids] = useState(0);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
-  const isRestaurant = business.category.toLowerCase().includes('restaurant') || 
-                      business.category.toLowerCase().includes('food');
-  const isAccommodation = business.category.toLowerCase().includes('hotel') || 
-                         business.category.toLowerCase().includes('apartment');
-  const isService = business.category.toLowerCase().includes('service') ||
-                   business.category.toLowerCase().includes('salon');
+  const isRestaurant = business.category?.toLowerCase().includes('restaurant') || 
+                      business.category?.toLowerCase().includes('food');
+  const isAccommodation = business.category?.toLowerCase().includes('hotel') || 
+                         business.category?.toLowerCase().includes('apartment');
+  const isService = business.category?.toLowerCase().includes('service') ||
+                   business.category?.toLowerCase().includes('salon');
 
   const amenities = [
     { id: "air_condition", label: "Air Condition", price: 10 },
@@ -241,44 +241,6 @@ export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
                 <User className="h-4 w-4" />Business Owner
               </span>
             </div>
-          </div>
-          
-          <div className="space-y-3 mb-4">
-            {business.email && (
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-100 rounded-lg">
-                  <Mail className="h-5 w-5 text-gray-600" />
-                </div>
-                <div>
-                  <h5 className="text-sm font-medium">Email</h5>
-                  <p className="text-sm text-gray-600">{business.email}</p>
-                </div>
-              </div>
-            )}
-            
-            {business.phone && (
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-100 rounded-lg">
-                  <Phone className="h-5 w-5 text-gray-600" />
-                </div>
-                <div>
-                  <h5 className="text-sm font-medium">Phone</h5>
-                  <p className="text-sm text-gray-600">{business.phone}</p>
-                </div>
-              </div>
-            )}
-            
-            {business.website && (
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-100 rounded-lg">
-                  <Globe className="h-5 w-5 text-gray-600" />
-                </div>
-                <div>
-                  <h5 className="text-sm font-medium">Website</h5>
-                  <p className="text-sm text-gray-600">{business.website}</p>
-                </div>
-              </div>
-            )}
           </div>
 
           <Link to={`/author/${business.owner.username}`}>
