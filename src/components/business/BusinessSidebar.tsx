@@ -221,7 +221,6 @@ export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
 
   return (
     <div className="space-y-4">
-      {/* Dynamic Order Section */}
       {isRestaurant && renderRestaurantSection()}
       {isAccommodation && renderAccommodationSection()}
       {isService && renderServiceSection()}
@@ -270,7 +269,7 @@ export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
       </div>
 
       {/* Action Buttons */}
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         <Button variant="outline" className="w-full">
           <span className="mr-2">📸</span>Add Photos
         </Button>
