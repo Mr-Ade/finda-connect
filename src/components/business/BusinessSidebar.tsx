@@ -1,5 +1,5 @@
-import { MapPin, Globe, Mail, Phone, User, Calendar, Clock, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MapPin, Globe, Mail, Phone, User, Calendar, Clock, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -225,29 +225,6 @@ export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
       {isRestaurant && renderRestaurantSection()}
       {isAccommodation && renderAccommodationSection()}
       {isService && renderServiceSection()}
-
-      {/* Business Owner Info */}
-      {business.owner && (
-        <div className="bg-white rounded-lg p-4 shadow-sm">
-          <div className="flex items-center gap-3 mb-4">
-            <img 
-              src={business.owner.avatar_url || "/placeholder.svg"} 
-              alt={business.owner.username}
-              className="w-16 h-16 rounded-full"
-            />
-            <div>
-              <h4 className="font-medium">{business.owner.full_name}</h4>
-              <span className="text-gray-500 text-sm flex items-center gap-1">
-                <User className="h-4 w-4" />Business Owner
-              </span>
-            </div>
-          </div>
-
-          <Link to={`/author/${business.owner.username}`}>
-            <Button variant="outline" className="w-full">View Profile</Button>
-          </Link>
-        </div>
-      )}
 
       <div className="grid grid-cols-3 gap-3">
         <Button variant="outline" className="w-full">

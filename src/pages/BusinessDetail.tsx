@@ -10,7 +10,6 @@ import { FAQ } from "@/components/business/FAQ";
 import { ReviewSection } from "@/components/business/ReviewSection";
 import { RecentlyViewedListings } from "@/components/home/RecentlyViewedListings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import AuthorProfile from "@/components/author/AuthorProfile";
 
 export default function BusinessDetail() {
   const { id } = useParams<{ id: string }>();
@@ -184,9 +183,6 @@ export default function BusinessDetail() {
                 full_name: business.owner.full_name
               } : undefined
             }} />
-            {business.owner && (
-              <AuthorProfile author={business.owner} />
-            )}
           </div>
         </div>
 
