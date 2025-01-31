@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe, Mail, Phone, User, Calendar, Clock, Users } from "lucide-react";
+import { MapPin, Globe, Mail, Phone, Calendar, Clock, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -226,7 +226,51 @@ export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
       {isAccommodation && renderAccommodationSection()}
       {isService && renderServiceSection()}
 
-      <div className="grid grid-cols-3 gap-3">
+      {/* Business Contact Details */}
+      <div className="bg-white rounded-lg p-4 shadow-sm space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="bg-gray-100 p-2 rounded-lg">
+            <Globe className="h-5 w-5 text-gray-600" />
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-gray-500">Live Site</h4>
+            <a href={business.website} className="text-primary hover:underline">{business.website}</a>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="bg-gray-100 p-2 rounded-lg">
+            <Mail className="h-5 w-5 text-gray-600" />
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-gray-500">Drop a Mail</h4>
+            <a href={`mailto:${business.email}`} className="text-gray-900">{business.email}</a>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="bg-gray-100 p-2 rounded-lg">
+            <Phone className="h-5 w-5 text-gray-600" />
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-gray-500">Call Us</h4>
+            <a href={`tel:${business.phone}`} className="text-gray-900">{business.phone}</a>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="bg-gray-100 p-2 rounded-lg">
+            <MapPin className="h-5 w-5 text-gray-600" />
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-gray-500">Get Directions</h4>
+            <p className="text-gray-900">{business.address}, {business.city}, {business.state} {business.zip_code}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="grid grid-cols-1 gap-3">
         <Button variant="outline" className="w-full">
           <span className="mr-2">📸</span>Add Photos
         </Button>
