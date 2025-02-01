@@ -10,6 +10,7 @@ import { FAQ } from "@/components/business/FAQ";
 import { ReviewSection } from "@/components/business/ReviewSection";
 import { RecentlyViewedListings } from "@/components/home/RecentlyViewedListings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PhotoGallery } from "@/components/business/PhotoGallery";
 
 export default function BusinessDetail() {
   const { id } = useParams<{ id: string }>();
@@ -174,6 +175,12 @@ export default function BusinessDetail() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Photo Gallery */}
+            <PhotoGallery 
+              businessId={id} 
+              isOwner={business.owner?.id === business.owner_id} 
+            />
 
             {/* Amenities */}
             <Amenities amenities={amenitiesList} />
