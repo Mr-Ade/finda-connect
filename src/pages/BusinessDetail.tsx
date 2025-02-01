@@ -135,17 +135,45 @@ export default function BusinessDetail() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* About Section */}
-            <Card>
+            <Card className="border-none shadow-sm">
               <CardHeader>
-                <CardTitle>About {business.name}</CardTitle>
+                <CardTitle className="text-xl font-semibold text-gray-900">About Cafe de Lagos</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">{business.description}</p>
+                <p className="text-gray-600 leading-relaxed">{business.description}</p>
               </CardContent>
             </Card>
 
             {/* Menu Items */}
-            <MenuItems businessId={id} />
+            <Card className="border-none shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-gray-900">Business Menu</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {business.menu_items?.map((item) => (
+                    <div key={item.id} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                      {item.image_url && (
+                        <div className="h-48 w-full overflow-hidden">
+                          <img 
+                            src={item.image_url} 
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      <div className="p-4">
+                        <h3 className="font-medium text-gray-900">{item.name}</h3>
+                        <div className="mt-1 flex items-baseline gap-x-2">
+                          <span className="text-sm text-gray-500">Start From</span>
+                          <span className="text-xl font-semibold text-red-500">${item.price}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Amenities */}
             <Amenities amenities={amenitiesList} />
