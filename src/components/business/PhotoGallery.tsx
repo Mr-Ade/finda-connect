@@ -22,6 +22,10 @@ interface BusinessPhoto {
   category: PhotoCategory;
   caption?: string;
   is_video: boolean;
+  business_id: string;
+  created_at: string;
+  updated_at: string;
+  order_index: number;
 }
 
 export const PhotoGallery = ({ businessId, isOwner }: PhotoGalleryProps) => {
@@ -44,7 +48,7 @@ export const PhotoGallery = ({ businessId, isOwner }: PhotoGalleryProps) => {
         throw error;
       }
 
-      return data || [];
+      return data as BusinessPhoto[];
     },
   });
 

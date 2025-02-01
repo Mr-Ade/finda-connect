@@ -289,8 +289,10 @@ export type Database = {
         Row: {
           business_id: string
           caption: string | null
+          category: string | null
           created_at: string
           id: string
+          is_video: boolean | null
           order_index: number
           photo_url: string
           updated_at: string
@@ -298,8 +300,10 @@ export type Database = {
         Insert: {
           business_id: string
           caption?: string | null
+          category?: string | null
           created_at?: string
           id?: string
+          is_video?: boolean | null
           order_index?: number
           photo_url: string
           updated_at?: string
@@ -307,8 +311,10 @@ export type Database = {
         Update: {
           business_id?: string
           caption?: string | null
+          category?: string | null
           created_at?: string
           id?: string
+          is_video?: boolean | null
           order_index?: number
           photo_url?: string
           updated_at?: string
