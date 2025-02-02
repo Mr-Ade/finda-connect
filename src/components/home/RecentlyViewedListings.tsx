@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Business } from "@/types/business";
+import type { Business } from "@/types/supabase/business";
 
 const RecentlyViewedListings = () => {
   const { data: businesses, isLoading, error } = useQuery({
@@ -8,7 +8,22 @@ const RecentlyViewedListings = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('businesses')
-        .select('*')
+        .select(`
+          *,
+          business_photos (
+            id,
+            photo_url,
+            caption,
+            order_index
+          ),
+          business_hours (
+            id,
+            day_of_week,
+            open_time,
+            close_time,
+            is_closed
+          )
+        `)
         .order('last_viewed', { ascending: false })
         .limit(5);
 
@@ -16,7 +31,7 @@ const RecentlyViewedListings = () => {
         throw new Error(error.message);
       }
 
-      return data as Business[];
+      return data as unknown as Business[];
     },
   });
 

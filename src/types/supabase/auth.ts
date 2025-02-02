@@ -4,4 +4,12 @@ export type Tables<T extends keyof Database['public']['Tables']> = Database['pub
 export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T];
 
 export type UserRole = Database['public']['Enums']['user_role'];
-export type Profile = Tables<'profiles'>;
+
+export interface Profile extends Tables<'profiles'> {
+  email?: string;
+  role: UserRole;
+  is_active: boolean;
+  is_admin: boolean;
+  super_admin: boolean;
+  last_seen: string;
+}

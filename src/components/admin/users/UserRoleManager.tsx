@@ -1,12 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Profile } from "@/types/profile";
+import type { Profile } from "@/types/supabase/auth";
 
 const UserRoleManager = () => {
-  const { data: users, isLoading, error } = useQuery("users", async () => {
-    const { data, error } = await supabase.from("profiles").select("*");
-    if (error) throw new Error(error.message);
-    return data;
+  const { data: users, isLoading, error } = useQuery({
+    queryKey: ['users'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("profiles").select("*");
+      if (error) throw new Error(error.message);
+      return data as Profile[];
+    }
   });
 
   if (isLoading) return <div>Loading...</div>;
@@ -24,7 +27,7 @@ const UserRoleManager = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user: Profile) => (
+          {users?.map((user: Profile) => (
             <tr key={user.id}>
               <td>{user.username}</td>
               <td>{user.role}</td>
