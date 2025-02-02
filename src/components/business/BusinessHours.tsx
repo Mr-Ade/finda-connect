@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { Map } from "@/components/Map";
 import { Clock } from "lucide-react";
 
 const DAYS = [
@@ -13,7 +14,7 @@ const DAYS = [
   "Saturday",
 ];
 
-export const BusinessHours = ({ businessId }: { businessId: string }) => {
+export const BusinessHours = ({ businessId, business }: { businessId: string, business?: any }) => {
   const { data: hours, isLoading } = useQuery({
     queryKey: ['business-hours', businessId],
     queryFn: async () => {
@@ -35,35 +36,78 @@ export const BusinessHours = ({ businessId }: { businessId: string }) => {
     });
   };
 
+  const isOpen = (dayHours: any) => {
+    if (!dayHours || dayHours.is_closed) return false;
+    
+    const now = new Date();
+    const currentDay = now.getDay();
+    const currentTime = now.toLocaleTimeString('en-US', { hour12: false });
+    
+    return dayHours.day_of_week === currentDay && 
+           currentTime >= dayHours.open_time && 
+           currentTime <= dayHours.close_time;
+  };
+
   if (isLoading) {
     return <div>Loading hours...</div>;
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center space-y-0">
-        <CardTitle className="text-xl font-bold flex items-center gap-2">
-          <Clock className="w-5 h-5" />
-          Business Hours
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
+    <Card className="p-6">
+      <h2 className="text-xl font-semibold mb-6">Location & Hours</h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Map Section */}
+        <div className="space-y-4">
+          <div className="h-[300px] w-full rounded-lg overflow-hidden">
+            <Map
+              center={{ 
+                lat: business?.latitude || 0, 
+                lng: business?.longitude || 0 
+              }}
+              markers={[{ 
+                lat: business?.latitude || 0, 
+                lng: business?.longitude || 0 
+              }]}
+              className="w-full h-full"
+            />
+          </div>
+          
+          {business?.address && (
+            <div className="space-y-1">
+              <p className="text-blue-600 hover:underline cursor-pointer">
+                {business.address}
+              </p>
+              <p className="text-gray-600">
+                {business.city}, {business.state} {business.zip_code}
+              </p>
+              <p className="text-gray-600">{business.neighborhood}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Hours Section */}
+        <div className="space-y-4">
           {DAYS.map((day, index) => {
             const dayHours = hours?.find((h) => h.day_of_week === index);
+            const isCurrentlyOpen = isOpen(dayHours);
+            
             return (
               <div
                 key={day}
-                className="flex justify-between items-center py-2 border-b last:border-b-0"
+                className="flex justify-between items-center"
               >
-                <span className="font-medium">{day}</span>
+                <span className="font-medium w-32">{day}</span>
                 <span className="text-gray-600">
                   {dayHours?.is_closed ? (
                     "Closed"
                   ) : dayHours ? (
-                    `${formatTime(dayHours.open_time)} - ${formatTime(
-                      dayHours.close_time
-                    )}`
+                    <span>
+                      {formatTime(dayHours.open_time)} - {formatTime(dayHours.close_time)}
+                      {isCurrentlyOpen && (
+                        <span className="ml-2 text-green-600">Open now</span>
+                      )}
+                    </span>
                   ) : (
                     "Not available"
                   )}
@@ -72,7 +116,7 @@ export const BusinessHours = ({ businessId }: { businessId: string }) => {
             );
           })}
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
 };
