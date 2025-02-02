@@ -27,18 +27,19 @@ const EditListing = () => {
         throw new Error(error.message);
       }
 
-      return data as Business;
+      // Transform the data to match Business type
+      const transformedData: Business = {
+        ...data,
+        business_hours: data.business_hours ? JSON.parse(data.business_hours as string) : [],
+        amenities: data.amenities || {},
+        faqs: data.faqs ? JSON.parse(data.faqs as string) : [],
+        delivery_info: data.delivery_info ? JSON.parse(data.delivery_info as string) : undefined,
+        social_links: data.social_links ? JSON.parse(data.social_links as string) : {}
+      };
+
+      return transformedData;
     },
-    onSuccess: (data) => {
-      setBusiness(data);
-      setLoading(false);
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+    onSettled: () => {
       setLoading(false);
     }
   });
@@ -46,9 +47,19 @@ const EditListing = () => {
   const handleUpdate = async () => {
     if (!business) return;
 
+    // Transform business data back to database format
+    const dbData = {
+      ...business,
+      business_hours: JSON.stringify(business.business_hours),
+      amenities: JSON.stringify(business.amenities),
+      faqs: JSON.stringify(business.faqs),
+      delivery_info: business.delivery_info ? JSON.stringify(business.delivery_info) : null,
+      social_links: JSON.stringify(business.social_links)
+    };
+
     const { error } = await supabase
       .from('businesses')
-      .update(business)
+      .update(dbData)
       .eq('id', id);
 
     if (error) {

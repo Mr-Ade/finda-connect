@@ -11,7 +11,18 @@ const Listings = () => {
         .select('*');
 
       if (error) throw new Error(error.message);
-      return data as Business[];
+
+      // Transform the data to match Business type
+      const transformedData: Business[] = data.map(item => ({
+        ...item,
+        business_hours: item.business_hours ? JSON.parse(item.business_hours as string) : [],
+        amenities: item.amenities || {},
+        faqs: item.faqs ? JSON.parse(item.faqs as string) : [],
+        delivery_info: item.delivery_info ? JSON.parse(item.delivery_info as string) : undefined,
+        social_links: item.social_links ? JSON.parse(item.social_links as string) : {}
+      }));
+
+      return transformedData;
     },
   });
 
@@ -31,7 +42,7 @@ const Listings = () => {
           </tr>
         </thead>
         <tbody>
-          {businesses.map((business) => (
+          {businesses?.map((business) => (
             <tr key={business.id}>
               <td className="border px-4 py-2">{business.name}</td>
               <td className="border px-4 py-2">{business.category}</td>

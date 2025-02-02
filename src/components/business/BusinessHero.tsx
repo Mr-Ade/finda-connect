@@ -35,7 +35,7 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
             close_time,
             is_closed
           ),
-          reviews:business_reviews (
+          business_reviews:reviews (
             id,
             rating,
             comment,
@@ -63,7 +63,7 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
 
       const transformedData: Business = {
         ...data,
-        business_hours: data.business_hours as BusinessHour[],
+        business_hours: data.business_hours || [],
         amenities: data.amenities ? 
           (typeof data.amenities === 'string' ? 
             JSON.parse(data.amenities) : 
@@ -80,7 +80,7 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
           (typeof data.social_links === 'string' ? 
             JSON.parse(data.social_links) : 
             data.social_links) : {},
-        reviews: data.reviews || [],
+        reviews: data.business_reviews || [],
         is_open: data.is_open || false,
         price_range: data.price_range || null
       };

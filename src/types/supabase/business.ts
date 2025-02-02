@@ -11,6 +11,32 @@ export interface BusinessHour {
   is_open: boolean;
 }
 
+export interface Review {
+  id: string;
+  business_id: string;
+  user_id: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+  helpful_count: number;
+  reply_count: number;
+  profiles: {
+    username: string;
+    avatar_url: string;
+    full_name?: string;
+  };
+  review_photos?: {
+    id: string;
+    photo_url: string;
+    caption?: string;
+  }[];
+  review_responses?: {
+    id: string;
+    response_text: string;
+    created_at: string;
+  }[];
+}
+
 export interface Business {
   id: string;
   owner_id?: string;
