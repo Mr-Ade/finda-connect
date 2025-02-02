@@ -1,35 +1,27 @@
-import { useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { ProfileUpdate, ProfileUpdatePayload } from "@/types/profile";
+import { useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
-interface UseProfileRealtimeProps {
-  onProfileUpdate: (data: ProfileUpdatePayload) => void;
+interface ProfileUpdate {
+  id: string;
+  full_name?: string;
+  avatar_url?: string;
+  [key: string]: any;
 }
 
-export const useProfileRealtime = ({ onProfileUpdate }: UseProfileRealtimeProps) => {
-  const { toast } = useToast();
-
+export const useProfileRealtime = (onUpdate: (profile: ProfileUpdate) => void) => {
   useEffect(() => {
-    const channel = supabase
-      .channel('profile-updates')
+    const channel = supabase.channel('public:profiles')
       .on(
-        'postgres_changes',
+        'postgres_changes' as any,
         {
-          event: '*',
+          event: 'UPDATE',
           schema: 'public',
           table: 'profiles'
         },
-        (payload: ProfileUpdate) => {
-          console.log('Profile update received:', payload);
-          if (payload.new && typeof payload.new === 'object') {
-            const newData = payload.new as ProfileUpdatePayload;
-            onProfileUpdate(newData);
-            
-            toast({
-              title: "Profile Updated",
-              description: "Your profile has been updated in real-time",
-            });
+        (payload: RealtimePostgresChangesPayload<ProfileUpdate>) => {
+          if (payload.eventType === 'UPDATE' && payload.record) {
+            onUpdate(payload.record);
           }
         }
       )
@@ -38,5 +30,5 @@ export const useProfileRealtime = ({ onProfileUpdate }: UseProfileRealtimeProps)
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [onProfileUpdate, toast]);
+  }, [onUpdate]);
 };

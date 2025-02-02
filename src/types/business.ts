@@ -87,8 +87,8 @@ export interface Business {
   latitude?: number;
   longitude?: number;
   status: string;
-  approved_at?: string;
-  approved_by?: string;
+  approved_at?: string | null;
+  approved_by?: string | null;
   payment_methods?: Json;
   hero_image?: string;
   gallery_images?: string[];
