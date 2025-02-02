@@ -69,16 +69,8 @@ export interface Business {
   hero_image?: string;
   gallery_images?: string[];
   menu_categories?: string[];
-  business_hours?: {
-    id: string;
-    day_of_week: number;
-    open_time: string;
-    close_time: string;
-    is_closed: boolean;
-  }[];
-  amenities?: {
-    [key: string]: boolean;
-  };
+  business_hours?: BusinessHour[];
+  amenities?: Json | { [key: string]: boolean };
   faqs?: {
     question: string;
     answer: string;
@@ -104,26 +96,9 @@ export interface Business {
     order_index: number;
   }[];
   
-  menu_items?: {
-    id: string;
-    name: string;
-    description?: string;
-    price: number;
-    image_url?: string;
-    category?: string;
-  }[];
+  menu_items?: MenuItem[];
   
-  business_reviews?: {
-    id: string;
-    rating: number;
-    review_text?: string;
-    review_date?: string;
-    helpful_votes?: number;
-    user_id?: string;
-    status?: string;
-    created_at?: string;
-    updated_at?: string;
-  }[];
+  reviews?: Review[];
   
   owner?: {
     username?: string;
@@ -140,12 +115,44 @@ export interface MenuItem {
   id: string;
   business_id: string;
   name: string;
-  description: string | null;
+  description?: string | null;
   price: number;
-  image_url: string | null;
-  category: string | null;
+  image_url?: string | null;
+  category?: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface Review {
+  id: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+  helpful_count: number;
+  reply_count: number;
+  user_id: string;
+  profiles: {
+    username: string;
+    avatar_url: string;
+    full_name: string;
+  };
+  review_photos: {
+    id: string;
+    photo_url: string;
+  }[];
+  review_responses: {
+    id: string;
+    response_text: string;
+    created_at: string;
+  }[];
+}
+
+export interface BusinessHour {
+  id: string;
+  day_of_week: number;
+  open_time: string;
+  close_time: string;
+  is_closed: boolean;
 }
 
 export interface CommunityQuestion {

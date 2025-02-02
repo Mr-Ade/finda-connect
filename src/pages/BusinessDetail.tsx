@@ -78,8 +78,13 @@ export default function BusinessDetail() {
 
       if (error) throw error;
       
-      // Ensure review_responses is always an array
-      if (data && data.reviews) {
+      // Transform amenities from JSON if needed
+      if (data.amenities && typeof data.amenities === 'string') {
+        data.amenities = JSON.parse(data.amenities);
+      }
+
+      // Ensure reviews array exists and review_responses is always an array
+      if (data.reviews) {
         data.reviews = data.reviews.map(review => ({
           ...review,
           review_responses: Array.isArray(review.review_responses) 
@@ -90,7 +95,7 @@ export default function BusinessDetail() {
         }));
       }
       
-      return data;
+      return data as Business;
     },
     enabled: !!id
   });
