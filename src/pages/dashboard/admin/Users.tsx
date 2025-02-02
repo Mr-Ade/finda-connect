@@ -1,105 +1,44 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { DashboardLayout } from "@/components/layouts/DashboardLayout";
-import { AdminRoute } from "@/components/auth/AdminRoute";
-import { UserManagementTable } from "@/components/admin/users/UserManagementTable";
-import { UserManagementHeader } from "@/components/admin/users/UserManagementHeader";
-import { UserManagementFilters } from "@/components/admin/users/UserManagementFilters";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { Database } from "@/integrations/supabase/types";
-
-type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-
-interface User extends Profile {
-  role: Database["public"]["Enums"]["user_role"];
-}
+import type { Profile } from "@/types/profile";
 
 const Users = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState<string>("all");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const { toast } = useToast();
-
-  const { data: users, isLoading, error, refetch } = useQuery({
-    queryKey: ['admin-users'],
-    queryFn: async () => {
-      console.log('Fetching users for admin...');
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(`
-          id,
-          username,
-          full_name,
-          avatar_url,
-          role,
-          is_active,
-          created_at,
-          last_seen
-        `);
-
-      if (error) {
-        console.error('Error fetching users:', error);
-        toast({
-          title: "Error fetching users",
-          description: error.message,
-          variant: "destructive",
-        });
-        throw error;
-      }
-
-      return data as User[];
-    }
+  const { data: users, isLoading, error } = useQuery("users", async () => {
+    const { data, error } = await supabase.from("profiles").select("*");
+    if (error) throw new Error(error.message);
+    return data;
   });
 
-  const filteredUsers = users?.filter(user => {
-    const matchesSearch = !searchQuery || 
-      user.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.full_name?.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesRole = roleFilter === 'all' || user.role === roleFilter;
-    const matchesStatus = statusFilter === 'all' || 
-      (statusFilter === 'active' && user.is_active) ||
-      (statusFilter === 'inactive' && !user.is_active);
-
-    return matchesSearch && matchesRole && matchesStatus;
-  });
-
-  if (error) {
-    return (
-      <AdminRoute requireSuperAdmin>
-        <DashboardLayout>
-          <div className="p-4 text-red-500">
-            Error loading users. Please try again later.
-          </div>
-        </DashboardLayout>
-      </AdminRoute>
-    );
-  }
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading users: {error.message}</div>;
 
   return (
-    <AdminRoute requireSuperAdmin>
-      <DashboardLayout>
-        <div className="space-y-6">
-          <UserManagementHeader />
-          
-          <UserManagementFilters 
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            roleFilter={roleFilter}
-            onRoleFilterChange={setRoleFilter}
-            statusFilter={statusFilter}
-            onStatusFilterChange={setStatusFilter}
-          />
-
-          <UserManagementTable 
-            users={filteredUsers || []}
-            isLoading={isLoading}
-            onUserUpdated={refetch}
-          />
-        </div>
-      </DashboardLayout>
-    </AdminRoute>
+    <div>
+      <h1 className="text-2xl font-bold">User Management</h1>
+      <table className="min-w-full mt-4">
+        <thead>
+          <tr>
+            <th className="border-b">Username</th>
+            <th className="border-b">Full Name</th>
+            <th className="border-b">Email</th>
+            <th className="border-b">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user: Profile) => (
+            <tr key={user.id}>
+              <td className="border-b">{user.username}</td>
+              <td className="border-b">{user.full_name}</td>
+              <td className="border-b">{user.email}</td>
+              <td className="border-b">
+                <button className="text-blue-500">Edit</button>
+                <button className="text-red-500 ml-2">Delete</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

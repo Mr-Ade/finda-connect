@@ -1,4 +1,4 @@
-import { Database } from "@/integrations/supabase/types";
+import type { Database } from "@/types/supabase";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];

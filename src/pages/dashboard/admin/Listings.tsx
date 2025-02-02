@@ -1,79 +1,51 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { DashboardLayout } from "@/components/layouts/DashboardLayout";
-import { AdminRoute } from "@/components/auth/AdminRoute";
-import { AdminListingsHeader } from "@/components/admin/listings/AdminListingsHeader";
-import { AdminListingsTable } from "@/components/admin/listings/AdminListingsTable";
-import { AdminListingsFilters } from "@/components/admin/listings/AdminListingsFilters";
-import { Card } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import type { Database } from "@/integrations/supabase/types";
+import type { Business } from "@/types/business";
 
-type Business = Database["public"]["Tables"]["businesses"]["Row"] & {
-  owner: {
-    full_name: string | null;
-  } | null;
-  business_photos: {
-    photo_url: string;
-  }[] | null;
-  reviews: {
-    rating: number;
-  }[] | null;
-};
-
-const AdminListings = () => {
-  const { toast } = useToast();
-
-  const { data: listings, isLoading } = useQuery({
-    queryKey: ['adminListings'],
+const Listings = () => {
+  const { data: businesses, isLoading, error } = useQuery({
+    queryKey: ['businesses'],
     queryFn: async () => {
-      console.log('Fetching admin listings...');
       const { data, error } = await supabase
         .from('businesses')
-        .select(`
-          *,
-          owner:profiles(full_name),
-          business_photos(photo_url),
-          reviews(rating)
-        `)
-        .order('created_at', { ascending: false });
+        .select('*');
 
-      if (error) {
-        console.error('Error fetching listings:', error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch listings",
-          variant: "destructive",
-        });
-        throw error;
-      }
-
+      if (error) throw new Error(error.message);
       return data as Business[];
-    }
+    },
   });
 
-  return (
-    <AdminRoute>
-      <DashboardLayout>
-        <AdminListingsHeader />
-        
-        <div className="mb-6">
-          <AdminListingsFilters />
-        </div>
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading listings: {error.message}</div>;
 
-        <Card>
-          {isLoading ? (
-            <div className="flex justify-center p-8">
-              <Loader2 className="w-8 h-8 animate-spin" />
-            </div>
-          ) : (
-            <AdminListingsTable listings={listings || []} />
-          )}
-        </Card>
-      </DashboardLayout>
-    </AdminRoute>
+  return (
+    <div>
+      <h1 className="text-2xl font-bold">Business Listings</h1>
+      <table className="min-w-full mt-4">
+        <thead>
+          <tr>
+            <th className="px-4 py-2">Name</th>
+            <th className="px-4 py-2">Category</th>
+            <th className="px-4 py-2">Status</th>
+            <th className="px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {businesses.map((business) => (
+            <tr key={business.id}>
+              <td className="border px-4 py-2">{business.name}</td>
+              <td className="border px-4 py-2">{business.category}</td>
+              <td className="border px-4 py-2">{business.status}</td>
+              <td className="border px-4 py-2">
+                <button className="text-blue-500">Edit</button>
+                <button className="text-red-500 ml-2">Delete</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
-export default AdminListings;
+export default Listings;

@@ -1,83 +1,96 @@
-import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { DashboardLayout } from "@/components/layouts/DashboardLayout";
-import { AdminRoute } from "@/components/auth/AdminRoute";
-import { Card } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import type { Business } from "@/types/business";
+import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import type { Database } from "@/integrations/supabase/types";
 
-type Business = Database["public"]["Tables"]["businesses"]["Row"] & {
-  owner: {
-    full_name: string | null;
-  } | null;
-  business_photos: {
-    photo_url: string;
-  }[] | null;
-};
-
-const AdminEditListing = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+const EditListing = () => {
+  const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
+  const [business, setBusiness] = useState<Business | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const { data: business, isLoading } = useQuery({
-    queryKey: ['adminListing', id],
+  const { data, isLoading } = useQuery({
+    queryKey: ['business', id],
     queryFn: async () => {
-      console.log('Fetching business details for editing...');
       const { data, error } = await supabase
         .from('businesses')
-        .select(`
-          *,
-          owner:profiles(full_name),
-          business_photos(photo_url)
-        `)
+        .select('*')
         .eq('id', id)
         .single();
 
       if (error) {
-        console.error('Error fetching business:', error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch business details",
-          variant: "destructive",
-        });
-        throw error;
+        throw new Error(error.message);
       }
 
       return data as Business;
+    },
+    onSuccess: (data) => {
+      setBusiness(data);
+      setLoading(false);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+      setLoading(false);
     }
   });
 
-  if (isLoading) {
-    return (
-      <AdminRoute>
-        <DashboardLayout>
-          <div className="flex justify-center p-8">
-            <Loader2 className="w-8 h-8 animate-spin" />
-          </div>
-        </DashboardLayout>
-      </AdminRoute>
-    );
+  const handleUpdate = async () => {
+    if (!business) return;
+
+    const { error } = await supabase
+      .from('businesses')
+      .update(business)
+      .eq('id', id);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Business updated successfully!",
+      });
+    }
+  };
+
+  if (loading || isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!business) {
+    return <div>Business not found</div>;
   }
 
   return (
-    <AdminRoute>
-      <DashboardLayout>
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold">Edit Business: {business?.name}</h1>
-          </div>
-          
-          <Card className="p-6">
-            {/* Add your edit form here */}
-            <p>Edit form coming soon...</p>
-          </Card>
-        </div>
-      </DashboardLayout>
-    </AdminRoute>
+    <div>
+      <h1 className="text-2xl font-bold">Edit Listing</h1>
+      <Input
+        value={business.name}
+        onChange={(e) => setBusiness({ ...business, name: e.target.value })}
+        placeholder="Business Name"
+        className="mb-4"
+      />
+      <Textarea
+        value={business.description || ''}
+        onChange={(e) => setBusiness({ ...business, description: e.target.value })}
+        placeholder="Business Description"
+        className="mb-4"
+      />
+      <Button onClick={handleUpdate} className="mt-4">Update Listing</Button>
+    </div>
   );
 };
 
-export default AdminEditListing;
+export default EditListing;
