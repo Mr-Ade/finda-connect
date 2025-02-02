@@ -11,6 +11,7 @@ import { ReviewSection } from "@/components/business/ReviewSection";
 import { RecentlyViewedListings } from "@/components/home/RecentlyViewedListings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PhotoGallery } from "@/components/business/PhotoGallery";
+import { MenuItem } from "@/types/business";
 
 export default function BusinessDetail() {
   const { id } = useParams<{ id: string }>();
@@ -43,7 +44,10 @@ export default function BusinessDetail() {
             description,
             price,
             category,
-            image_url
+            image_url,
+            business_id,
+            created_at,
+            updated_at
           ),
           reviews (
             id,
