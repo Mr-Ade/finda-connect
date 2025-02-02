@@ -135,3 +135,14 @@ export interface Business {
   price_range?: string | null;
   claimed?: boolean;
 }
+
+export interface CommunityQuestion {
+  id: string;
+  question: string;
+  answer: string;
+  askedBy: string;
+  answeredBy: string;
+  date: string;
+  helpful?: number;
+  notHelpful?: number;
+}
