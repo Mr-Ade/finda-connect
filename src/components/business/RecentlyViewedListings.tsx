@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BusinessCard } from "@/components/BusinessCard";
-import type { Business, BusinessHour } from "@/types/business";
+import type { Business } from "@/types/supabase/business";
 
 export const RecentlyViewedListings = () => {
   const { data: businesses, isLoading } = useQuery({
@@ -12,18 +12,8 @@ export const RecentlyViewedListings = () => {
         .from('businesses')
         .select(`
           *,
-          business_hours (
-            id,
-            day_of_week,
-            open_time,
-            close_time,
-            is_closed
-          ),
           business_photos (
-            id,
-            photo_url,
-            caption,
-            order_index
+            photo_url
           )
         `)
         .limit(4)
@@ -34,17 +24,7 @@ export const RecentlyViewedListings = () => {
         throw error;
       }
 
-      // Transform the data to match our Business type
-      const transformedData = data.map(business => ({
-        ...business,
-        business_hours: business.business_hours as BusinessHour[],
-        amenities: business.amenities as Business['amenities'],
-        faqs: business.faqs ? JSON.parse(business.faqs as string) : [],
-        delivery_info: business.delivery_info ? JSON.parse(business.delivery_info as string) : undefined,
-        social_links: business.social_links ? JSON.parse(business.social_links as string) : {},
-      })) as Business[];
-
-      return transformedData;
+      return data as Business[];
     }
   });
 
@@ -75,7 +55,6 @@ export const RecentlyViewedListings = () => {
               rating={4.5} // TODO: Calculate from reviews
               reviewCount={30} // TODO: Get from reviews count
               location={`${business.city}, ${business.state}`}
-              description={business.description}
             />
           ))}
         </div>

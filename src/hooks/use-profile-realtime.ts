@@ -1,27 +1,35 @@
-import { useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
-import type { ProfileUpdate } from '@/types/profile';
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { ProfileUpdate, ProfileUpdatePayload } from "@/types/profile";
 
-export const useProfileRealtime = (
-  userId: string,
-  onProfileUpdate: (profile: ProfileUpdate) => void
-) => {
+interface UseProfileRealtimeProps {
+  onProfileUpdate: (data: ProfileUpdatePayload) => void;
+}
+
+export const useProfileRealtime = ({ onProfileUpdate }: UseProfileRealtimeProps) => {
+  const { toast } = useToast();
+
   useEffect(() => {
     const channel = supabase
-      .channel('profile-changes')
+      .channel('profile-updates')
       .on(
         'postgres_changes',
         {
-          event: 'UPDATE',
+          event: '*',
           schema: 'public',
-          table: 'profiles',
-          filter: `id=eq.${userId}`,
+          table: 'profiles'
         },
-        (payload: RealtimePostgresChangesPayload<ProfileUpdate>) => {
-          if (payload.eventType === 'UPDATE' && 'new' in payload) {
-            console.log('Profile updated:', payload.new);
-            onProfileUpdate(payload.new as ProfileUpdate);
+        (payload: ProfileUpdate) => {
+          console.log('Profile update received:', payload);
+          if (payload.new && typeof payload.new === 'object') {
+            const newData = payload.new as ProfileUpdatePayload;
+            onProfileUpdate(newData);
+            
+            toast({
+              title: "Profile Updated",
+              description: "Your profile has been updated in real-time",
+            });
           }
         }
       )
@@ -30,5 +38,5 @@ export const useProfileRealtime = (
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [userId, onProfileUpdate]);
+  }, [onProfileUpdate, toast]);
 };

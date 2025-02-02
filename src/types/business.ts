@@ -1,6 +1,4 @@
-import type { Database } from "./supabase/database";
-
-export type Json = Database['public']['Tables']['businesses']['Row']['amenities'];
+import type { Json } from "@/integrations/supabase/types";
 
 export interface BusinessHour {
   id: string;
@@ -8,9 +6,6 @@ export interface BusinessHour {
   open_time: string;
   close_time: string;
   is_closed: boolean;
-  created_at?: string;
-  updated_at?: string;
-  is_open?: boolean;
 }
 
 export interface MenuItem {
@@ -25,25 +20,6 @@ export interface MenuItem {
   updated_at: string;
 }
 
-export interface Review {
-  id: string;
-  business_id: string;
-  user_id: string;
-  rating: number;
-  comment: string;
-  created_at: string;
-  updated_at: string;
-  helpful_count: number;
-  reply_count: number;
-  profiles?: {
-    username: string;
-    avatar_url: string;
-    full_name?: string;
-  };
-  review_photos?: ReviewPhoto[];
-  review_responses?: ReviewResponse[];
-}
-
 export interface ReviewResponse {
   id: string;
   response_text: string;
@@ -53,7 +29,23 @@ export interface ReviewResponse {
 export interface ReviewPhoto {
   id: string;
   photo_url: string;
-  caption?: string;
+}
+
+export interface Review {
+  id: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+  helpful_count: number;
+  reply_count: number;
+  user_id: string;
+  profiles: {
+    username: string;
+    avatar_url: string;
+    full_name?: string;
+  };
+  review_responses?: ReviewResponse[];
+  review_photos?: ReviewPhoto[];
 }
 
 export interface CommunityQuestion {
@@ -62,11 +54,6 @@ export interface CommunityQuestion {
   answer: string;
   created_at: string;
   updated_at: string;
-  askedBy?: string;
-  answeredBy?: string;
-  date?: string;
-  helpful?: number;
-  notHelpful?: number;
 }
 
 export interface Business {
@@ -87,8 +74,8 @@ export interface Business {
   latitude?: number;
   longitude?: number;
   status: string;
-  approved_at?: string | null;
-  approved_by?: string | null;
+  approved_at?: string;
+  approved_by?: string;
   payment_methods?: Json;
   hero_image?: string;
   gallery_images?: string[];

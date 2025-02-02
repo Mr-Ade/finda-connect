@@ -1,7 +1,7 @@
+// Import only the essential types from the large types.ts file
 import type { Database as SupabaseDatabase } from "@/integrations/supabase/types";
 
 export type Database = SupabaseDatabase;
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 // Add commonly used type helpers
 export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];

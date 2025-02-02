@@ -4,8 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { BusinessHero } from "@/components/business/BusinessHero";
 import { MainContent } from "@/components/business/MainContent";
 import { SidebarWrapper } from "@/components/business/SidebarWrapper";
-import RecentlyViewedListings from "@/components/home/RecentlyViewedListings";
-import type { Business } from "@/types/supabase/business";
+import { RecentlyViewedListings } from "@/components/home/RecentlyViewedListings";
+import type { Business, BusinessHour } from "@/types/business";
 
 export default function BusinessDetail() {
   const { id } = useParams<{ id: string }>();
@@ -43,13 +43,14 @@ export default function BusinessDetail() {
             created_at,
             updated_at
           ),
-          reviews (
+          business_reviews (
             id,
             rating,
-            comment,
+            review_text,
             created_at,
-            helpful_count,
-            reply_count,
+            helpful_votes,
+            reply_text,
+            reply_date,
             user_id,
             profiles (
               username,
@@ -69,8 +70,48 @@ export default function BusinessDetail() {
 
       if (error) throw error;
 
-      return data as unknown as Business;
-    },
+      // Transform the data to match our Business type
+      const transformedData: Business = {
+        ...data,
+        business_hours: data.business_hours as BusinessHour[],
+        amenities: data.amenities ? 
+          (typeof data.amenities === 'string' ? 
+            JSON.parse(data.amenities) : 
+            data.amenities) : {},
+        faqs: data.faqs ? 
+          (typeof data.faqs === 'string' ? 
+            JSON.parse(data.faqs) : 
+            data.faqs) : [],
+        delivery_info: data.delivery_info ? 
+          (typeof data.delivery_info === 'string' ? 
+            JSON.parse(data.delivery_info) : 
+            data.delivery_info) : undefined,
+        social_links: data.social_links ? 
+          (typeof data.social_links === 'string' ? 
+            JSON.parse(data.social_links) : 
+            data.social_links) : {},
+        reviews: data.business_reviews ? data.business_reviews.map(review => ({
+          id: review.id,
+          rating: review.rating,
+          comment: review.review_text,
+          created_at: review.created_at,
+          helpful_count: review.helpful_votes || 0,
+          reply_count: 0,
+          user_id: review.user_id,
+          profiles: review.profiles,
+          review_photos: [],
+          review_responses: {
+            id: '',
+            response_text: review.reply_text || '',
+            created_at: review.reply_date || ''
+          }
+        })) : [],
+        is_open: data.is_open || false,
+        price_range: data.price_range || null
+      };
+
+      return transformedData;
+    }
   });
 
   if (!id) {

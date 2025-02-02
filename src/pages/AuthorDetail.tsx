@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import AuthorProfile from "@/components/author/AuthorProfile";
-import AuthorListings from "@/components/author/AuthorListings";
+import { AuthorListings } from "@/components/author/AuthorListings";
 import { ListingFilters } from "@/components/author/ListingFilters";
 
 const AuthorDetail = () => {
@@ -59,12 +59,12 @@ const AuthorDetail = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           <div className="md:col-span-4">
-            <AuthorProfile authorId={author.id} />
+            <AuthorProfile author={author} />
           </div>
           
           <div className="md:col-span-8">
             <ListingFilters listingsCount={listings?.length || 0} />
-            <AuthorListings />
+            <AuthorListings data={listings || []} />
           </div>
         </div>
       </div>

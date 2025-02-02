@@ -1,33 +1,59 @@
-import { Link } from "react-router-dom";
-import { MapPin, Star, Wifi, Car, Dog, Fan } from "lucide-react";
+import { Clock, MapPin, Star, Wifi, Car, PawPrint, Wind } from "lucide-react";
 import type { Business } from "@/types/business";
+import type { Json } from "@/integrations/supabase/types";
 
 interface BusinessInfoProps {
   business: Business;
 }
 
 export const BusinessInfo = ({ business }: BusinessInfoProps) => {
+  const getAmenityValue = (amenities: { [key: string]: boolean } | Json, key: string): boolean => {
+    if (typeof amenities === 'string') {
+      try {
+        const parsed = JSON.parse(amenities);
+        return parsed[key] || false;
+      } catch {
+        return false;
+      }
+    }
+    if (typeof amenities === 'object' && amenities !== null) {
+      return (amenities as { [key: string]: boolean })[key] || false;
+    }
+    return false;
+  };
+
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold">{business.name}</h2>
-      <p className="text-gray-600">{business.description}</p>
-      <div className="flex items-center mt-2">
-        <MapPin className="w-4 h-4 text-gray-500" />
-        <span className="ml-1 text-sm text-gray-500">{business.address}, {business.city}, {business.state} {business.zip_code}</span>
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 text-gray-600">
+        <MapPin className="w-4 h-4" />
+        <span className="text-sm">
+          {business.address}, {business.city}, {business.state}
+        </span>
       </div>
-      <div className="flex items-center mt-2">
-        <Star className="w-4 h-4 text-yellow-400" />
-        <span className="ml-1 text-sm text-gray-500">{business.reviews?.length || 0} Reviews</span>
+
+      {business.is_open !== undefined && (
+        <div className="flex items-center gap-2">
+          <Clock className="w-4 h-4" />
+          <span className={`text-sm ${business.is_open ? 'text-green-600' : 'text-red-600'}`}>
+            {business.is_open ? 'Open' : 'Closed'}
+          </span>
+        </div>
+      )}
+
+      <div className="flex items-center gap-4">
+        {getAmenityValue(business.amenities, 'wifi') && (
+          <Wifi className="w-4 h-4 text-gray-600" />
+        )}
+        {getAmenityValue(business.amenities, 'parking') && (
+          <Car className="w-4 h-4 text-gray-600" />
+        )}
+        {getAmenityValue(business.amenities, 'petFriendly') && (
+          <PawPrint className="w-4 h-4 text-gray-600" />
+        )}
+        {getAmenityValue(business.amenities, 'airConditioned') && (
+          <Wind className="w-4 h-4 text-gray-600" />
+        )}
       </div>
-      <div className="flex items-center mt-2">
-        {business.amenities.wifi && <Wifi className="w-5 h-5 text-gray-500" />}
-        {business.amenities.parking && <Car className="w-5 h-5 text-gray-500" />}
-        {business.amenities.petFriendly && <Dog className="w-5 h-5 text-gray-500" />}
-        {business.amenities.airConditioned && <Fan className="w-5 h-5 text-gray-500" />}
-      </div>
-      <Link to={`/business/${business.id}`} className="mt-4 inline-block text-primary hover:underline">
-        View Details
-      </Link>
     </div>
   );
 };

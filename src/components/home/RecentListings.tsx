@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BusinessCard } from "@/components/BusinessCard";
-import type { Business, BusinessHour } from "@/types/business";
+import type { Business } from "@/types/business";
 
 const RecentListings = () => {
   const { data: businesses, isLoading } = useQuery({
@@ -12,13 +12,6 @@ const RecentListings = () => {
         .from('businesses')
         .select(`
           *,
-          business_hours (
-            id,
-            day_of_week,
-            open_time,
-            close_time,
-            is_closed
-          ),
           business_photos (
             id,
             photo_url,
@@ -35,14 +28,15 @@ const RecentListings = () => {
       }
 
       // Transform the data to match our Business type
-      const transformedData = data.map(business => ({
+      const transformedData: Business[] = data.map(business => ({
         ...business,
-        business_hours: business.business_hours as BusinessHour[],
+        business_hours: business.business_hours as Business['business_hours'],
         amenities: business.amenities as Business['amenities'],
-        faqs: business.faqs ? JSON.parse(business.faqs as string) : [],
-        delivery_info: business.delivery_info ? JSON.parse(business.delivery_info as string) : undefined,
-        social_links: business.social_links ? JSON.parse(business.social_links as string) : {},
-      })) as Business[];
+        faqs: business.faqs as Business['faqs'],
+        delivery_info: business.delivery_info as Business['delivery_info'],
+        social_links: business.social_links as Business['social_links'],
+        business_photos: business.business_photos as Business['business_photos']
+      }));
 
       return transformedData;
     }

@@ -1,46 +1,74 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import type { Profile } from "@/types/supabase/auth";
+import { Database } from "@/integrations/supabase/types";
 
-const UserRoleManager = () => {
-  const { data: users, isLoading, error } = useQuery({
-    queryKey: ['users'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("profiles").select("*");
-      if (error) throw new Error(error.message);
-      return data as Profile[];
+type UserRole = Database["public"]["Enums"]["user_role"];
+
+interface UserRoleManagerProps {
+  userId: string;
+  currentRole: UserRole;
+  isActive: boolean;
+  onUpdate: () => void;
+}
+
+export const UserRoleManager = ({
+  userId,
+  currentRole,
+  isActive,
+  onUpdate,
+}: UserRoleManagerProps) => {
+  const [isUpdating, setIsUpdating] = useState(false);
+  const { toast } = useToast();
+
+  const handleRoleChange = async (newRole: UserRole) => {
+    setIsUpdating(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ role: newRole })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Role updated successfully",
+      });
+      onUpdate();
+    } catch (error) {
+      console.error('Error updating role:', error);
+      toast({
+        title: "Error updating role",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdating(false);
     }
-  });
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading users: {error.message}</div>;
+  };
 
   return (
-    <div>
-      <h1>User Role Management</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users?.map((user: Profile) => (
-            <tr key={user.id}>
-              <td>{user.username}</td>
-              <td>{user.role}</td>
-              <td>
-                <button>Edit</button>
-                <button>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <Select
+      disabled={!isActive || isUpdating}
+      value={currentRole}
+      onValueChange={handleRoleChange}
+    >
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select role" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="user">User</SelectItem>
+        <SelectItem value="business_owner">Business Owner</SelectItem>
+        <SelectItem value="admin">Admin</SelectItem>
+        <SelectItem value="super_admin">Super Admin</SelectItem>
+      </SelectContent>
+    </Select>
   );
 };
-
-export default UserRoleManager;

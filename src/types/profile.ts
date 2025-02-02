@@ -1,12 +1,17 @@
-import { Database } from "./supabase/database";
+import { Database } from "@/integrations/supabase/types";
+import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
-export type Profile = Database['public']['Tables']['profiles']['Row'] & {
-  email?: string;
+export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+
+export type ProfileUpdatePayload = {
+  username: string | null;
+  full_name: string | null;
+  bio: string | null;
+  mobile: string | null;
+  state: string | null;
+  city: string | null;
+  address: string | null;
+  zip_code: string | null;
 };
 
-export type ProfileUpdatePayload = Partial<Profile>;
-
-export type ProfileUpdate = {
-  type: 'UPDATE' | 'DELETE';
-  payload: ProfileUpdatePayload;
-};
+export type ProfileUpdate = RealtimePostgresChangesPayload<ProfileUpdatePayload>;
