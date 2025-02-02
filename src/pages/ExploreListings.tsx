@@ -98,11 +98,11 @@ const ExploreListings = () => {
       const transformedData = data.map(business => ({
         ...business,
         business_hours: business.business_hours as BusinessHour[],
-        amenities: business.amenities,
-        faqs: business.faqs,
-        delivery_info: business.delivery_info,
-        social_links: business.social_links,
-        reviews: business.reviews
+        amenities: business.amenities as Business['amenities'],
+        faqs: business.faqs ? JSON.parse(business.faqs as string) : [],
+        delivery_info: business.delivery_info ? JSON.parse(business.delivery_info as string) : undefined,
+        social_links: business.social_links ? JSON.parse(business.social_links as string) : {},
+        reviews: business.reviews || []
       })) as Business[];
 
       return transformedData;
