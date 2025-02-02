@@ -1,0 +1,66 @@
+import { Button } from "@/components/ui/button";
+import { Globe, Mail, MapPin, Phone } from "lucide-react";
+
+interface ContactDetailsProps {
+  website?: string;
+  email?: string;
+  phone?: string;
+  address: string;
+  city: string;
+  state: string;
+  zip_code: string;
+}
+
+export const ContactDetails = ({
+  website,
+  email,
+  phone,
+  address,
+  city,
+  state,
+  zip_code
+}: ContactDetailsProps) => {
+  return (
+    <div className="bg-white rounded-lg p-4 shadow-sm space-y-4">
+      <div className="flex items-center gap-3">
+        <div className="bg-gray-100 p-2 rounded-lg">
+          <Globe className="h-5 w-5 text-gray-600" />
+        </div>
+        <div>
+          <h4 className="text-sm font-medium text-gray-500">Live Site</h4>
+          <a href={website} className="text-primary hover:underline">{website}</a>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <div className="bg-gray-100 p-2 rounded-lg">
+          <Mail className="h-5 w-5 text-gray-600" />
+        </div>
+        <div>
+          <h4 className="text-sm font-medium text-gray-500">Drop a Mail</h4>
+          <a href={`mailto:${email}`} className="text-gray-900">{email}</a>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <div className="bg-gray-100 p-2 rounded-lg">
+          <Phone className="h-5 w-5 text-gray-600" />
+        </div>
+        <div>
+          <h4 className="text-sm font-medium text-gray-500">Call Us</h4>
+          <a href={`tel:${phone}`} className="text-gray-900">{phone}</a>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <div className="bg-gray-100 p-2 rounded-lg">
+          <MapPin className="h-5 w-5 text-gray-600" />
+        </div>
+        <div>
+          <h4 className="text-sm font-medium text-gray-500">Get Directions</h4>
+          <p className="text-gray-900">{address}, {city}, {state} {zip_code}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
