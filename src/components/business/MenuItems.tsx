@@ -17,31 +17,10 @@ interface MenuItem {
 
 interface MenuItemsProps {
   businessId: string;
+  menuItems: MenuItem[];
 }
 
-export const MenuItems = ({ businessId }: MenuItemsProps) => {
-  const { data: menuItems, isLoading } = useQuery<MenuItem[]>({
-    queryKey: ['menu-items', businessId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('menu_items')
-        .select('*')
-        .eq('business_id', businessId)
-        .order('category', { ascending: true });
-
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  if (isLoading) {
-    return <div className="animate-pulse">Loading menu items...</div>;
-  }
-
-  if (!menuItems?.length) {
-    return null;
-  }
-
+export const MenuItems = ({ businessId, menuItems = [] }: MenuItemsProps) => {
   // Group menu items by category
   const groupedItems = menuItems.reduce((acc, item) => {
     const category = item.category || 'Other';

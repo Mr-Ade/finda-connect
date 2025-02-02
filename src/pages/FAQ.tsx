@@ -78,17 +78,17 @@ const FAQ = () => {
           <div className="max-w-4xl mx-auto space-y-8">
             <div>
               <h4 className="text-xl font-semibold mb-4">Basic FAQ's:</h4>
-              <FAQComponent faqs={basicFaqs} />
+              <FAQComponent businessId="basic" questions={basicFaqs} />
             </div>
 
             <div>
               <h4 className="text-xl font-semibold mb-4">Payment and Data's FAQ's:</h4>
-              <FAQComponent faqs={paymentFaqs} />
+              <FAQComponent businessId="payment" questions={paymentFaqs} />
             </div>
 
             <div>
               <h4 className="text-xl font-semibold mb-4">Advanced FAQ's:</h4>
-              <FAQComponent faqs={advancedFaqs} />
+              <FAQComponent businessId="advanced" questions={advancedFaqs} />
             </div>
           </div>
         </div>
