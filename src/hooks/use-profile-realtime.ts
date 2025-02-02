@@ -1,27 +1,27 @@
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import type { ProfileUpdate } from '@/types/profile';
 
-interface ProfileUpdate {
-  id: string;
-  full_name?: string;
-  avatar_url?: string;
-  [key: string]: any;
-}
-
-export const useProfileRealtime = (onUpdate: (profile: ProfileUpdate) => void) => {
+export const useProfileRealtime = (
+  userId: string,
+  onProfileUpdate: (profile: ProfileUpdate) => void
+) => {
   useEffect(() => {
-    const channel = supabase.channel('public:profiles')
+    const channel = supabase
+      .channel('profile-changes')
       .on(
-        'postgres_changes' as any,
+        'postgres_changes',
         {
           event: 'UPDATE',
           schema: 'public',
-          table: 'profiles'
+          table: 'profiles',
+          filter: `id=eq.${userId}`,
         },
         (payload: RealtimePostgresChangesPayload<ProfileUpdate>) => {
-          if (payload.eventType === 'UPDATE' && payload.record) {
-            onUpdate(payload.record);
+          if (payload.eventType === 'UPDATE' && 'new' in payload) {
+            console.log('Profile updated:', payload.new);
+            onProfileUpdate(payload.new as ProfileUpdate);
           }
         }
       )
@@ -30,5 +30,5 @@ export const useProfileRealtime = (onUpdate: (profile: ProfileUpdate) => void) =
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [onUpdate]);
+  }, [userId, onProfileUpdate]);
 };

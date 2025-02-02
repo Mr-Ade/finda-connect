@@ -20,7 +20,10 @@ export const RecentlyViewedListings = () => {
             is_closed
           ),
           business_photos (
-            photo_url
+            id,
+            photo_url,
+            caption,
+            order_index
           )
         `)
         .limit(4)
