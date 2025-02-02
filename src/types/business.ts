@@ -1,3 +1,5 @@
+import type { Json } from "@/integrations/supabase/types";
+
 export interface BusinessFormData {
   // Basic Info
   name: string;
@@ -71,10 +73,7 @@ export interface Business {
   menu_categories?: string[];
   business_hours?: BusinessHour[];
   amenities?: Json | { [key: string]: boolean };
-  faqs?: {
-    question: string;
-    answer: string;
-  }[];
+  faqs?: { question: string; answer: string; }[];
   delivery_info?: {
     available: boolean;
     minimum_order?: number;
@@ -88,7 +87,6 @@ export interface Business {
     linkedin?: string;
   };
   
-  // Related tables
   business_photos?: {
     id: string;
     photo_url: string;
@@ -101,6 +99,7 @@ export interface Business {
   reviews?: Review[];
   
   owner?: {
+    id?: string;
     username?: string;
     avatar_url?: string;
     full_name?: string;
@@ -115,7 +114,7 @@ export interface MenuItem {
   id: string;
   business_id: string;
   name: string;
-  description?: string | null;
+  description: string | null;
   price: number;
   image_url?: string | null;
   category?: string | null;

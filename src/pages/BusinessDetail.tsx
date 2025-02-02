@@ -5,7 +5,7 @@ import { BusinessHero } from "@/components/business/BusinessHero";
 import { MainContent } from "@/components/business/MainContent";
 import { SidebarWrapper } from "@/components/business/SidebarWrapper";
 import { RecentlyViewedListings } from "@/components/home/RecentlyViewedListings";
-import type { Business } from "@/types/business";
+import type { Business, BusinessHour } from "@/types/business";
 
 export default function BusinessDetail() {
   const { id } = useParams<{ id: string }>();
@@ -43,7 +43,7 @@ export default function BusinessDetail() {
             created_at,
             updated_at
           ),
-          reviews (
+          reviews:business_reviews (
             id,
             rating,
             comment,
@@ -83,19 +83,24 @@ export default function BusinessDetail() {
         data.amenities = JSON.parse(data.amenities);
       }
 
-      // Ensure reviews array exists and review_responses is always an array
-      if (data.reviews) {
-        data.reviews = data.reviews.map(review => ({
-          ...review,
-          review_responses: Array.isArray(review.review_responses) 
-            ? review.review_responses 
-            : review.review_responses 
-              ? [review.review_responses]
-              : []
-        }));
+      // Transform faqs from JSON if needed
+      if (data.faqs && typeof data.faqs === 'string') {
+        data.faqs = JSON.parse(data.faqs);
       }
+
+      const transformedData: Business = {
+        ...data,
+        business_hours: data.business_hours as BusinessHour[],
+        amenities: data.amenities as Business['amenities'],
+        faqs: data.faqs as Business['faqs'],
+        delivery_info: data.delivery_info as Business['delivery_info'],
+        social_links: data.social_links as Business['social_links'],
+        reviews: data.reviews || [],
+        is_open: data.is_open || false,
+        price_range: data.price_range || null
+      };
       
-      return data as Business;
+      return transformedData;
     },
     enabled: !!id
   });

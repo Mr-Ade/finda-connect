@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Star, Clock, CheckCircle, Image } from "lucide-react";
-import type { Business } from "@/types/business";
+import type { Business, BusinessHour } from "@/types/business";
 import { useState } from "react";
 
 interface BusinessHeroProps {
@@ -29,11 +29,12 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
             order_index
           ),
           owner:profiles!businesses_owner_id_fkey (
+            id,
             username,
             avatar_url,
             full_name
           ),
-          business_reviews (
+          reviews:business_reviews (
             id,
             rating
           )
@@ -45,7 +46,7 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
 
       const transformedData: Business = {
         ...data,
-        business_hours: data.business_hours ? data.business_hours as Business['business_hours'] : [],
+        business_hours: data.business_hours ? data.business_hours as BusinessHour[] : [],
         amenities: data.amenities ? data.amenities as Business['amenities'] : {},
         faqs: data.faqs ? data.faqs as Business['faqs'] : [],
         delivery_info: data.delivery_info ? data.delivery_info as Business['delivery_info'] : undefined,
@@ -83,8 +84,8 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
     setCurrentSlide((prev) => (prev === 0 ? photos.length - 1 : prev - 1));
   };
 
-  const averageRating = business.business_reviews?.length 
-    ? business.business_reviews.reduce((acc, review) => acc + review.rating, 0) / business.business_reviews.length
+  const averageRating = business.reviews?.length 
+    ? business.reviews.reduce((acc, review) => acc + review.rating, 0) / business.reviews.length
     : 0;
 
   const renderStars = (rating: number) => {
@@ -164,7 +165,7 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
               <div className="flex items-center gap-2">
                 <div className="flex">{renderStars(Math.round(averageRating))}</div>
                 <span className="text-sm">
-                  {business.business_reviews?.length || 0} Reviews
+                  {business.reviews?.length || 0} Reviews
                 </span>
                 <span className="text-sm">
                   {business.price_range && `• ${business.price_range}`}
