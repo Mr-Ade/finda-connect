@@ -1,51 +1,59 @@
 import type { Json } from "@/integrations/supabase/types";
 
-export interface BusinessFormData {
-  // Basic Info
+export interface BusinessHour {
+  id: string;
+  day_of_week: number;
+  open_time: string;
+  close_time: string;
+  is_closed: boolean;
+}
+
+export interface MenuItem {
+  id: string;
+  business_id: string;
   name: string;
-  description: string;
-  category: string;
-  keywords: string[];
-  
-  // Location
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  latitude: number;
-  longitude: number;
-  phone: string;
-  email: string;
-  website: string;
+  description: string | null;
+  price: number;
+  image_url: string | null;
+  category: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
-  // Social Links
-  facebook?: string;
-  twitter?: string;
-  instagram?: string;
-  linkedin?: string;
+export interface ReviewResponse {
+  id: string;
+  response_text: string;
+  created_at: string;
+}
 
-  // Working Hours
-  workingHours: {
-    dayOfWeek: number;
-    openTime: string;
-    closeTime: string;
-    isClosed: boolean;
-  }[];
+export interface ReviewPhoto {
+  id: string;
+  photo_url: string;
+}
 
-  // Menu Items
-  menuItems: {
-    name: string;
-    description?: string;
-    price: number;
-    category?: string;
-    imageUrl?: string;
-  }[];
+export interface Review {
+  id: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+  helpful_count: number;
+  reply_count: number;
+  user_id: string;
+  profiles: {
+    username: string;
+    avatar_url: string;
+    full_name?: string;
+  };
+  review_responses?: ReviewResponse[];
+  review_photos?: ReviewPhoto[];
+}
 
-  // Amenities
-  amenities: {
-    name: string;
-    available: boolean;
-  }[];
+export interface CommunityQuestion {
+  id: string;
+  question: string;
+  answer: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Business {
@@ -68,6 +76,7 @@ export interface Business {
   status: string;
   approved_at?: string;
   approved_by?: string;
+  payment_methods?: Json;
   hero_image?: string;
   gallery_images?: string[];
   menu_categories?: string[];
@@ -103,48 +112,4 @@ export interface Business {
   is_open?: boolean;
   price_range?: string | null;
   claimed?: boolean;
-}
-
-export interface MenuItem {
-  id: string;
-  business_id: string;
-  name: string;
-  description: string | null;
-  price: number;
-  image_url?: string | null;
-  category?: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Review {
-  id: string;
-  rating: number;
-  comment: string;
-  created_at: string;
-  helpful_count: number;
-  reply_count: number;
-  user_id: string;
-  profiles: {
-    username: string;
-    avatar_url: string;
-    full_name: string;
-  };
-  review_photos: {
-    id: string;
-    photo_url: string;
-  }[];
-  review_responses: {
-    id: string;
-    response_text: string;
-    created_at: string;
-  };
-}
-
-export interface BusinessHour {
-  id: string;
-  day_of_week: number;
-  open_time: string;
-  close_time: string;
-  is_closed: boolean;
 }

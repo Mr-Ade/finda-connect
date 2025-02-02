@@ -28,15 +28,32 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
             caption,
             order_index
           ),
+          business_hours (
+            id,
+            day_of_week,
+            open_time,
+            close_time,
+            is_closed
+          ),
+          reviews:business_reviews (
+            id,
+            rating,
+            comment,
+            created_at,
+            helpful_count,
+            reply_count,
+            user_id,
+            profiles (
+              username,
+              avatar_url,
+              full_name
+            )
+          ),
           owner:profiles!businesses_owner_id_fkey (
             id,
             username,
             avatar_url,
             full_name
-          ),
-          reviews:business_reviews (
-            id,
-            rating
           )
         `)
         .eq('id', businessId)
@@ -46,15 +63,24 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
 
       const transformedData: Business = {
         ...data,
-        business_hours: data.business_hours ? data.business_hours as BusinessHour[] : [],
-        amenities: data.amenities ? data.amenities as Business['amenities'] : {},
-        faqs: data.faqs ? data.faqs as Business['faqs'] : [],
-        delivery_info: data.delivery_info ? data.delivery_info as Business['delivery_info'] : undefined,
-        social_links: data.social_links ? data.social_links as Business['social_links'] : {},
-        business_photos: (data.business_photos || []).map(photo => ({
-          ...photo,
-          order_index: photo.order_index || 0
-        })),
+        business_hours: data.business_hours as BusinessHour[],
+        amenities: data.amenities ? 
+          (typeof data.amenities === 'string' ? 
+            JSON.parse(data.amenities) : 
+            data.amenities) : {},
+        faqs: data.faqs ? 
+          (typeof data.faqs === 'string' ? 
+            JSON.parse(data.faqs) : 
+            data.faqs) : [],
+        delivery_info: data.delivery_info ? 
+          (typeof data.delivery_info === 'string' ? 
+            JSON.parse(data.delivery_info) : 
+            data.delivery_info) : undefined,
+        social_links: data.social_links ? 
+          (typeof data.social_links === 'string' ? 
+            JSON.parse(data.social_links) : 
+            data.social_links) : {},
+        reviews: data.reviews || [],
         is_open: data.is_open || false,
         price_range: data.price_range || null
       };
