@@ -93,18 +93,18 @@ export default function BusinessDetail() {
         reviews: data.business_reviews ? data.business_reviews.map(review => ({
           id: review.id,
           rating: review.rating,
-          comment: review.review_text,
+          review_text: review.review_text,
           created_at: review.created_at,
-          helpful_count: review.helpful_votes || 0,
+          helpful_votes: review.helpful_votes || 0,
           reply_count: 0,
           user_id: review.user_id,
           profiles: review.profiles,
           review_photos: [],
-          review_responses: {
-            id: '',
-            response_text: review.reply_text || '',
-            created_at: review.reply_date || ''
-          }
+          review_responses: review.reply_text ? [{
+            id: review.id,
+            response_text: review.reply_text,
+            created_at: review.reply_date || review.created_at
+          }] : []
         })) : [],
         is_open: data.is_open || false,
         price_range: data.price_range || null

@@ -34,9 +34,9 @@ export interface ReviewPhoto {
 export interface Review {
   id: string;
   rating: number;
-  comment: string;
+  review_text: string; // Changed from comment to review_text
   created_at: string;
-  helpful_count: number;
+  helpful_votes: number; // Changed from helpful_count
   reply_count: number;
   user_id: string;
   profiles: {
@@ -54,6 +54,11 @@ export interface CommunityQuestion {
   answer: string;
   created_at: string;
   updated_at: string;
+  askedBy?: string;
+  answeredBy?: string;
+  date?: string;
+  helpful?: number;
+  notHelpful?: number;
 }
 
 export interface Business {
