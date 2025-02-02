@@ -61,6 +61,15 @@ export default function BusinessDetail() {
               username,
               avatar_url,
               full_name
+            ),
+            review_photos (
+              id,
+              photo_url
+            ),
+            review_responses (
+              id,
+              response_text,
+              created_at
             )
           ),
           owner:profiles!businesses_owner_id_fkey (
