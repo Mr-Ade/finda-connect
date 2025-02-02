@@ -6,13 +6,23 @@ const AuthorListings = () => {
   const { data: listings, isLoading, error } = useQuery({
     queryKey: ['author-listings'],
     queryFn: async () => {
+      const { data: session } = await supabase.auth.getSession();
       const { data, error } = await supabase
         .from('businesses')
-        .select('*')
-        .eq('owner_id', supabase.auth.user()?.id);
+        .select(`
+          *,
+          business_hours (
+            id,
+            day_of_week,
+            open_time,
+            close_time,
+            is_closed
+          )
+        `)
+        .eq('owner_id', session?.user?.id);
 
       if (error) throw new Error(error.message);
-      return data as Business[];
+      return data as unknown as Business[];
     },
   });
 

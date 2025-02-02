@@ -1,17 +1,6 @@
-import type { Json } from "@/types/supabase";
+import type { Database } from "./supabase/database";
 
-export interface CommunityQuestion {
-  id: string;
-  question: string;
-  answer: string;
-  created_at: string;
-  updated_at: string;
-  askedBy?: string;
-  answeredBy?: string;
-  date?: string;
-  helpful?: number;
-  notHelpful?: number;
-}
+export type Json = Database['public']['CompositeTypes']['json'];
 
 export interface BusinessHour {
   id: string;
@@ -59,6 +48,19 @@ export interface Review {
   };
   review_responses?: ReviewResponse[];
   review_photos?: ReviewPhoto[];
+}
+
+export interface CommunityQuestion {
+  id: string;
+  question: string;
+  answer: string;
+  created_at: string;
+  updated_at: string;
+  askedBy?: string;
+  answeredBy?: string;
+  date?: string;
+  helpful?: number;
+  notHelpful?: number;
 }
 
 export interface Business {

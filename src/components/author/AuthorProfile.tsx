@@ -3,15 +3,18 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Profile } from "@/types/profile";
 
 const AuthorProfile = ({ authorId }: { authorId: string }) => {
-  const { data: author, isLoading, error } = useQuery<Profile>(['author', authorId], async () => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', authorId)
-      .single();
+  const { data: author, isLoading, error } = useQuery({
+    queryKey: ['author', authorId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', authorId)
+        .single();
 
-    if (error) throw new Error(error.message);
-    return data;
+      if (error) throw new Error(error.message);
+      return data as Profile;
+    },
   });
 
   if (isLoading) return <div>Loading...</div>;

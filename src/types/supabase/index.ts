@@ -1,4 +1,4 @@
-export * from './auth';
+export type { Database } from './database';
 export * from './business';
 export * from './reviews';
-export * from './database';
+export * from './auth';

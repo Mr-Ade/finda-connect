@@ -11,11 +11,26 @@ export const AdminListingsTable = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('businesses')
-        .select('*');
+        .select(`
+          *,
+          business_hours (
+            id,
+            day_of_week,
+            open_time,
+            close_time,
+            is_closed
+          ),
+          business_photos (
+            id,
+            photo_url,
+            caption,
+            order_index
+          )
+        `);
 
       if (error) throw error;
 
-      return data as Business[];
+      return data as unknown as Business[];
     },
   });
 
@@ -25,7 +40,7 @@ export const AdminListingsTable = () => {
   return (
     <div>
       <Link to="/dashboard/admin/listings/new">
-        <Button variant="primary" className="mb-4">Add New Listing</Button>
+        <Button variant="default" className="mb-4">Add New Listing</Button>
       </Link>
       <Table>
         <thead>
@@ -37,7 +52,7 @@ export const AdminListingsTable = () => {
           </tr>
         </thead>
         <tbody>
-          {listings.map((listing) => (
+          {listings?.map((listing) => (
             <tr key={listing.id}>
               <td>{listing.name}</td>
               <td>{listing.category}</td>
