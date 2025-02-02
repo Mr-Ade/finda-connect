@@ -2,16 +2,10 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BusinessHero } from "@/components/business/BusinessHero";
-import { BusinessSidebar } from "@/components/business/BusinessSidebar";
-import { BusinessHours } from "@/components/business/BusinessHours";
-import { MenuItems } from "@/components/business/MenuItems";
-import { Amenities } from "@/components/business/Amenities";
-import { FAQ } from "@/components/business/FAQ";
-import { ReviewSection } from "@/components/business/ReviewSection";
+import { MainContent } from "@/components/business/MainContent";
+import { SidebarWrapper } from "@/components/business/SidebarWrapper";
 import { RecentlyViewedListings } from "@/components/home/RecentlyViewedListings";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PhotoGallery } from "@/components/business/PhotoGallery";
-import { MenuItem } from "@/types/business";
+import type { Business } from "@/types/business";
 
 export default function BusinessDetail() {
   const { id } = useParams<{ id: string }>();
@@ -76,30 +70,7 @@ export default function BusinessDetail() {
             id,
             username,
             avatar_url,
-            full_name,
-            city,
-            state,
-            address,
-            mobile,
-            bio,
-            business_owner,
-            created_at,
-            updated_at,
-            location_data,
-            preferred_currency,
-            preferred_language,
-            timezone,
-            is_admin,
-            last_seen,
-            super_admin,
-            zip_code,
-            website,
-            role,
-            is_active,
-            businesses:businesses(count),
-            followers:follows!follows_following_id_fkey(count),
-            email:mobile,
-            phone:mobile
+            full_name
           )
         `)
         .eq('id', id)
@@ -136,87 +107,17 @@ export default function BusinessDetail() {
     return <div>Business not found</div>;
   }
 
-  // Transform amenities from JSON to array format
-  const amenitiesList = business.amenities ? 
-    (typeof business.amenities === 'string' ? 
-      JSON.parse(business.amenities) : 
-      Object.entries(business.amenities || {}).map(([name, available]) => ({
-        name,
-        available: !!available
-      }))
-    ) : [];
-
-  // Transform FAQs from JSON to array format with proper typing
-  const questionsList = business.faqs ? 
-    (typeof business.faqs === 'string' ? 
-      JSON.parse(business.faqs) : 
-      business.faqs
-    ) : [];
-
   return (
     <div className="min-h-screen bg-gray-50">
       <BusinessHero businessId={id} />
       
       <div className="container mx-auto py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-32">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* About Section */}
-            <Card className="border-none shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-gray-900">About {business.name}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 leading-relaxed">{business.description}</p>
-              </CardContent>
-            </Card>
-
-            {/* Menu Items */}
-            <MenuItems businessId={id} menuItems={business.menu_items || []} />
-
-            {/* Photo Gallery */}
-            <PhotoGallery 
-              businessId={id} 
-              isOwner={business.owner?.id === business.owner_id} 
-            />
-
-            {/* Amenities */}
-            <Amenities amenities={amenitiesList} />
-
-            {/* FAQs */}
-            <FAQ businessId={id} questions={questionsList} />
-
-            {/* Reviews */}
-            <ReviewSection 
-              businessId={id} 
-              reviews={business.reviews || []} 
-              isOwner={false}
-            />
-
-            {/* Business Hours */}
-            <BusinessHours businessId={id} />
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-8">
-            <BusinessSidebar business={{
-              id: business.id,
-              name: business.name,
-              description: business.description || '',
-              address: business.address,
-              city: business.city,
-              state: business.state,
-              zip_code: business.zip_code,
-              phone: business.phone || '',
-              email: business.email || '',
-              category: business.category,
-              owner: business.owner ? {
-                username: business.owner.username,
-                avatar_url: business.owner.avatar_url,
-                full_name: business.owner.full_name
-              } : undefined
-            }} />
-          </div>
+          <MainContent 
+            business={business} 
+            isOwner={business.owner?.id === business.owner_id} 
+          />
+          <SidebarWrapper business={business} />
         </div>
 
         {/* Recently Viewed Listings */}
