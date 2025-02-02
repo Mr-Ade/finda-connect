@@ -136,6 +136,18 @@ export interface Business {
   claimed?: boolean;
 }
 
+export interface MenuItem {
+  id: string;
+  business_id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  image_url: string | null;
+  category: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface CommunityQuestion {
   id: string;
   question: string;
