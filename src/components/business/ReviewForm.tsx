@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ReviewPhotoUpload } from "./ReviewPhotoUpload";
@@ -13,6 +14,8 @@ interface ReviewFormProps {
 
 export const ReviewForm = ({ businessId, onReviewSubmitted }: ReviewFormProps) => {
   const [rating, setRating] = useState(0);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reviewId, setReviewId] = useState<string | null>(null);
@@ -29,6 +32,16 @@ export const ReviewForm = ({ businessId, onReviewSubmitted }: ReviewFormProps) =
         variant: "destructive",
         title: "Error",
         description: "Please login to submit a review",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!rating) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please select a rating",
       });
       setIsSubmitting(false);
       return;
@@ -59,6 +72,8 @@ export const ReviewForm = ({ businessId, onReviewSubmitted }: ReviewFormProps) =
       });
       setReviewId(data.id);
       setRating(0);
+      setName("");
+      setEmail("");
       setComment("");
       onReviewSubmitted();
     }
@@ -72,9 +87,10 @@ export const ReviewForm = ({ businessId, onReviewSubmitted }: ReviewFormProps) =
   };
 
   return (
-    <form onSubmit={handleSubmitReview} className="mb-8">
-      <div className="mb-4">
-        <div className="flex gap-1 mb-2">
+    <form onSubmit={handleSubmitReview} className="space-y-6">
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">Choose Rate</label>
+        <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((value) => (
             <button
               key={value}
@@ -90,17 +106,49 @@ export const ReviewForm = ({ businessId, onReviewSubmitted }: ReviewFormProps) =
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">Name</label>
+          <Input
+            placeholder="Your Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">Email</label>
+          <Input
+            type="email"
+            placeholder="Your Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">Review</label>
         <Textarea
+          placeholder="Write your review..."
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          placeholder="Write your review..."
-          className="mb-2"
+          className="min-h-[150px]"
           required
         />
-        <Button type="submit" disabled={isSubmitting || rating === 0}>
-          Submit Review
-        </Button>
       </div>
+
+      <Button 
+        type="submit" 
+        disabled={isSubmitting || rating === 0}
+        className="w-full bg-red-500 hover:bg-red-600"
+      >
+        Submit Review
+      </Button>
+
       {reviewId && (
         <div className="mt-4">
           <h3 className="text-sm font-medium mb-2">Add photos to your review</h3>

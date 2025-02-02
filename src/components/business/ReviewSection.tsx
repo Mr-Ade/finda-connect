@@ -21,6 +21,10 @@ interface ReviewSectionProps {
       response_text: string;
       created_at: string;
     }>;
+    review_photos?: Array<{
+      id: string;
+      photo_url: string;
+    }>;
   }>;
 }
 
@@ -32,16 +36,15 @@ export const ReviewSection = ({ businessId, isOwner = false, reviews }: ReviewSe
   };
 
   useEffect(() => {
-    // Subscribe to real-time changes on the reviews table
     const channel = supabase
       .channel('reviews-changes')
       .on(
         'postgres_changes',
         {
-          event: '*', // Listen to all changes (INSERT, UPDATE, DELETE)
+          event: '*',
           schema: 'public',
           table: 'reviews',
-          filter: `business_id=eq.${businessId}` // Only listen to reviews for this business
+          filter: `business_id=eq.${businessId}`
         },
         () => {
           console.log('Review change detected - refreshing data');
@@ -50,31 +53,36 @@ export const ReviewSection = ({ businessId, isOwner = false, reviews }: ReviewSe
       )
       .subscribe();
 
-    // Cleanup subscription on unmount
     return () => {
       supabase.removeChannel(channel);
     };
   }, [businessId]);
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-2xl font-semibold mb-6">Reviews</h2>
-      
-      <ReviewForm 
-        businessId={businessId}
-        onReviewSubmitted={handleUpdate}
-      />
+    <div className="space-y-8">
+      {/* Submit Review Section */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-2xl font-semibold mb-6">Drop Your Review</h2>
+        <ReviewForm 
+          businessId={businessId}
+          onReviewSubmitted={handleUpdate}
+        />
+      </div>
 
-      <div className="space-y-6">
-        {reviews.map((review) => (
-          <ReviewItem
-            key={review.id}
-            review={review}
-            businessId={businessId}
-            isOwner={isOwner}
-            onUpdate={handleUpdate}
-          />
-        ))}
+      {/* Recommended Reviews Section */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-2xl font-semibold mb-6">Recommended Reviews</h2>
+        <div className="space-y-6">
+          {reviews.map((review) => (
+            <ReviewItem
+              key={review.id}
+              review={review}
+              businessId={businessId}
+              isOwner={isOwner}
+              onUpdate={handleUpdate}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
