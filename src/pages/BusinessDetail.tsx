@@ -106,6 +106,19 @@ export default function BusinessDetail() {
         .single();
 
       if (error) throw error;
+      
+      // Ensure review_responses is always an array
+      if (data && data.reviews) {
+        data.reviews = data.reviews.map(review => ({
+          ...review,
+          review_responses: Array.isArray(review.review_responses) 
+            ? review.review_responses 
+            : review.review_responses 
+              ? [review.review_responses]
+              : []
+        }));
+      }
+      
       return data;
     },
     enabled: !!id
