@@ -3,10 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Profile } from "@/types/profile";
 
 const Users = () => {
-  const { data: users, isLoading, error } = useQuery("users", async () => {
-    const { data, error } = await supabase.from("profiles").select("*");
-    if (error) throw new Error(error.message);
-    return data;
+  const { data: users, isLoading, error } = useQuery({
+    queryKey: ["users"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("profiles").select("*");
+      if (error) throw new Error(error.message);
+      return data as Profile[];
+    }
   });
 
   if (isLoading) return <div>Loading...</div>;

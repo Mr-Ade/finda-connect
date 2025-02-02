@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import type { Business } from "@/types/business";
+import type { Business, BusinessHour } from "@/types/business";
 
 const ExploreListings = () => {
   const [showMap, setShowMap] = useState(true);
@@ -49,6 +49,13 @@ const ExploreListings = () => {
         .from('businesses')
         .select(`
           *,
+          business_hours (
+            id,
+            day_of_week,
+            open_time,
+            close_time,
+            is_closed
+          ),
           business_photos (
             id,
             photo_url,
@@ -56,7 +63,18 @@ const ExploreListings = () => {
             order_index
           ),
           reviews (
-            rating
+            id,
+            rating,
+            comment,
+            created_at,
+            helpful_count,
+            reply_count,
+            user_id,
+            profiles (
+              username,
+              avatar_url,
+              full_name
+            )
           )
         `);
 
@@ -77,15 +95,15 @@ const ExploreListings = () => {
       }
 
       // Transform the data to match our Business type
-      const transformedData: Business[] = data.map(business => ({
+      const transformedData = data.map(business => ({
         ...business,
-        business_hours: business.business_hours as Business['business_hours'],
-        amenities: business.amenities as Business['amenities'],
-        faqs: business.faqs as Business['faqs'],
-        delivery_info: business.delivery_info as Business['delivery_info'],
-        social_links: business.social_links as Business['social_links'],
-        business_photos: business.business_photos as Business['business_photos']
-      }));
+        business_hours: business.business_hours as BusinessHour[],
+        amenities: business.amenities,
+        faqs: business.faqs,
+        delivery_info: business.delivery_info,
+        social_links: business.social_links,
+        reviews: business.reviews
+      })) as Business[];
 
       return transformedData;
     },

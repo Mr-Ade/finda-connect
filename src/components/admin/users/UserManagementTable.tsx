@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Profile } from "@/types/profile";
+import { Table } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 const UserManagementTable = () => {
   const { data: users, isLoading, error } = useQuery({
@@ -11,7 +13,7 @@ const UserManagementTable = () => {
         .select('*');
 
       if (error) throw new Error(error.message);
-      return data;
+      return data as Profile[];
     },
   });
 
@@ -19,29 +21,29 @@ const UserManagementTable = () => {
   if (error) return <div>Error loading users: {error.message}</div>;
 
   return (
-    <table className="min-w-full">
+    <Table>
       <thead>
         <tr>
-          <th className="px-4 py-2">Username</th>
-          <th className="px-4 py-2">Full Name</th>
-          <th className="px-4 py-2">Email</th>
-          <th className="px-4 py-2">Actions</th>
+          <th>Username</th>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         {users.map((user) => (
           <tr key={user.id}>
-            <td className="border px-4 py-2">{user.username}</td>
-            <td className="border px-4 py-2">{user.full_name}</td>
-            <td className="border px-4 py-2">{user.email}</td>
-            <td className="border px-4 py-2">
-              <button className="text-blue-500">Edit</button>
-              <button className="text-red-500 ml-2">Delete</button>
+            <td>{user.username}</td>
+            <td>{user.full_name}</td>
+            <td>{user.email}</td>
+            <td>
+              <Button variant="outline" className="mr-2">Edit</Button>
+              <Button variant="destructive">Delete</Button>
             </td>
           </tr>
         ))}
       </tbody>
-    </table>
+    </Table>
   );
 };
 

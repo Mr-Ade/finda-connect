@@ -6,7 +6,11 @@ const AuthorListings = () => {
   const { data: listings, isLoading, error } = useQuery({
     queryKey: ['author-listings'],
     queryFn: async () => {
-      const { data: session } = await supabase.auth.getSession();
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session?.user?.id) {
+        throw new Error('No authenticated user');
+      }
+
       const { data, error } = await supabase
         .from('businesses')
         .select(`
@@ -19,7 +23,7 @@ const AuthorListings = () => {
             is_closed
           )
         `)
-        .eq('owner_id', session?.user?.id);
+        .eq('owner_id', sessionData.session.user.id);
 
       if (error) throw new Error(error.message);
       return data as unknown as Business[];

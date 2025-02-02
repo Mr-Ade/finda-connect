@@ -8,6 +8,9 @@ export interface BusinessHour {
   open_time: string;
   close_time: string;
   is_closed: boolean;
+  created_at?: string;
+  updated_at?: string;
+  is_open?: boolean;
 }
 
 export interface MenuItem {
@@ -22,6 +25,25 @@ export interface MenuItem {
   updated_at: string;
 }
 
+export interface Review {
+  id: string;
+  business_id: string;
+  user_id: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+  updated_at: string;
+  helpful_count: number;
+  reply_count: number;
+  profiles?: {
+    username: string;
+    avatar_url: string;
+    full_name?: string;
+  };
+  review_photos?: ReviewPhoto[];
+  review_responses?: ReviewResponse[];
+}
+
 export interface ReviewResponse {
   id: string;
   response_text: string;
@@ -31,23 +53,7 @@ export interface ReviewResponse {
 export interface ReviewPhoto {
   id: string;
   photo_url: string;
-}
-
-export interface Review {
-  id: string;
-  rating: number;
-  comment: string;
-  created_at: string;
-  helpful_count: number;
-  reply_count: number;
-  user_id: string;
-  profiles: {
-    username: string;
-    avatar_url: string;
-    full_name?: string;
-  };
-  review_responses?: ReviewResponse[];
-  review_photos?: ReviewPhoto[];
+  caption?: string;
 }
 
 export interface CommunityQuestion {

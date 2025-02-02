@@ -1,17 +1,26 @@
-import type { Database } from "@/types/supabase";
-import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
-
-export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-
-export type ProfileUpdatePayload = {
-  username: string | null;
-  full_name: string | null;
-  bio: string | null;
-  mobile: string | null;
-  state: string | null;
-  city: string | null;
-  address: string | null;
-  zip_code: string | null;
-};
-
-export type ProfileUpdate = RealtimePostgresChangesPayload<ProfileUpdatePayload>;
+export interface Profile {
+  id: string;
+  username?: string;
+  full_name?: string;
+  avatar_url?: string;
+  business_owner?: boolean;
+  created_at: string;
+  updated_at: string;
+  location_data?: any;
+  preferred_currency?: string;
+  preferred_language?: string;
+  timezone?: string;
+  bio?: string;
+  mobile?: string;
+  state?: string;
+  city?: string;
+  address?: string;
+  zip_code?: string;
+  is_admin?: boolean;
+  last_seen?: string;
+  super_admin?: boolean;
+  website?: string;
+  role?: string;
+  is_active?: boolean;
+  email?: string;
+}
