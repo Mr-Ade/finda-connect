@@ -1,9 +1,7 @@
 import type { Database } from "./database";
 
-export type Profile = Database['public']['Tables']['profiles']['Row'];
-export type UserRole = Database['public']['Enums']['user_role'];
+export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
+export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T];
 
-export interface AuthUser extends Profile {
-  email?: string;
-  role: UserRole;
-}
+export type UserRole = Database['public']['Enums']['user_role'];
+export type Profile = Tables<'profiles'>;
