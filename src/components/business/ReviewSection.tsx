@@ -12,9 +12,13 @@ interface ReviewSectionProps {
     rating: number;
     comment: string;
     created_at: string;
+    helpful_count?: number;
+    reply_count?: number;
+    user_id?: string;
     profiles: {
       username: string;
       avatar_url: string;
+      full_name?: string;
     };
     review_responses?: Array<{
       id: string;
