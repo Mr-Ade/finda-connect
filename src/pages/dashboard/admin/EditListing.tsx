@@ -1,82 +1,92 @@
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Business } from "@/types/business";
-import { useParams } from "react-router-dom";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import type { Business } from "@/types/business";
+import { BusinessForm } from "@/components/business/BusinessForm";
+import { PageHeader } from "@/components/PageHeader";
 
-const EditListing = () => {
+export default function EditListing() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { toast } = useToast();
-  const [business, setBusiness] = useState<Business | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  const { data, isLoading } = useQuery({
+  const { data: business, isLoading } = useQuery({
     queryKey: ['business', id],
     queryFn: async () => {
+      if (!id) throw new Error('Business ID is required');
+      
       const { data, error } = await supabase
         .from('businesses')
-        .select('*')
+        .select(`
+          *,
+          business_photos (
+            id,
+            photo_url,
+            caption,
+            order_index
+          ),
+          business_hours (
+            id,
+            day_of_week,
+            open_time,
+            close_time,
+            is_closed
+          ),
+          menu_items (
+            id,
+            name,
+            description,
+            price,
+            category,
+            image_url
+          ),
+          reviews (
+            id,
+            rating,
+            comment,
+            created_at,
+            helpful_count,
+            reply_count,
+            user_id,
+            profiles (
+              username,
+              avatar_url,
+              full_name
+            )
+          ),
+          owner:profiles!businesses_owner_id_fkey (
+            id,
+            username,
+            avatar_url,
+            full_name
+          )
+        `)
         .eq('id', id)
         .single();
 
-      if (error) {
-        throw new Error(error.message);
-      }
+      if (error) throw error;
 
-      // Transform the data to match Business type
-      const transformedData: Business = {
-        ...data,
-        business_hours: data.business_hours ? JSON.parse(data.business_hours as string) : [],
-        amenities: data.amenities || {},
-        faqs: data.faqs ? JSON.parse(data.faqs as string) : [],
-        delivery_info: data.delivery_info ? JSON.parse(data.delivery_info as string) : undefined,
-        social_links: data.social_links ? JSON.parse(data.social_links as string) : {}
-      };
-
-      return transformedData;
+      return data as unknown as Business;
     },
-    onSettled: () => {
-      setLoading(false);
+    meta: {
+      onSettled: (data, error) => {
+        if (error) {
+          toast({
+            title: "Error loading business",
+            description: error.message,
+            variant: "destructive"
+          });
+        }
+      }
     }
   });
 
-  const handleUpdate = async () => {
-    if (!business) return;
+  if (!id) {
+    return <div>Business ID is required</div>;
+  }
 
-    // Transform business data back to database format
-    const dbData = {
-      ...business,
-      business_hours: JSON.stringify(business.business_hours),
-      amenities: JSON.stringify(business.amenities),
-      faqs: JSON.stringify(business.faqs),
-      delivery_info: business.delivery_info ? JSON.stringify(business.delivery_info) : null,
-      social_links: JSON.stringify(business.social_links)
-    };
-
-    const { error } = await supabase
-      .from('businesses')
-      .update(dbData)
-      .eq('id', id);
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Success",
-        description: "Business updated successfully!",
-      });
-    }
-  };
-
-  if (loading || isLoading) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
@@ -84,24 +94,50 @@ const EditListing = () => {
     return <div>Business not found</div>;
   }
 
+  const handleCancel = () => {
+    navigate(-1);
+  };
+
+  const handleSubmit = async (updatedBusiness: Partial<Business>) => {
+    try {
+      const { error } = await supabase
+        .from('businesses')
+        .update(updatedBusiness)
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Business updated successfully",
+      });
+
+      navigate(`/business/${id}`);
+    } catch (error) {
+      console.error('Error updating business:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update business",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
-    <div>
-      <h1 className="text-2xl font-bold">Edit Listing</h1>
-      <Input
-        value={business.name}
-        onChange={(e) => setBusiness({ ...business, name: e.target.value })}
-        placeholder="Business Name"
-        className="mb-4"
+    <div className="container mx-auto py-8">
+      <PageHeader
+        heading="Edit Business Listing"
+        text="Update your business information"
       />
-      <Textarea
-        value={business.description || ''}
-        onChange={(e) => setBusiness({ ...business, description: e.target.value })}
-        placeholder="Business Description"
-        className="mb-4"
-      />
-      <Button onClick={handleUpdate} className="mt-4">Update Listing</Button>
+
+      <div className="mt-8">
+        <BusinessForm
+          business={business}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          isEdit
+        />
+      </div>
     </div>
   );
-};
-
-export default EditListing;
+}

@@ -1,6 +1,6 @@
 import type { Database } from "./supabase/database";
 
-export type Json = Database['public']['CompositeTypes']['json'];
+export type Json = Database['public']['Tables']['businesses']['Row']['amenities'];
 
 export interface BusinessHour {
   id: string;

@@ -10,7 +10,7 @@ interface ProfileDetailsProps {
   setFullName: (value: string) => void;
   avatarUrl?: string;
   onAvatarChange: (url: string) => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (profile: ProfileUpdate) => void;
   updating: boolean;
 }
 
@@ -24,6 +24,17 @@ export const ProfileDetails = ({
   onSubmit,
   updating
 }: ProfileDetailsProps) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit({
+      type: 'UPDATE',
+      payload: {
+        username,
+        full_name: fullName
+      }
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
