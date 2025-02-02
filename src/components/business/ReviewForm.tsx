@@ -68,7 +68,7 @@ export const ReviewForm = ({ businessId, onReviewSubmitted }: ReviewFormProps) =
     } else {
       toast({
         title: "Success",
-        description: "Your review has been submitted.",
+        description: "Your review has been submitted. You can now add photos to your review.",
       });
       setReviewId(data.id);
       setRating(0);
