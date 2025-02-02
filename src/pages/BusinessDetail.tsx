@@ -43,27 +43,19 @@ export default function BusinessDetail() {
             created_at,
             updated_at
           ),
-          reviews:business_reviews (
+          business_reviews (
             id,
             rating,
-            comment,
+            review_text,
             created_at,
-            helpful_count,
-            reply_count,
+            helpful_votes,
+            reply_text,
+            reply_date,
             user_id,
             profiles (
               username,
               avatar_url,
               full_name
-            ),
-            review_photos (
-              id,
-              photo_url
-            ),
-            review_responses (
-              id,
-              response_text,
-              created_at
             )
           ),
           owner:profiles!businesses_owner_id_fkey (
@@ -77,32 +69,49 @@ export default function BusinessDetail() {
         .single();
 
       if (error) throw error;
-      
-      // Transform amenities from JSON if needed
-      if (data.amenities && typeof data.amenities === 'string') {
-        data.amenities = JSON.parse(data.amenities);
-      }
 
-      // Transform faqs from JSON if needed
-      if (data.faqs && typeof data.faqs === 'string') {
-        data.faqs = JSON.parse(data.faqs);
-      }
-
+      // Transform the data to match our Business type
       const transformedData: Business = {
         ...data,
         business_hours: data.business_hours as BusinessHour[],
-        amenities: data.amenities as Business['amenities'],
-        faqs: data.faqs as Business['faqs'],
-        delivery_info: data.delivery_info as Business['delivery_info'],
-        social_links: data.social_links as Business['social_links'],
-        reviews: data.reviews || [],
+        amenities: data.amenities ? 
+          (typeof data.amenities === 'string' ? 
+            JSON.parse(data.amenities) : 
+            data.amenities) : {},
+        faqs: data.faqs ? 
+          (typeof data.faqs === 'string' ? 
+            JSON.parse(data.faqs) : 
+            data.faqs) : [],
+        delivery_info: data.delivery_info ? 
+          (typeof data.delivery_info === 'string' ? 
+            JSON.parse(data.delivery_info) : 
+            data.delivery_info) : undefined,
+        social_links: data.social_links ? 
+          (typeof data.social_links === 'string' ? 
+            JSON.parse(data.social_links) : 
+            data.social_links) : {},
+        reviews: data.business_reviews ? data.business_reviews.map(review => ({
+          id: review.id,
+          rating: review.rating,
+          comment: review.review_text,
+          created_at: review.created_at,
+          helpful_count: review.helpful_votes || 0,
+          reply_count: 0,
+          user_id: review.user_id,
+          profiles: review.profiles,
+          review_photos: [],
+          review_responses: {
+            id: '',
+            response_text: review.reply_text || '',
+            created_at: review.reply_date || ''
+          }
+        })) : [],
         is_open: data.is_open || false,
         price_range: data.price_range || null
       };
-      
+
       return transformedData;
-    },
-    enabled: !!id
+    }
   });
 
   if (!id) {

@@ -71,8 +71,8 @@ export interface Business {
   hero_image?: string;
   gallery_images?: string[];
   menu_categories?: string[];
-  business_hours?: BusinessHour[];
-  amenities?: Json | { [key: string]: boolean };
+  business_hours: BusinessHour[];
+  amenities: { [key: string]: boolean } | Json;
   faqs?: { question: string; answer: string; }[];
   delivery_info?: {
     available: boolean;
@@ -86,25 +86,20 @@ export interface Business {
     instagram?: string;
     linkedin?: string;
   };
-  
   business_photos?: {
     id: string;
     photo_url: string;
     caption?: string;
     order_index: number;
   }[];
-  
   menu_items?: MenuItem[];
-  
   reviews?: Review[];
-  
   owner?: {
     id?: string;
     username?: string;
     avatar_url?: string;
     full_name?: string;
   };
-
   is_open?: boolean;
   price_range?: string | null;
   claimed?: boolean;
@@ -143,7 +138,7 @@ export interface Review {
     id: string;
     response_text: string;
     created_at: string;
-  }[];
+  };
 }
 
 export interface BusinessHour {
@@ -152,15 +147,4 @@ export interface BusinessHour {
   open_time: string;
   close_time: string;
   is_closed: boolean;
-}
-
-export interface CommunityQuestion {
-  id: string;
-  question: string;
-  answer: string;
-  askedBy: string;
-  answeredBy: string;
-  date: string;
-  helpful?: number;
-  notHelpful?: number;
 }

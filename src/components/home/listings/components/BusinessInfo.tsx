@@ -1,51 +1,59 @@
-import { Link } from "react-router-dom";
-import { Wifi, Car, Dog, Fan } from "lucide-react";
+import { Clock, MapPin, Star, Wifi, Car, PawPrint, Wind } from "lucide-react";
 import type { Business } from "@/types/business";
+import type { Json } from "@/integrations/supabase/types";
 
 interface BusinessInfoProps {
   business: Business;
 }
 
 export const BusinessInfo = ({ business }: BusinessInfoProps) => {
-  const tags = business.category ? business.category.split(',') : [];
-  const amenities = business.amenities || {};
+  const getAmenityValue = (amenities: { [key: string]: boolean } | Json, key: string): boolean => {
+    if (typeof amenities === 'string') {
+      try {
+        const parsed = JSON.parse(amenities);
+        return parsed[key] || false;
+      } catch {
+        return false;
+      }
+    }
+    if (typeof amenities === 'object' && amenities !== null) {
+      return (amenities as { [key: string]: boolean })[key] || false;
+    }
+    return false;
+  };
 
   return (
-    <>
-      <Link 
-        to={`/business/${business.id}`}
-        className="block mb-2"
-      >
-        <h3 className="text-lg font-semibold hover:text-primary transition-colors">
-          {business.name}
-        </h3>
-      </Link>
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 text-gray-600">
+        <MapPin className="w-4 h-4" />
+        <span className="text-sm">
+          {business.address}, {business.city}, {business.state}
+        </span>
+      </div>
 
-      {tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-3">
-          {tags.map((tag, index) => (
-            <span 
-              key={index}
-              className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full"
-            >
-              {tag.trim()}
-            </span>
-          ))}
+      {business.is_open !== undefined && (
+        <div className="flex items-center gap-2">
+          <Clock className="w-4 h-4" />
+          <span className={`text-sm ${business.is_open ? 'text-green-600' : 'text-red-600'}`}>
+            {business.is_open ? 'Open' : 'Closed'}
+          </span>
         </div>
       )}
 
-      {business.description && (
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-          {business.description}
-        </p>
-      )}
-
-      <div className="flex gap-4 mb-4">
-        {amenities.wifi && <Wifi className="w-5 h-5 text-gray-400" />}
-        {amenities.parking && <Car className="w-5 h-5 text-gray-400" />}
-        {amenities.petFriendly && <Dog className="w-5 h-5 text-gray-400" />}
-        {amenities.airConditioned && <Fan className="w-5 h-5 text-gray-400" />}
+      <div className="flex items-center gap-4">
+        {getAmenityValue(business.amenities, 'wifi') && (
+          <Wifi className="w-4 h-4 text-gray-600" />
+        )}
+        {getAmenityValue(business.amenities, 'parking') && (
+          <Car className="w-4 h-4 text-gray-600" />
+        )}
+        {getAmenityValue(business.amenities, 'petFriendly') && (
+          <PawPrint className="w-4 h-4 text-gray-600" />
+        )}
+        {getAmenityValue(business.amenities, 'airConditioned') && (
+          <Wind className="w-4 h-4 text-gray-600" />
+        )}
       </div>
-    </>
+    </div>
   );
 };
