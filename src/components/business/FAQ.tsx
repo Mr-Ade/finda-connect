@@ -8,7 +8,7 @@ interface FAQProps {
   questions: CommunityQuestion[];
 }
 
-export const FAQ = ({ businessId, questions }: FAQProps) => {
+export const FAQ = ({ businessId, questions = [] }: FAQProps) => {
   return (
     <Card className="border-none shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between">

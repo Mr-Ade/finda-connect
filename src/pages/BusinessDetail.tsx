@@ -120,8 +120,8 @@ export default function BusinessDetail() {
       }))
     ) : [];
 
-  // Transform FAQs from JSON to array format
-  const faqsList = business.faqs ? 
+  // Transform FAQs from JSON to array format with proper typing
+  const questionsList = business.faqs ? 
     (typeof business.faqs === 'string' ? 
       JSON.parse(business.faqs) : 
       business.faqs
@@ -138,7 +138,7 @@ export default function BusinessDetail() {
             {/* About Section */}
             <Card className="border-none shadow-sm">
               <CardHeader>
-                <CardTitle className="text-xl font-semibold text-gray-900">About Cafe de Lagos</CardTitle>
+                <CardTitle className="text-xl font-semibold text-gray-900">About {business.name}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 leading-relaxed">{business.description}</p>
@@ -146,35 +146,7 @@ export default function BusinessDetail() {
             </Card>
 
             {/* Menu Items */}
-            <Card className="border-none shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-gray-900">Business Menu</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {business.menu_items?.map((item) => (
-                    <div key={item.id} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
-                      {item.image_url && (
-                        <div className="h-48 w-full overflow-hidden">
-                          <img 
-                            src={item.image_url} 
-                            alt={item.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      )}
-                      <div className="p-4">
-                        <h3 className="font-medium text-gray-900">{item.name}</h3>
-                        <div className="mt-1 flex items-baseline gap-x-2">
-                          <span className="text-sm text-gray-500">Start From</span>
-                          <span className="text-xl font-semibold text-red-500">${item.price}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <MenuItems businessId={id} menuItems={business.menu_items || []} />
 
             {/* Photo Gallery */}
             <PhotoGallery 
@@ -186,7 +158,7 @@ export default function BusinessDetail() {
             <Amenities amenities={amenitiesList} />
 
             {/* FAQs */}
-            <FAQ faqs={faqsList} />
+            <FAQ businessId={id} questions={questionsList} />
 
             {/* Reviews */}
             <ReviewSection 
