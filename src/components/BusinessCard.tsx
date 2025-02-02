@@ -27,7 +27,7 @@ interface BusinessCardProps {
     parking: boolean;
     petFriendly: boolean;
     airConditioned: boolean;
-  };
+  } | null;
   email?: string;
   authorId?: string;
 }
@@ -142,6 +142,14 @@ export const BusinessCard = ({
     window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`, '_blank');
   };
 
+  // Ensure amenities is not null before accessing properties
+  const safeAmenities = amenities || {
+    wifi: false,
+    parking: false,
+    petFriendly: false,
+    airConditioned: false
+  };
+
   return (
     <Link to={`/business/${id}`} className="block h-full">
       <Card className="overflow-hidden group relative h-full transition-all duration-200 hover:shadow-lg">
@@ -233,10 +241,10 @@ export const BusinessCard = ({
             {/* Amenities */}
             <div className="flex justify-between mt-4">
               <div className="flex gap-4 text-gray-400">
-                {amenities.wifi && <Wifi className="w-5 h-5" />}
-                {amenities.parking && <Car className="w-5 h-5" />}
-                {amenities.petFriendly && <Dog className="w-5 h-5" />}
-                {amenities.airConditioned && <Fan className="w-5 h-5" />}
+                {safeAmenities.wifi && <Wifi className="w-5 h-5" />}
+                {safeAmenities.parking && <Car className="w-5 h-5" />}
+                {safeAmenities.petFriendly && <Dog className="w-5 h-5" />}
+                {safeAmenities.airConditioned && <Fan className="w-5 h-5" />}
               </div>
               <div className="flex gap-2">
                 {email && (
