@@ -89,7 +89,7 @@ export const ReviewForm = ({ businessId, onReviewSubmitted }: ReviewFormProps) =
   return (
     <form onSubmit={handleSubmitReview} className="space-y-6">
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">Choose Rate</label>
+        <label className="block text-sm font-medium text-gray-700">Choose Rating</label>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((value) => (
             <button
