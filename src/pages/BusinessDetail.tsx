@@ -11,6 +11,7 @@ import { ReviewSection } from "@/components/business/ReviewSection";
 import { RecentlyViewedListings } from "@/components/home/RecentlyViewedListings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PhotoGallery } from "@/components/business/PhotoGallery";
+import { QuestionDetails } from "@/components/business/QuestionDetails";
 
 export default function BusinessDetail() {
   const { id } = useParams<{ id: string }>();
@@ -186,7 +187,25 @@ export default function BusinessDetail() {
             <Amenities amenities={amenitiesList} />
 
             {/* FAQs */}
-            <FAQ faqs={faqsList} />
+            <FAQ 
+              businessId={id} 
+              faqs={[
+                {
+                  id: "1",
+                  question: "Can the code from your paper coupons (weekly-mailer) be used when ordering online?",
+                  answer: "If the coupon says accepted online, you can use the paper coupons on our website. Thanks for asking!",
+                  answeredBy: "Lisa M.",
+                  date: "1 year ago"
+                },
+                {
+                  id: "2",
+                  question: "Hi! Do u have a lunch buffet today? What time starts and how much is it? Thanks",
+                  answer: "We sure do! We offer our weekday buffet from 11 AM to 2 PM; thanks for asking!",
+                  answeredBy: "Lisa M.",
+                  date: "1 year ago"
+                }
+              ]} 
+            />
 
             {/* Reviews */}
             <ReviewSection 
