@@ -28,6 +28,15 @@ interface ImageGalleryProps {
   isOwner: boolean;
 }
 
+const categories = [
+  { id: 'all', label: 'All', icon: Image },
+  { id: 'inside', label: 'Inside', icon: Building2 },
+  { id: 'outside', label: 'Outside', icon: Store },
+  { id: 'videos', label: 'Videos', icon: Video },
+  { id: 'owner', label: 'Owner', icon: User },
+  { id: 'menu', label: 'Menu', icon: Coffee }
+];
+
 export const ImageGallery = ({ businessId, isOwner }: ImageGalleryProps) => {
   const [selectedPhoto, setSelectedPhoto] = useState<BusinessPhoto | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -51,6 +60,73 @@ export const ImageGallery = ({ businessId, isOwner }: ImageGalleryProps) => {
       return data as BusinessPhoto[];
     },
   });
+
+  const filteredPhotos = photos?.filter(photo => 
+    selectedCategory === 'all' ? true : photo.category === selectedCategory
+  ) || [];
+
+  const handleReorder = async (photoId: string, newIndex: number) => {
+    try {
+      const photo = photos?.find(p => p.id === photoId);
+      if (!photo) return;
+
+      const { error } = await supabase
+        .from("business_photos")
+        .update({ order_index: newIndex })
+        .eq("id", photoId);
+
+      if (error) {
+        console.error("Error reordering photo:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to reorder photo",
+        });
+        return;
+      }
+
+      refetch();
+    } catch (error) {
+      console.error("Error reordering photo:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to reorder photo",
+      });
+    }
+  };
+
+  const handleDelete = async (photoId: string) => {
+    try {
+      const { error } = await supabase
+        .from("business_photos")
+        .delete()
+        .eq("id", photoId);
+
+      if (error) {
+        console.error("Error deleting photo:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to delete photo",
+        });
+        return;
+      }
+
+      refetch();
+      toast({
+        title: "Success",
+        description: "Photo deleted successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting photo:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete photo",
+      });
+    }
+  };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>, category: string = 'all') => {
     try {
