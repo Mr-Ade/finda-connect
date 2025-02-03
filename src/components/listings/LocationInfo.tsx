@@ -25,7 +25,9 @@ export const LocationInfo = () => {
     website: ""
   });
 
-  const [availableStates, setAvailableStates] = useState<{ name: string; code: string }[]>(getStatesByCountry("Nigeria"));
+  const [availableStates, setAvailableStates] = useState<{ name: string; code: string }[]>(
+    getStatesByCountry("Nigeria")
+  );
 
   useEffect(() => {
     if (locationContext.coordinates.latitude && locationContext.coordinates.longitude) {
@@ -44,7 +46,9 @@ export const LocationInfo = () => {
 
   const handleLocationSelect = (lat: number, lng: number) => {
     setCoordinates({ latitude: lat, longitude: lng });
+    console.log("Location selected:", { lat, lng });
 
+    // Reverse geocoding using OpenCage API
     fetch(`https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=155e6c1220b94de0a87f628b659b430b`)
       .then(response => response.json())
       .then(data => {
@@ -57,7 +61,9 @@ export const LocationInfo = () => {
             state: components.state || prev.state,
             city: components.city || components.town || components.village || prev.city,
             zip_code: components.postcode || prev.zip_code,
-            street: components.road ? `${components.road}${components.house_number ? `, ${components.house_number}` : ''}` : prev.street
+            street: components.road ? 
+              `${components.road}${components.house_number ? `, ${components.house_number}` : ''}` : 
+              prev.street
           }));
         }
       })
