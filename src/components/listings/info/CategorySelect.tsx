@@ -2,26 +2,33 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useBusinessForm } from "@/contexts/BusinessFormContext";
-import { BUSINESS_CATEGORIES } from "@/lib/constants";
+import { INITIAL_CATEGORIES, ADDITIONAL_CATEGORIES } from "@/components/home/CategoryData";
 
 export const CategorySelect = () => {
   const { formData, updateFormData } = useBusinessForm();
 
-  const flattenedCategories = Object.entries(BUSINESS_CATEGORIES).flatMap(([mainCategory, subCategories]) => {
+  // Combine initial and additional categories
+  const allCategories = [...INITIAL_CATEGORIES, ...ADDITIONAL_CATEGORIES];
+
+  // Create flattened category structure for select options
+  const flattenedCategories = allCategories.flatMap(category => {
     // Add main category
-    const items = [{ value: mainCategory, label: `📁 ${mainCategory}` }];
+    const items = [{
+      value: category.name,
+      label: `📁 ${category.name}`,
+      isMain: true
+    }];
     
-    // Add subcategories and their items
-    Object.entries(subCategories).forEach(([subCategory, subItems]) => {
-      items.push({ value: `${mainCategory}/${subCategory}`, label: `  ↳ ${subCategory}` });
-      
-      subItems.forEach(item => {
-        items.push({ 
-          value: `${mainCategory}/${subCategory}/${item}`,
-          label: `    • ${item}`
+    // Add subcategories if they exist
+    if (category.subcategories) {
+      category.subcategories.forEach(subcat => {
+        items.push({
+          value: `${category.name}/${subcat}`,
+          label: `  ↳ ${subcat}`,
+          isMain: false
         });
       });
-    });
+    }
     
     return items;
   });
@@ -46,7 +53,7 @@ export const CategorySelect = () => {
                 <SelectItem 
                   key={category.value} 
                   value={category.value}
-                  className="whitespace-nowrap"
+                  className={`whitespace-nowrap ${category.isMain ? 'font-semibold' : 'pl-6'}`}
                 >
                   {category.label}
                 </SelectItem>
