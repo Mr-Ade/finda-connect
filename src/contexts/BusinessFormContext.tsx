@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import type { Amenities } from "@/types/amenities";
+import type { Json } from "@/integrations/supabase/types";
 
 interface WorkingHour {
   dayOfWeek: number;
@@ -16,7 +17,7 @@ interface MenuItem {
   imageUrl?: string;
 }
 
-interface SocialLinks {
+export interface SocialLinks {
   facebook?: string;
   twitter?: string;
   instagram?: string;

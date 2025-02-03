@@ -42,7 +42,7 @@ const EditListingForm = () => {
 
       setProgress(30);
 
-      // Update business record with amenities as JSONB
+      // Update business record
       const { error: businessError } = await supabase
         .from('businesses')
         .update({

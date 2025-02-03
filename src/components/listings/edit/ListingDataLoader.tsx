@@ -45,11 +45,9 @@ export const ListingDataLoader = ({ children }: ListingDataLoaderProps) => {
       updateFormData('email', business.email || '');
       updateFormData('website', business.website || '');
       
-      const amenities = business.amenities as Json[] || [];
-      updateFormData('amenities', amenities.map(item => ({
-        name: String(item),
-        available: true
-      })));
+      // Convert amenities from Json to Partial<Amenities>
+      const amenities = business.amenities as Json || {};
+      updateFormData('amenities', amenities as Partial<Amenities>);
 
       const workingHours = business.business_hours as Json[] || [];
       updateFormData('workingHours', workingHours.map(hour => ({
