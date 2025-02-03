@@ -1322,6 +1322,7 @@ export type Database = {
           preferred_currency: string | null
           preferred_language: string | null
           role: Database["public"]["Enums"]["user_role"]
+          social_links: Json | null
           state: string | null
           super_admin: boolean | null
           timezone: string | null
@@ -1347,6 +1348,7 @@ export type Database = {
           preferred_currency?: string | null
           preferred_language?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          social_links?: Json | null
           state?: string | null
           super_admin?: boolean | null
           timezone?: string | null
@@ -1372,6 +1374,7 @@ export type Database = {
           preferred_currency?: string | null
           preferred_language?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          social_links?: Json | null
           state?: string | null
           super_admin?: boolean | null
           timezone?: string | null
