@@ -5,6 +5,8 @@ import { BusinessHero } from "@/components/business/BusinessHero";
 import { MainContent } from "@/components/business/MainContent";
 import { SidebarWrapper } from "@/components/business/SidebarWrapper";
 import { RecentlyViewedListings } from "@/components/home/RecentlyViewedListings";
+import { Newsletter } from "@/components/home/Newsletter";
+import { Footer } from "@/components/Footer";
 import type { Business, BusinessHour } from "@/types/business";
 
 export default function BusinessDetail() {
@@ -143,7 +145,13 @@ export default function BusinessDetail() {
         <div className="mt-16">
           <RecentlyViewedListings />
         </div>
+
+        {/* Newsletter Section */}
+        <Newsletter />
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
