@@ -35,10 +35,22 @@ const EditListingForm = () => {
         if (error) throw error;
 
         if (business) {
-          // Update form data with existing business data
-          Object.keys(business).forEach((key) => {
-            updateFormData(key as keyof Business, business[key as keyof Business]);
-          });
+          // Map business data to form data structure
+          updateFormData('name', business.name);
+          updateFormData('description', business.description || '');
+          updateFormData('category', business.category);
+          updateFormData('keywords', business.keywords || []);
+          updateFormData('address', business.address);
+          updateFormData('city', business.city);
+          updateFormData('state', business.state);
+          updateFormData('zipCode', business.zip_code);
+          updateFormData('phone', business.phone || '');
+          updateFormData('email', business.email || '');
+          updateFormData('website', business.website || '');
+          updateFormData('amenities', business.amenities || []);
+          updateFormData('workingHours', business.business_hours || []);
+          updateFormData('menuItems', business.menu_items || []);
+          updateFormData('socialLinks', business.social_links || {});
         }
       } catch (error) {
         console.error('Error fetching business:', error);
@@ -124,6 +136,10 @@ const EditListingForm = () => {
           phone: formData.phone,
           website: formData.website,
           email: formData.email,
+          keywords: formData.keywords,
+          amenities: formData.amenities,
+          business_hours: formData.workingHours,
+          social_links: formData.socialLinks
         })
         .eq('id', id);
 
