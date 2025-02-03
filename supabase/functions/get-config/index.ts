@@ -16,21 +16,28 @@ serve(async (req) => {
     const { keys } = await req.json()
     console.log('Requested config keys:', keys)
 
+    if (!Array.isArray(keys)) {
+      throw new Error('Keys must be an array')
+    }
+
     // Only return specifically requested keys
     const config: Record<string, string> = {}
     for (const key of keys) {
       const value = Deno.env.get(key)
       if (!value) {
         console.error(`Config key not found: ${key}`)
-        throw new Error(`Config key not found: ${key}`)
+        throw new Error(`Config key "${key}" not found or not configured`)
       }
       config[key] = value
     }
 
-    console.log('Returning config values:', Object.keys(config))
+    console.log('Successfully retrieved config values for:', Object.keys(config))
 
     return new Response(
-      JSON.stringify({ data: config }),
+      JSON.stringify({ 
+        data: config,
+        success: true 
+      }),
       { 
         headers: {
           ...corsHeaders,
@@ -41,14 +48,17 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in get-config function:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { 
-        status: 400,
+      JSON.stringify({ 
+        error: error.message,
+        success: false 
+      }),
+      {
         headers: {
           ...corsHeaders,
           'Content-Type': 'application/json',
         },
-      },
+        status: 400,
+      }
     )
   }
 })

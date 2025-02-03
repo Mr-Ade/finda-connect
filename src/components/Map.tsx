@@ -14,7 +14,7 @@ interface MapProps {
 // Create a loader function that gets the API key from Supabase
 const getMapboxToken = async () => {
   try {
-    const { data: { MAPBOX_PUBLIC_TOKEN }, error } = await supabase.functions.invoke('get-config', {
+    const { data, error } = await supabase.functions.invoke('get-config', {
       body: { keys: ['MAPBOX_PUBLIC_TOKEN'] }
     });
 
@@ -23,11 +23,11 @@ const getMapboxToken = async () => {
       throw new Error('Failed to fetch Mapbox token');
     }
 
-    if (!MAPBOX_PUBLIC_TOKEN) {
-      throw new Error('Mapbox token not found');
+    if (!data?.MAPBOX_PUBLIC_TOKEN) {
+      throw new Error('Mapbox token not found in response');
     }
 
-    return MAPBOX_PUBLIC_TOKEN;
+    return data.MAPBOX_PUBLIC_TOKEN;
   } catch (error) {
     console.error("Error in getMapboxToken:", error);
     throw error;
@@ -46,6 +46,8 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
     const initMap = async () => {
       try {
         setIsLoading(true);
+        setError(null);
+        
         const token = await getMapboxToken();
         mapboxgl.accessToken = token;
         
@@ -100,18 +102,17 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
         });
 
         console.log("Markers updated:", markers.length);
-        setError(null);
+        setIsLoading(false);
 
       } catch (error) {
         console.error("Error initializing map:", error);
         setError(error instanceof Error ? error.message : 'Failed to initialize map');
+        setIsLoading(false);
         toast({
           title: "Map Error",
           description: "There was an error loading the map. Please try again later.",
           variant: "destructive",
         });
-      } finally {
-        setIsLoading(false);
       }
     };
 
