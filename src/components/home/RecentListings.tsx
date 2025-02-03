@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BusinessCard } from "@/components/BusinessCard";
-import type { Business } from "@/types/business";
+import type { Business } from "@/types/supabase/business";
 
 const RecentListings = () => {
   const { data: businesses, isLoading } = useQuery({
@@ -30,12 +30,30 @@ const RecentListings = () => {
       // Transform the data to match our Business type
       const transformedData: Business[] = data.map(business => ({
         ...business,
-        business_hours: business.business_hours as Business['business_hours'],
-        amenities: business.amenities as Business['amenities'],
-        faqs: business.faqs as Business['faqs'],
-        delivery_info: business.delivery_info as Business['delivery_info'],
-        social_links: business.social_links as Business['social_links'],
-        business_photos: business.business_photos as Business['business_photos']
+        business_hours: business.business_hours ? 
+          (typeof business.business_hours === 'string' ? 
+            JSON.parse(business.business_hours) : 
+            business.business_hours) as Business['business_hours'] : [],
+        amenities: business.amenities ? 
+          (typeof business.amenities === 'string' ? 
+            JSON.parse(business.amenities) : 
+            business.amenities) : {},
+        faqs: business.faqs ? 
+          (typeof business.faqs === 'string' ? 
+            JSON.parse(business.faqs) : 
+            business.faqs) : [],
+        delivery_info: business.delivery_info ? 
+          (typeof business.delivery_info === 'string' ? 
+            JSON.parse(business.delivery_info) : 
+            business.delivery_info) : undefined,
+        social_links: business.social_links ? 
+          (typeof business.social_links === 'string' ? 
+            JSON.parse(business.social_links) : 
+            business.social_links) : {},
+        business_photos: business.business_photos || [],
+        reviews: [],
+        is_open: business.is_open || false,
+        price_range: business.price_range || null
       }));
 
       return transformedData;
