@@ -19,7 +19,7 @@ const RecentListings = () => {
             order_index
           )
         `)
-        .limit(4)
+        .limit(8)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -66,19 +66,19 @@ const RecentListings = () => {
 
   return (
     <section 
-      className="w-full bg-gray-50 py-16 -mx-4"
+      className="w-full bg-gray-50 py-16"
       aria-labelledby="recent-listings-heading"
     >
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center mb-12 text-center">
-          <span className="text-primary text-sm font-semibold uppercase tracking-wide">
-            Related Listing
+          <span className="text-gray-600 text-sm font-medium mb-2">
+            Recent Listings
           </span>
           <h2 
             id="recent-listings-heading"
-            className="mt-2 text-3xl font-bold text-gray-900"
+            className="text-3xl font-bold text-gray-900 flex items-center gap-2"
           >
-            Recently Viewed Listing
+            Browse Recent <span className="text-red-500">Listings</span>
           </h2>
         </div>
 
@@ -94,10 +94,14 @@ const RecentListings = () => {
               name={business.name}
               image={business.business_photos?.[0]?.photo_url || '/placeholder.svg'}
               category={business.category}
-              rating={4.5} // TODO: Calculate from reviews
-              reviewCount={30} // TODO: Get from reviews count
+              rating={business.rating || 0}
+              reviewCount={business.review_count || 0}
               location={`${business.city}, ${business.state}`}
               description={business.description}
+              isFeatured={business.status === 'approved'}
+              amenities={business.amenities}
+              email={business.email}
+              authorId={business.owner_id}
             />
           ))}
         </div>
