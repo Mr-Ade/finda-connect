@@ -1,35 +1,34 @@
 import { useEffect, useRef, useState } from "react";
-import mapboxgl from 'mapbox-gl';
+import { Loader } from '@googlemaps/js-api-loader';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import 'mapbox-gl/dist/mapbox-gl.css';
 
 interface MapProps {
   center?: { lat: number; lng: number };
   markers?: { lat: number; lng: number }[];
-  onMapClick?: (e: mapboxgl.MapMouseEvent) => void;
+  onMapClick?: (e: google.maps.MapMouseEvent) => void;
   className?: string;
 }
 
 // Create a loader function that gets the API key from Supabase
-const getMapboxToken = async () => {
+const getGoogleMapsKey = async () => {
   try {
     const { data, error } = await supabase.functions.invoke('get-config', {
-      body: { keys: ['MAPBOX_PUBLIC_TOKEN'] }
+      body: { keys: ['GOOGLE_MAPS_API_KEY'] }
     });
 
     if (error) {
-      console.error("Error fetching Mapbox token:", error);
-      throw new Error('Failed to fetch Mapbox token');
+      console.error("Error fetching Google Maps key:", error);
+      throw new Error('Failed to fetch Google Maps key');
     }
 
-    if (!data?.MAPBOX_PUBLIC_TOKEN) {
-      throw new Error('Mapbox token not found in response');
+    if (!data?.GOOGLE_MAPS_API_KEY) {
+      throw new Error('Google Maps key not found in response');
     }
 
-    return data.MAPBOX_PUBLIC_TOKEN;
+    return data.GOOGLE_MAPS_API_KEY;
   } catch (error) {
-    console.error("Error in getMapboxToken:", error);
+    console.error("Error in getGoogleMapsKey:", error);
     throw error;
   }
 };
@@ -37,8 +36,8 @@ const getMapboxToken = async () => {
 export const Map = ({ center, markers = [], onMapClick, className = "" }: MapProps) => {
   const { toast } = useToast();
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
-  const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const mapInstanceRef = useRef<google.maps.Map | null>(null);
+  const markersRef = useRef<google.maps.Marker[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,8 +47,14 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
         setIsLoading(true);
         setError(null);
         
-        const token = await getMapboxToken();
-        mapboxgl.accessToken = token;
+        const apiKey = await getGoogleMapsKey();
+        
+        const loader = new Loader({
+          apiKey,
+          version: "weekly",
+        });
+
+        const google = await loader.load();
         
         if (!mapRef.current) {
           throw new Error("Map container ref not found");
@@ -60,43 +65,39 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
         
         // Only create new map instance if one doesn't exist
         if (!mapInstanceRef.current) {
-          mapInstanceRef.current = new mapboxgl.Map({
-            container: mapRef.current,
-            style: 'mapbox://styles/mapbox/streets-v12',
-            center: [defaultCenter.lng, defaultCenter.lat],
+          mapInstanceRef.current = new google.maps.Map(mapRef.current, {
+            center: defaultCenter,
             zoom: 8,
+            mapTypeControl: true,
+            streetViewControl: true,
+            fullscreenControl: true,
           });
-
-          // Add navigation controls
-          mapInstanceRef.current.addControl(
-            new mapboxgl.NavigationControl(),
-            'top-right'
-          );
 
           console.log("Map instance created successfully");
         } else {
           // Update existing map center if needed
-          mapInstanceRef.current.setCenter([defaultCenter.lng, defaultCenter.lat]);
+          mapInstanceRef.current.setCenter(defaultCenter);
           console.log("Updated existing map center");
         }
 
         if (onMapClick && mapInstanceRef.current) {
-          mapInstanceRef.current.on('click', (e) => {
-            console.log("Map clicked at:", e.lngLat);
+          mapInstanceRef.current.addListener('click', (e: google.maps.MapMouseEvent) => {
+            console.log("Map clicked at:", e.latLng?.toJSON());
             onMapClick(e);
           });
         }
 
         // Clear existing markers
-        markersRef.current.forEach(marker => marker.remove());
+        markersRef.current.forEach(marker => marker.setMap(null));
         markersRef.current = [];
 
         // Add new markers
         markers.forEach(position => {
           if (mapInstanceRef.current) {
-            const marker = new mapboxgl.Marker()
-              .setLngLat([position.lng, position.lat])
-              .addTo(mapInstanceRef.current);
+            const marker = new google.maps.Marker({
+              position,
+              map: mapInstanceRef.current,
+            });
             markersRef.current.push(marker);
           }
         });
@@ -120,10 +121,8 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
 
     return () => {
       console.log("Cleaning up map instance");
-      markersRef.current.forEach(marker => marker.remove());
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-      }
+      markersRef.current.forEach(marker => marker.setMap(null));
+      // Google Maps doesn't need explicit cleanup like Mapbox
     };
   }, [center, markers, onMapClick, toast]);
 

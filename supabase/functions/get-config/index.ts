@@ -1,64 +1,52 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { corsHeaders } from "../_shared/cors.ts"
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+console.log("Hello from get-config!")
 
 serve(async (req) => {
-  // Handle CORS preflight
+  // Handle CORS
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    // Parse the request body
     const { keys } = await req.json()
-    console.log('Requested config keys:', keys)
 
     if (!Array.isArray(keys)) {
       throw new Error('Keys must be an array')
     }
 
-    // Only return specifically requested keys
     const config: Record<string, string> = {}
-    for (const key of keys) {
+    
+    // Only return requested keys that exist in environment
+    keys.forEach(key => {
       const value = Deno.env.get(key)
-      if (!value) {
-        console.error(`Config key not found: ${key}`)
-        throw new Error(`Config key "${key}" not found or not configured`)
+      if (value) {
+        config[key] = value
       }
-      config[key] = value
-    }
-
-    console.log('Successfully retrieved config values for:', Object.keys(config))
+    })
 
     return new Response(
-      JSON.stringify({ 
-        data: config,
-        success: true 
-      }),
+      JSON.stringify(config),
       { 
         headers: {
           ...corsHeaders,
           'Content-Type': 'application/json',
         },
+        status: 200,
       },
     )
   } catch (error) {
-    console.error('Error in get-config function:', error)
+    console.error('Error:', error.message)
     return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        success: false 
-      }),
-      {
+      JSON.stringify({ error: error.message }),
+      { 
         headers: {
           ...corsHeaders,
           'Content-Type': 'application/json',
         },
         status: 400,
-      }
+      },
     )
   }
 })
