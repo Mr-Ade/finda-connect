@@ -100,7 +100,7 @@ const EditListingForm = () => {
       <WorkingHours />
       <AmenitiesForm 
         amenities={formData.amenities} 
-        onChange={(amenities) => formData.updateFormData('amenities', amenities)}
+        onChange={(amenities) => formData.amenities = amenities}
       />
       <SocialLinks />
       <ListingFormActions isSubmitting={isSubmitting} progress={progress} />
