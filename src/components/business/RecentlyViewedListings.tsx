@@ -13,7 +13,10 @@ export const RecentlyViewedListings = () => {
         .select(`
           *,
           business_photos (
-            photo_url
+            id,
+            photo_url,
+            caption,
+            order_index
           ),
           business_hours (
             id,

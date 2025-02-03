@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BusinessCard } from "@/components/BusinessCard";
-import type { Business } from "@/types/supabase/business";
+import type { Business } from "@/types/business";
 
 const RecentListings = () => {
   const { data: businesses, isLoading } = useQuery({
@@ -33,7 +33,7 @@ const RecentListings = () => {
         business_hours: business.business_hours ? 
           (typeof business.business_hours === 'string' ? 
             JSON.parse(business.business_hours) : 
-            business.business_hours) as Business['business_hours'] : [],
+            business.business_hours) : [],
         amenities: business.amenities ? 
           (typeof business.amenities === 'string' ? 
             JSON.parse(business.amenities) : 
