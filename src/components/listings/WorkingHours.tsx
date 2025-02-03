@@ -4,14 +4,9 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Clock } from "lucide-react";
 import { useBusinessForm } from "@/contexts/BusinessFormContext";
-
-const timeOptions = [
-  "Closed",
-  "12:00 AM", "1:00 AM", "2:00 AM", "3:00 AM", "4:00 AM", "5:00 AM",
-  "6:00 AM", "7:00 AM", "8:00 AM", "9:00 AM", "10:00 AM", "11:00 AM",
-  "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM",
-  "6:00 PM", "7:00 PM", "8:00 PM", "9:00 PM", "10:00 PM", "11:00 PM"
-];
+import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 
 const days = [
   "Monday", "Tuesday", "Wednesday", "Thursday",
@@ -20,47 +15,82 @@ const days = [
 
 export const WorkingHours = () => {
   const { formData, updateFormData } = useBusinessForm();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
 
   const handleTimeChange = (day: number, type: 'open' | 'close', value: string) => {
-    const updatedHours = [...(formData.workingHours || [])];
-    const dayIndex = updatedHours.findIndex(h => h.dayOfWeek === day);
+    try {
+      setLoading(true);
+      const updatedHours = [...(formData.workingHours || [])];
+      const dayIndex = updatedHours.findIndex(h => h.dayOfWeek === day);
 
-    if (dayIndex === -1) {
-      updatedHours.push({
-        dayOfWeek: day,
-        openTime: type === 'open' ? value : "09:00",
-        closeTime: type === 'close' ? value : "17:00",
-        isClosed: false
+      // Validate time format
+      const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+      if (!timeRegex.test(value)) {
+        throw new Error("Invalid time format");
+      }
+
+      if (dayIndex === -1) {
+        updatedHours.push({
+          dayOfWeek: day,
+          openTime: type === 'open' ? value : "09:00",
+          closeTime: type === 'close' ? value : "17:00",
+          isClosed: false
+        });
+      } else {
+        updatedHours[dayIndex] = {
+          ...updatedHours[dayIndex],
+          [type === 'open' ? 'openTime' : 'closeTime']: value
+        };
+      }
+
+      updateFormData('workingHours', updatedHours);
+      
+      toast({
+        title: "Hours updated",
+        description: "Business hours have been updated successfully."
       });
-    } else {
-      updatedHours[dayIndex] = {
-        ...updatedHours[dayIndex],
-        [type === 'open' ? 'openTime' : 'closeTime']: value
-      };
+    } catch (error) {
+      toast({
+        title: "Error updating hours",
+        description: error instanceof Error ? error.message : "An error occurred",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
-
-    updateFormData('workingHours', updatedHours);
   };
 
   const handleClosedToggle = (day: number) => {
-    const updatedHours = [...(formData.workingHours || [])];
-    const dayIndex = updatedHours.findIndex(h => h.dayOfWeek === day);
+    try {
+      setLoading(true);
+      const updatedHours = [...(formData.workingHours || [])];
+      const dayIndex = updatedHours.findIndex(h => h.dayOfWeek === day);
 
-    if (dayIndex === -1) {
-      updatedHours.push({
-        dayOfWeek: day,
-        openTime: "09:00",
-        closeTime: "17:00",
-        isClosed: true
+      if (dayIndex === -1) {
+        updatedHours.push({
+          dayOfWeek: day,
+          openTime: "09:00",
+          closeTime: "17:00",
+          isClosed: true
+        });
+      } else {
+        updatedHours[dayIndex] = {
+          ...updatedHours[dayIndex],
+          isClosed: !updatedHours[dayIndex].isClosed
+        };
+      }
+
+      updateFormData('workingHours', updatedHours);
+    } catch (error) {
+      toast({
+        title: "Error updating hours",
+        description: "Failed to update business hours",
+        variant: "destructive"
       });
-    } else {
-      updatedHours[dayIndex] = {
-        ...updatedHours[dayIndex],
-        isClosed: !updatedHours[dayIndex].isClosed
-      };
+    } finally {
+      setLoading(false);
     }
-
-    updateFormData('workingHours', updatedHours);
   };
 
   const getHoursForDay = (day: number) => {
@@ -71,6 +101,12 @@ export const WorkingHours = () => {
       isClosed: false
     };
   };
+
+  const timeOptions = Array.from({ length: 24 * 4 }, (_, i) => {
+    const hour = Math.floor(i / 4);
+    const minute = (i % 4) * 15;
+    return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+  });
 
   return (
     <Card>
@@ -86,14 +122,14 @@ export const WorkingHours = () => {
               <Select
                 value={getHoursForDay(index).openTime}
                 onValueChange={(value) => handleTimeChange(index, 'open', value)}
-                disabled={getHoursForDay(index).isClosed}
+                disabled={getHoursForDay(index).isClosed || loading}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Opening Time" />
                 </SelectTrigger>
                 <SelectContent>
                   {timeOptions.map((time) => (
-                    <SelectItem key={time} value={time.toLowerCase()}>
+                    <SelectItem key={time} value={time}>
                       {time}
                     </SelectItem>
                   ))}
@@ -104,14 +140,14 @@ export const WorkingHours = () => {
               <Select
                 value={getHoursForDay(index).closeTime}
                 onValueChange={(value) => handleTimeChange(index, 'close', value)}
-                disabled={getHoursForDay(index).isClosed}
+                disabled={getHoursForDay(index).isClosed || loading}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Closing Time" />
                 </SelectTrigger>
                 <SelectContent>
                   {timeOptions.map((time) => (
-                    <SelectItem key={time} value={time.toLowerCase()}>
+                    <SelectItem key={time} value={time}>
                       {time}
                     </SelectItem>
                   ))}
@@ -123,11 +159,18 @@ export const WorkingHours = () => {
                 id={`closed-${index}`}
                 checked={getHoursForDay(index).isClosed}
                 onCheckedChange={() => handleClosedToggle(index)}
+                disabled={loading}
               />
               <Label htmlFor={`closed-${index}`} className="text-sm">Closed</Label>
             </div>
           </div>
         ))}
+
+        {loading && (
+          <div className="flex justify-center">
+            <Loader2 className="w-6 h-6 animate-spin" />
+          </div>
+        )}
 
         <div className="flex items-center space-x-2 pt-4">
           <Checkbox 
@@ -136,12 +179,13 @@ export const WorkingHours = () => {
             onCheckedChange={(checked) => {
               const updatedHours = days.map((_, index) => ({
                 dayOfWeek: index,
-                openTime: "12:00 am",
-                closeTime: "11:59 pm",
+                openTime: "00:00",
+                closeTime: "23:59",
                 isClosed: !checked
               }));
               updateFormData('workingHours', updatedHours);
             }}
+            disabled={loading}
           />
           <Label htmlFor="24hours">This business is open 24/7</Label>
         </div>

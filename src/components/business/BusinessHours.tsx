@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Map } from "@/components/Map";
 import { Clock } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const DAYS = [
   "Sunday",
@@ -15,17 +17,28 @@ const DAYS = [
 ];
 
 export const BusinessHours = ({ businessId, business }: { businessId: string, business?: any }) => {
+  const { toast } = useToast();
+  
   const { data: hours, isLoading } = useQuery({
     queryKey: ['business-hours', businessId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('business_hours')
-        .select('*')
-        .eq('business_id', businessId)
-        .order('day_of_week');
+      try {
+        const { data, error } = await supabase
+          .from('business_hours')
+          .select('*')
+          .eq('business_id', businessId)
+          .order('day_of_week');
 
-      if (error) throw error;
-      return data;
+        if (error) throw error;
+        return data;
+      } catch (error) {
+        toast({
+          title: "Error loading hours",
+          description: "Failed to load business hours",
+          variant: "destructive"
+        });
+        throw error;
+      }
     },
   });
 
@@ -47,10 +60,6 @@ export const BusinessHours = ({ businessId, business }: { businessId: string, bu
            currentTime >= dayHours.open_time && 
            currentTime <= dayHours.close_time;
   };
-
-  if (isLoading) {
-    return <div>Loading hours...</div>;
-  }
 
   return (
     <Card className="p-6">
@@ -88,33 +97,42 @@ export const BusinessHours = ({ businessId, business }: { businessId: string, bu
 
         {/* Hours Section */}
         <div className="space-y-4">
-          {DAYS.map((day, index) => {
-            const dayHours = hours?.find((h) => h.day_of_week === index);
-            const isCurrentlyOpen = isOpen(dayHours);
-            
-            return (
-              <div
-                key={day}
-                className="flex justify-between items-center"
-              >
-                <span className="font-medium w-32">{day}</span>
-                <span className="text-gray-600">
-                  {dayHours?.is_closed ? (
-                    "Closed"
-                  ) : dayHours ? (
-                    <span>
-                      {formatTime(dayHours.open_time)} - {formatTime(dayHours.close_time)}
-                      {isCurrentlyOpen && (
-                        <span className="ml-2 text-green-600">Open now</span>
-                      )}
-                    </span>
-                  ) : (
-                    "Not available"
-                  )}
-                </span>
+          {isLoading ? (
+            Array(7).fill(0).map((_, i) => (
+              <div key={i} className="flex justify-between items-center">
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-32" />
               </div>
-            );
-          })}
+            ))
+          ) : (
+            DAYS.map((day, index) => {
+              const dayHours = hours?.find((h) => h.day_of_week === index);
+              const isCurrentlyOpen = isOpen(dayHours);
+              
+              return (
+                <div
+                  key={day}
+                  className="flex justify-between items-center"
+                >
+                  <span className="font-medium w-32">{day}</span>
+                  <span className="text-gray-600">
+                    {dayHours?.is_closed ? (
+                      "Closed"
+                    ) : dayHours ? (
+                      <span>
+                        {formatTime(dayHours.open_time)} - {formatTime(dayHours.close_time)}
+                        {isCurrentlyOpen && (
+                          <span className="ml-2 text-green-600">Open now</span>
+                        )}
+                      </span>
+                    ) : (
+                      "Not available"
+                    )}
+                  </span>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </Card>
