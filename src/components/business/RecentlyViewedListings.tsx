@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BusinessCard } from "@/components/BusinessCard";
-import type { Business } from "@/types/supabase/business";
+import type { Business } from "@/types/business";
 
 export const RecentlyViewedListings = () => {
   const { data: businesses, isLoading } = useQuery({

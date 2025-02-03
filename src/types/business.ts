@@ -34,9 +34,9 @@ export interface ReviewPhoto {
 export interface Review {
   id: string;
   rating: number;
-  review_text: string; // Changed from comment to review_text
+  review_text: string;
   created_at: string;
-  helpful_votes: number; // Changed from helpful_count
+  helpful_votes: number;
   reply_count: number;
   user_id: string;
   profiles: {

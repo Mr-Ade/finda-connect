@@ -35,13 +35,14 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
             close_time,
             is_closed
           ),
-          reviews:business_reviews (
+          business_reviews (
             id,
             rating,
             review_text,
             created_at,
             helpful_votes,
-            reply_count,
+            reply_text,
+            reply_date,
             user_id,
             profiles (
               username,
@@ -80,18 +81,22 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
           (typeof data.social_links === 'string' ? 
             JSON.parse(data.social_links) : 
             data.social_links) : {},
-        reviews: data.reviews?.map(review => ({
+        reviews: data.business_reviews ? data.business_reviews.map(review => ({
           id: review.id,
           rating: review.rating,
           review_text: review.review_text,
           created_at: review.created_at,
           helpful_votes: review.helpful_votes || 0,
-          reply_count: review.reply_count || 0,
+          reply_count: 0,
           user_id: review.user_id,
           profiles: review.profiles,
-          review_responses: [],
-          review_photos: []
-        })) || [],
+          review_photos: [],
+          review_responses: review.reply_text ? [{
+            id: review.id,
+            response_text: review.reply_text,
+            created_at: review.reply_date || review.created_at
+          }] : []
+        })) : [],
         is_open: data.is_open || false,
         price_range: data.price_range || null
       };

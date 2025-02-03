@@ -1,139 +1,182 @@
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { Newsletter } from "@/components/home/Newsletter";
-import { FAQ as FAQComponent } from "@/components/business/FAQ";
+import { CommunityQuestion } from "@/types/business";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { Search } from "lucide-react";
 
-const FAQ = () => {
-  const breadcrumbItems = [
-    { label: "Home", href: "/" },
-    { label: "Pages", href: "#" },
-    { label: "FAQ's", href: "/faq", active: true },
+const generalQuestions: CommunityQuestion[] = [
+  {
+    id: "1",
+    question: "What is Lovable?",
+    answer: "Lovable is a local business directory and review platform that helps you discover and connect with great local businesses. Our platform provides detailed business information, customer reviews, and photos to help you make informed decisions about where to shop, eat, and find services in your area.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    askedBy: "Admin",
+    answeredBy: "Team Lovable",
+    date: new Date().toISOString()
+  },
+  {
+    id: "2",
+    question: "Is Lovable free to use?",
+    answer: "Yes, Lovable is completely free for consumers to use. You can search for businesses, read reviews, and create an account without any cost. Business owners may have premium features available for a fee.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    askedBy: "Admin",
+    answeredBy: "Team Lovable",
+    date: new Date().toISOString()
+  },
+  {
+    id: "3",
+    question: "How do I create an account?",
+    answer: "Creating an account is easy! Click the 'Sign Up' button in the top right corner of the page, enter your email address and create a password. You can also sign up using your Google or Facebook account for quicker access.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    askedBy: "Admin",
+    answeredBy: "Team Lovable",
+    date: new Date().toISOString()
+  }
+];
+
+const businessQuestions: CommunityQuestion[] = [
+  {
+    id: "4",
+    question: "How do I claim my business?",
+    answer: "To claim your business, search for your business on Lovable and click the 'Claim This Business' button on your business page. You'll need to verify your ownership through our verification process, which may include providing business documentation and completing a phone verification.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    askedBy: "Admin",
+    answeredBy: "Team Lovable",
+    date: new Date().toISOString()
+  },
+  {
+    id: "5",
+    question: "How can I update my business information?",
+    answer: "Once you've claimed your business, you can update your business information by logging into your business account and accessing the business dashboard. From there, you can edit your business details, hours, photos, and more.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    askedBy: "Admin",
+    answeredBy: "Team Lovable",
+    date: new Date().toISOString()
+  },
+  {
+    id: "6",
+    question: "What are the benefits of claiming my business?",
+    answer: "Claiming your business gives you control over your business profile, allowing you to respond to reviews, update business information, add photos, and access analytics about how customers interact with your page. You can also access promotional tools and features to help grow your business.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    askedBy: "Admin",
+    answeredBy: "Team Lovable",
+    date: new Date().toISOString()
+  }
+];
+
+const reviewQuestions: CommunityQuestion[] = [
+  {
+    id: "7",
+    question: "How do I write a review?",
+    answer: "To write a review, first find the business you want to review using our search feature. On the business page, click the 'Write a Review' button. You'll need to be logged in to submit a review. Rate your experience, write your review, and optionally add photos to help others understand your experience.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    askedBy: "Admin",
+    answeredBy: "Team Lovable",
+    date: new Date().toISOString()
+  },
+  {
+    id: "8",
+    question: "Can I edit or delete my review?",
+    answer: "Yes, you can edit or delete your reviews at any time. Go to your profile, find the review you want to modify, and click the edit or delete button. Keep in mind that maintaining honest and accurate reviews helps our community.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    askedBy: "Admin",
+    answeredBy: "Team Lovable",
+    date: new Date().toISOString()
+  },
+  {
+    id: "9",
+    question: "What are the guidelines for writing reviews?",
+    answer: "We encourage honest, respectful, and detailed reviews. Focus on your personal experience, be specific, and avoid personal attacks or inappropriate content. Reviews should be helpful to both businesses and other users. Photos should be relevant to your experience.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    askedBy: "Admin",
+    answeredBy: "Team Lovable",
+    date: new Date().toISOString()
+  }
+];
+
+export default function FAQ() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("general");
+
+  const categories = [
+    { id: "general", name: "General Questions" },
+    { id: "business", name: "For Business Owners" },
+    { id: "reviews", name: "Reviews & Community" },
   ];
 
-  const basicFaqs = [
-    {
-      id: "1",
-      question: "What's Included in Finda Listing?",
-      answer: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.",
-      askedBy: "John Doe",
-      answeredBy: "Support Team",
-      date: "2024-01-20"
-    },
-    {
-      id: "2",
-      question: "What is the difference between Finda and Other Listings?",
-      answer: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.",
-      askedBy: "Jane Smith",
-      answeredBy: "Support Team",
-      date: "2024-01-21"
-    },
-    {
-      id: "3",
-      question: "How many websites can we launch with Finda?",
-      answer: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.",
-      askedBy: "Mike Johnson",
-      answeredBy: "Support Team",
-      date: "2024-01-22"
+  const getQuestionsByCategory = () => {
+    switch (activeCategory) {
+      case "business":
+        return businessQuestions;
+      case "reviews":
+        return reviewQuestions;
+      default:
+        return generalQuestions;
     }
-  ];
+  };
 
-  const paymentFaqs = [
-    {
-      id: "4",
-      question: "Which license is better for business purpose?",
-      answer: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.",
-      askedBy: "Sarah Wilson",
-      answeredBy: "Support Team",
-      date: "2024-01-23"
-    },
-    {
-      id: "5",
-      question: "After purchase can we resell Finda on any other marketplace?",
-      answer: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.",
-      askedBy: "David Brown",
-      answeredBy: "Support Team",
-      date: "2024-01-24"
-    },
-    {
-      id: "6",
-      question: "Can we get any offer for Finda?",
-      answer: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.",
-      askedBy: "Emily Davis",
-      answeredBy: "Support Team",
-      date: "2024-01-25"
-    }
-  ];
-
-  const advancedFaqs = [
-    {
-      id: "7",
-      question: "Can I get Finda listing for free?",
-      answer: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.",
-      askedBy: "Alex Thompson",
-      answeredBy: "Support Team",
-      date: "2024-01-26"
-    },
-    {
-      id: "8",
-      question: "How to Permanently Delete Files From Windows?",
-      answer: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.",
-      askedBy: "Chris Martin",
-      answeredBy: "Support Team",
-      date: "2024-01-27"
-    },
-    {
-      id: "9",
-      question: "Can I get Finda listing for free?",
-      answer: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.",
-      askedBy: "Lisa Anderson",
-      answeredBy: "Support Team",
-      date: "2024-01-28"
-    }
-  ];
+  const filteredQuestions = getQuestionsByCategory().filter(
+    (q) =>
+      q.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      q.answer.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      
-      {/* Breadcrumb */}
-      <div className="bg-gray-900 py-3">
-        <div className="container mx-auto px-4">
-          <Breadcrumb items={breadcrumbItems} />
+    <div className="min-h-screen bg-gray-50 py-16">
+      <div className="container mx-auto px-4">
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-4xl font-bold text-center mb-8">
+            Frequently Asked Questions
+          </h1>
+
+          {/* Search Bar */}
+          <div className="relative mb-8">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Search questions..."
+              className="pl-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
+          {/* Category Tabs */}
+          <div className="flex gap-2 mb-8">
+            {categories.map((category) => (
+              <Button
+                key={category.id}
+                variant={activeCategory === category.id ? "default" : "outline"}
+                onClick={() => setActiveCategory(category.id)}
+              >
+                {category.name}
+              </Button>
+            ))}
+          </div>
+
+          {/* FAQ List */}
+          <div className="space-y-6">
+            {filteredQuestions.map((item) => (
+              <div
+                key={item.id}
+                className="bg-white rounded-lg shadow-sm p-6 space-y-4"
+              >
+                <h3 className="text-xl font-semibold">{item.question}</h3>
+                <p className="text-gray-600">{item.answer}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-
-      {/* Main Content */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-2">FAQ's Section</h1>
-            <h3 className="text-2xl text-gray-600">Frequently Asked Questions</h3>
-          </div>
-
-          <div className="max-w-4xl mx-auto space-y-8">
-            <div>
-              <h4 className="text-xl font-semibold mb-4">Basic FAQ's:</h4>
-              <FAQComponent businessId="basic" questions={basicFaqs} />
-            </div>
-
-            <div>
-              <h4 className="text-xl font-semibold mb-4">Payment and Data's FAQ's:</h4>
-              <FAQComponent businessId="payment" questions={paymentFaqs} />
-            </div>
-
-            <div>
-              <h4 className="text-xl font-semibold mb-4">Advanced FAQ's:</h4>
-              <FAQComponent businessId="advanced" questions={advancedFaqs} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <Newsletter />
-      <Footer />
     </div>
   );
-};
-
-export default FAQ;
+}
