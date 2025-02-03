@@ -22,6 +22,26 @@ const EditListingForm = () => {
   const { toast } = useToast();
   const { formData, updateFormData, isSubmitting, setIsSubmitting } = useBusinessForm();
   const [progress, setProgress] = useState(0);
+  const [isOwner, setIsOwner] = useState(false);
+
+  // Check if user is owner
+  const checkOwnership = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return false;
+
+    const { data: business } = await supabase
+      .from('businesses')
+      .select('owner_id')
+      .eq('id', id)
+      .single();
+
+    return business?.owner_id === session.user.id;
+  };
+
+  // Set ownership status on component mount
+  useState(() => {
+    checkOwnership().then(setIsOwner);
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,7 +115,7 @@ const EditListingForm = () => {
     <form onSubmit={handleSubmit} className="space-y-6">
       <ListingInfo />
       <LocationInfo />
-      <ImageGallery />
+      <ImageGallery businessId={id!} isOwner={isOwner} />
       <MenuItems />
       <WorkingHours />
       <AmenitiesForm 

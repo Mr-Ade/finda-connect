@@ -19,6 +19,7 @@ const AddListingForm = () => {
   const { toast } = useToast();
   const { formData, updateFormData, isSubmitting, setIsSubmitting } = useBusinessForm();
   const [progress, setProgress] = useState(0);
+  const [tempBusinessId, setTempBusinessId] = useState<string>('temp-' + crypto.randomUUID());
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,7 +95,7 @@ const AddListingForm = () => {
     <form onSubmit={handleSubmit} className="space-y-6">
       <ListingInfo />
       <LocationInfo />
-      <ImageGallery />
+      <ImageGallery businessId={tempBusinessId} isOwner={true} />
       <MenuItems />
       <WorkingHours />
       <AmenitiesForm 
