@@ -1,18 +1,4 @@
-/* Original imports */
-@import url(plugins/animation.css);
-@import url(plugins/bootstrap.min.css);
-@import url(plugins/slick.css);
-@import url(plugins/slick-theme.css);
-@import url(plugins/dropzone.css);
-@import url(plugins/magnificpopup.css);
-@import url(plugins/date-picker.css);
-@import url(plugins/themify.css);
-@import url(plugins/line-icons.css);
-@import url(plugins/iconfont.css);
-@import url(plugins/font-awesome.css);
-@import url(plugins/flaticon.css);
-
-/* New component imports */
+/* Component imports */
 @import url(components/buttons.css);
 @import url(components/modal.css);
 @import url(components/pagination.css);
