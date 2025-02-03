@@ -161,8 +161,8 @@ const EditListingForm = () => {
             openTime: h.openTime,
             closeTime: h.closeTime,
             isClosed: h.isClosed
-          })),
-          social_links: formData.socialLinks
+          })) as Json,
+          social_links: formData.socialLinks as Json
         })
         .eq('id', id);
 
