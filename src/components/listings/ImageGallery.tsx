@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Image, Plus, X, Video, Store, Coffee, Building2, User, Loader, ImageOff } from "lucide-react";
+import { Image, Plus, X, Video, Store, Coffee, Building2, User, Loader, ImageOff, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -52,11 +52,7 @@ export const ImageGallery = ({ businessId, isOwner }: ImageGalleryProps) => {
     },
   });
 
-  const filteredPhotos = photos?.filter(photo => 
-    selectedCategory === 'all' || photo.category === selectedCategory
-  );
-
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>, category: string = 'all') => {
     try {
       const files = event.target.files;
       if (!files || files.length === 0) return;
@@ -64,6 +60,16 @@ export const ImageGallery = ({ businessId, isOwner }: ImageGalleryProps) => {
       setUploading(true);
       
       for (const file of files) {
+        // Check file size (2MB limit)
+        if (file.size > 2 * 1024 * 1024) {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "File size must be less than 2MB",
+          });
+          continue;
+        }
+
         const fileExt = file.name.split(".").pop();
         const filePath = `${businessId}/${crypto.randomUUID()}.${fileExt}`;
         const isVideo = file.type.startsWith('video/');
@@ -91,7 +97,7 @@ export const ImageGallery = ({ businessId, isOwner }: ImageGalleryProps) => {
           .insert({
             business_id: businessId,
             photo_url: publicUrl,
-            category: selectedCategory,
+            category: category as PhotoCategory,
             is_video: isVideo,
             order_index: (photos?.length || 0) + 1,
           });
@@ -123,227 +129,182 @@ export const ImageGallery = ({ businessId, isOwner }: ImageGalleryProps) => {
     }
   };
 
-  const handleDelete = async (photoId: string) => {
-    try {
-      const { error } = await supabase
-        .from("business_photos")
-        .delete()
-        .eq("id", photoId);
-
-      if (error) throw error;
-
-      refetch();
-      toast({
-        title: "Success",
-        description: "File deleted successfully",
-      });
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to delete file",
-      });
-    }
-  };
-
-  const handleReorder = async (photoId: string, newIndex: number) => {
-    try {
-      const { error } = await supabase
-        .from("business_photos")
-        .update({ order_index: newIndex })
-        .eq("id", photoId);
-
-      if (error) throw error;
-
-      refetch();
-    } catch (error) {
-      console.error("Reorder error:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to reorder photos",
-      });
-    }
-  };
-
-  const categories = [
-    { id: 'all', label: 'All', icon: Image },
-    { id: 'inside', label: 'Inside', icon: Building2 },
-    { id: 'outside', label: 'Outside', icon: Store },
-    { id: 'videos', label: 'Videos', icon: Video },
-    { id: 'owner', label: 'By Owner', icon: User },
-    { id: 'menu', label: 'Food & Drinks', icon: Coffee },
-  ];
-
-  if (isLoading) {
-    return (
-      <Card>
-        <CardContent className="p-6 flex items-center justify-center min-h-[300px]">
-          <Loader className="w-8 h-8 animate-spin text-gray-400" />
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card>
-        <CardContent className="p-6 flex items-center justify-center min-h-[300px]">
-          <div className="text-center">
-            <ImageOff className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-            <p className="text-gray-500">Failed to load photos</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <Card>
-      <CardContent className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-2xl font-semibold">Photos & Videos</h3>
-          {isOwner && (
-            <div>
+    <div className="space-y-6">
+      <h3 className="text-2xl font-semibold">Images & Gallery</h3>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Logo Upload */}
+        <Card>
+          <CardContent className="p-6">
+            <h4 className="text-lg font-medium mb-4">Upload Logo</h4>
+            <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center">
               <input
                 type="file"
-                id="photo-upload"
+                id="logo-upload"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleFileUpload(e, 'logo')}
+                disabled={uploading}
+              />
+              <label htmlFor="logo-upload" className="cursor-pointer">
+                <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <p className="text-sm text-gray-600 mb-2">Drop files here to upload</p>
+                <p className="text-xs text-gray-500">Maximum file size: 2 MB</p>
+              </label>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Featured Image Upload */}
+        <Card>
+          <CardContent className="p-6">
+            <h4 className="text-lg font-medium mb-4">Featured Image</h4>
+            <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center">
+              <input
+                type="file"
+                id="featured-upload"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleFileUpload(e, 'featured')}
+                disabled={uploading}
+              />
+              <label htmlFor="featured-upload" className="cursor-pointer">
+                <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <p className="text-sm text-gray-600 mb-2">Drop files here to upload</p>
+                <p className="text-xs text-gray-500">Maximum file size: 2 MB</p>
+              </label>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Image Gallery Upload */}
+        <Card>
+          <CardContent className="p-6">
+            <h4 className="text-lg font-medium mb-4">Image Gallery</h4>
+            <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center">
+              <input
+                type="file"
+                id="gallery-upload"
                 multiple
                 accept="image/*,video/*"
                 className="hidden"
-                onChange={handleFileUpload}
+                onChange={(e) => handleFileUpload(e)}
                 disabled={uploading}
               />
-              <label htmlFor="photo-upload">
-                <Button
-                  variant="outline"
-                  className="cursor-pointer"
-                  disabled={uploading}
-                  asChild
-                >
-                  <span>
-                    {uploading ? (
-                      <>
-                        <Loader className="w-4 h-4 mr-2 animate-spin" />
-                        Uploading...
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add photos & videos
-                      </>
-                    )}
-                  </span>
-                </Button>
+              <label htmlFor="gallery-upload" className="cursor-pointer">
+                <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <p className="text-sm text-gray-600 mb-2">Drop files here to upload</p>
+                <p className="text-xs text-gray-500">Maximum file size: 2 MB</p>
               </label>
             </div>
-          )}
-        </div>
+          </CardContent>
+        </Card>
+      </div>
 
-        <Tabs defaultValue="all" className="w-full" onValueChange={(value) => setSelectedCategory(value as PhotoCategory)}>
-          <TabsList className="mb-6">
-            {categories.map((category) => (
-              <TabsTrigger key={category.id} value={category.id} className="flex items-center gap-2">
-                <category.icon className="w-4 h-4" />
-                {category.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
+      {/* Gallery Preview Section */}
+      <Tabs defaultValue="all" className="w-full" onValueChange={(value) => setSelectedCategory(value as PhotoCategory)}>
+        <TabsList className="mb-6">
           {categories.map((category) => (
-            <TabsContent key={category.id} value={category.id}>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {filteredPhotos?.map((photo, index) => (
-                  <div key={photo.id} className="relative group">
-                    <Dialog>
-                      <DialogTrigger>
-                        <div className="relative cursor-pointer">
-                          {photo.is_video ? (
-                            <video 
-                              src={photo.photo_url}
-                              className="w-full h-48 object-cover rounded-lg"
-                            />
-                          ) : (
-                            <img
-                              src={photo.photo_url}
-                              alt={photo.caption || "Business photo"}
-                              className="w-full h-48 object-cover rounded-lg"
-                            />
-                          )}
-                          {isOwner && (
-                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                              {index > 0 && (
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleReorder(photo.id, index - 1);
-                                  }}
-                                  className="text-white hover:text-white/80"
-                                >
-                                  ↑
-                                </Button>
-                              )}
-                              {index < (filteredPhotos.length - 1) && (
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleReorder(photo.id, index + 1);
-                                  }}
-                                  className="text-white hover:text-white/80"
-                                >
-                                  ↓
-                                </Button>
-                              )}
-                              <Button
-                                size="icon"
-                                variant="destructive"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDelete(photo.id);
-                                }}
-                                className="absolute top-2 right-2"
-                              >
-                                <X className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          )}
-                        </div>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-4xl">
+            <TabsTrigger key={category.id} value={category.id} className="flex items-center gap-2">
+              <category.icon className="w-4 h-4" />
+              {category.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+
+        {categories.map((category) => (
+          <TabsContent key={category.id} value={category.id}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {filteredPhotos?.map((photo, index) => (
+                <div key={photo.id} className="relative group">
+                  <Dialog>
+                    <DialogTrigger>
+                      <div className="relative cursor-pointer">
                         {photo.is_video ? (
                           <video 
                             src={photo.photo_url}
-                            controls
-                            className="w-full h-auto"
+                            className="w-full h-48 object-cover rounded-lg"
                           />
                         ) : (
                           <img
                             src={photo.photo_url}
                             alt={photo.caption || "Business photo"}
-                            className="w-full h-auto"
+                            className="w-full h-48 object-cover rounded-lg"
                           />
                         )}
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                ))}
-              </div>
-            </TabsContent>
-          ))}
-        </Tabs>
+                        {isOwner && (
+                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                            {index > 0 && (
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleReorder(photo.id, index - 1);
+                                }}
+                                className="text-white hover:text-white/80"
+                              >
+                                ↑
+                              </Button>
+                            )}
+                            {index < (filteredPhotos.length - 1) && (
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleReorder(photo.id, index + 1);
+                                }}
+                                className="text-white hover:text-white/80"
+                              >
+                                ↓
+                              </Button>
+                            )}
+                            <Button
+                              size="icon"
+                              variant="destructive"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(photo.id);
+                              }}
+                              className="absolute top-2 right-2"
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl">
+                      {photo.is_video ? (
+                        <video 
+                          src={photo.photo_url}
+                          controls
+                          className="w-full h-auto"
+                        />
+                      ) : (
+                        <img
+                          src={photo.photo_url}
+                          alt={photo.caption || "Business photo"}
+                          className="w-full h-auto"
+                        />
+                      )}
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
 
-        {(!photos || photos.length === 0) && (
-          <div className="text-center py-8 text-gray-500">
-            <Image className="w-12 h-12 mx-auto mb-2 text-gray-400" />
-            <p>No photos yet</p>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      {(!photos || photos.length === 0) && (
+        <div className="text-center py-8 text-gray-500">
+          <Image className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+          <p>No photos yet</p>
+        </div>
+      )}
+    </div>
   );
 };
