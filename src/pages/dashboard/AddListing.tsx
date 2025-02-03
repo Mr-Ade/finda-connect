@@ -8,7 +8,6 @@ import { MenuItems } from "@/components/listings/MenuItems";
 import { WorkingHours } from "@/components/listings/WorkingHours";
 import { AmenitiesForm } from "@/components/listings/AmenitiesForm";
 import { SocialLinks } from "@/components/listings/SocialLinks";
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { BusinessFormProvider, useBusinessForm } from "@/contexts/BusinessFormContext";
