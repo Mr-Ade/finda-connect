@@ -68,6 +68,7 @@ interface BusinessFormContextType {
   ) => void;
   isSubmitting: boolean;
   setIsSubmitting: (value: boolean) => void;
+  validateForm: () => boolean;
 }
 
 const defaultFormData: BusinessFormData = {
@@ -107,12 +108,24 @@ export const BusinessFormProvider = ({ children }: { children: React.ReactNode }
     }));
   };
 
+  const validateForm = () => {
+    // Basic validation
+    if (!formData.name?.trim()) return false;
+    if (!formData.description?.trim()) return false;
+    if (formData.name.length < 3) return false;
+    if (formData.description.length < 20) return false;
+    
+    // Add more validation as needed
+    return true;
+  };
+
   return (
     <BusinessFormContext.Provider value={{ 
       formData, 
       updateFormData, 
       isSubmitting, 
-      setIsSubmitting 
+      setIsSubmitting,
+      validateForm
     }}>
       {children}
     </BusinessFormContext.Provider>
