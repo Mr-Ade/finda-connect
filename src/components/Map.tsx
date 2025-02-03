@@ -12,15 +12,25 @@ interface MapProps {
 
 // Create a loader function that gets the API key from Supabase
 const getMapboxToken = async () => {
-  const { data: { MAPBOX_PUBLIC_TOKEN } } = await supabase.functions.invoke('get-config', {
-    body: { keys: ['MAPBOX_PUBLIC_TOKEN'] }
-  });
+  try {
+    const { data: { MAPBOX_PUBLIC_TOKEN }, error } = await supabase.functions.invoke('get-config', {
+      body: { keys: ['MAPBOX_PUBLIC_TOKEN'] }
+    });
 
-  if (!MAPBOX_PUBLIC_TOKEN) {
-    throw new Error('Mapbox token not found');
+    if (error) {
+      console.error("Error fetching Mapbox token:", error);
+      throw new Error('Failed to fetch Mapbox token');
+    }
+
+    if (!MAPBOX_PUBLIC_TOKEN) {
+      throw new Error('Mapbox token not found');
+    }
+
+    return MAPBOX_PUBLIC_TOKEN;
+  } catch (error) {
+    console.error("Error in getMapboxToken:", error);
+    throw error;
   }
-
-  return MAPBOX_PUBLIC_TOKEN;
 };
 
 export const Map = ({ center, markers = [], onMapClick, className = "" }: MapProps) => {
@@ -34,9 +44,13 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
         const token = await getMapboxToken();
         mapboxgl.accessToken = token;
         
-        if (!mapRef.current) return;
+        if (!mapRef.current) {
+          console.error("Map container ref not found");
+          return;
+        }
 
         const defaultCenter = center || { lat: 9.0820, lng: 8.6753 }; // Nigeria center
+        console.log("Initializing map with center:", defaultCenter);
         
         // Only create new map instance if one doesn't exist
         if (!mapInstanceRef.current) {
@@ -52,13 +66,17 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
             new mapboxgl.NavigationControl(),
             'top-right'
           );
+
+          console.log("Map instance created successfully");
         } else {
           // Update existing map center if needed
           mapInstanceRef.current.setCenter([defaultCenter.lng, defaultCenter.lat]);
+          console.log("Updated existing map center");
         }
 
         if (onMapClick && mapInstanceRef.current) {
           mapInstanceRef.current.on('click', (e) => {
+            console.log("Map clicked at:", e.lngLat);
             onMapClick(e);
           });
         }
@@ -77,6 +95,8 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
           }
         });
 
+        console.log("Markers updated:", markers.length);
+
       } catch (error) {
         console.error("Error initializing map:", error);
       }
@@ -85,6 +105,7 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
     initMap();
 
     return () => {
+      console.log("Cleaning up map instance");
       markersRef.current.forEach(marker => marker.remove());
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();

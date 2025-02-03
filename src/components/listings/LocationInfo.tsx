@@ -35,6 +35,7 @@ export const LocationInfo = () => {
         latitude: locationContext.coordinates.latitude,
         longitude: locationContext.coordinates.longitude
       });
+      console.log("Updated coordinates from context:", locationContext.coordinates);
     }
     
     setAddress(prev => ({
@@ -50,7 +51,12 @@ export const LocationInfo = () => {
 
     // Reverse geocoding using OpenCage API
     fetch(`https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=155e6c1220b94de0a87f628b659b430b`)
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then(data => {
         if (data.results && data.results[0]) {
           const components = data.results[0].components;
