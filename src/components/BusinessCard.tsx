@@ -23,7 +23,7 @@ interface BusinessCardProps {
   description?: string;
   tags?: string[];
   authorImage?: string;
-  amenities?: Partial<Amenities>;
+  amenities?: Partial<Amenities> | null;
   email?: string;
   authorId?: string;
 }
@@ -229,10 +229,10 @@ export const BusinessCard = ({
             {/* Amenities */}
             <div className="flex justify-between mt-4">
               <div className="flex gap-4 text-gray-400">
-                {amenities.wifi && <Wifi className="w-5 h-5" />}
-                {amenities.parking && <Car className="w-5 h-5" />}
-                {amenities.petFriendly && <Dog className="w-5 h-5" />}
-                {amenities.airConditioned && <Fan className="w-5 h-5" />}
+                {amenities?.wifi && <Wifi className="w-5 h-5" />}
+                {amenities?.parking && <Car className="w-5 h-5" />}
+                {amenities?.petFriendly && <Dog className="w-5 h-5" />}
+                {amenities?.airConditioned && <Fan className="w-5 h-5" />}
               </div>
               <div className="flex gap-2">
                 {email && (
