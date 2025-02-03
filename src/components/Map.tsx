@@ -40,9 +40,15 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
   const markersRef = useRef<google.maps.Marker[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     const initMap = async () => {
+      // Only initialize once
+      if (isInitialized || !mapRef.current) {
+        return;
+      }
+
       try {
         setIsLoading(true);
         setError(null);
@@ -56,29 +62,19 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
 
         const google = await loader.load();
         
-        if (!mapRef.current) {
-          throw new Error("Map container ref not found");
-        }
-
         const defaultCenter = center || { lat: 9.0820, lng: 8.6753 }; // Nigeria center
         console.log("Initializing map with center:", defaultCenter);
         
-        // Only create new map instance if one doesn't exist
-        if (!mapInstanceRef.current) {
-          mapInstanceRef.current = new google.maps.Map(mapRef.current, {
-            center: defaultCenter,
-            zoom: 8,
-            mapTypeControl: true,
-            streetViewControl: true,
-            fullscreenControl: true,
-          });
+        // Create new map instance
+        mapInstanceRef.current = new google.maps.Map(mapRef.current, {
+          center: defaultCenter,
+          zoom: 8,
+          mapTypeControl: true,
+          streetViewControl: true,
+          fullscreenControl: true,
+        });
 
-          console.log("Map instance created successfully");
-        } else {
-          // Update existing map center if needed
-          mapInstanceRef.current.setCenter(defaultCenter);
-          console.log("Updated existing map center");
-        }
+        console.log("Map instance created successfully");
 
         if (onMapClick && mapInstanceRef.current) {
           mapInstanceRef.current.addListener('click', (e: google.maps.MapMouseEvent) => {
@@ -87,22 +83,7 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
           });
         }
 
-        // Clear existing markers
-        markersRef.current.forEach(marker => marker.setMap(null));
-        markersRef.current = [];
-
-        // Add new markers
-        markers.forEach(position => {
-          if (mapInstanceRef.current) {
-            const marker = new google.maps.Marker({
-              position,
-              map: mapInstanceRef.current,
-            });
-            markersRef.current.push(marker);
-          }
-        });
-
-        console.log("Markers updated:", markers.length);
+        setIsInitialized(true);
         setIsLoading(false);
 
       } catch (error) {
@@ -121,10 +102,45 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
 
     return () => {
       console.log("Cleaning up map instance");
-      markersRef.current.forEach(marker => marker.setMap(null));
-      // Google Maps doesn't need explicit cleanup like Mapbox
+      if (mapInstanceRef.current) {
+        // Clear markers
+        markersRef.current.forEach(marker => marker.setMap(null));
+        markersRef.current = [];
+      }
     };
-  }, [center, markers, onMapClick, toast]);
+  }, [center, onMapClick, toast]);
+
+  // Update markers whenever they change
+  useEffect(() => {
+    if (!mapInstanceRef.current || !isInitialized) {
+      return;
+    }
+
+    // Clear existing markers
+    markersRef.current.forEach(marker => marker.setMap(null));
+    markersRef.current = [];
+
+    // Add new markers
+    markers.forEach(position => {
+      const marker = new google.maps.Marker({
+        position,
+        map: mapInstanceRef.current,
+      });
+      markersRef.current.push(marker);
+    });
+
+    console.log("Markers updated:", markers.length);
+  }, [markers, isInitialized]);
+
+  // Update center when it changes
+  useEffect(() => {
+    if (!mapInstanceRef.current || !isInitialized || !center) {
+      return;
+    }
+
+    mapInstanceRef.current.setCenter(center);
+    console.log("Updated map center to:", center);
+  }, [center, isInitialized]);
 
   if (isLoading) {
     return (
