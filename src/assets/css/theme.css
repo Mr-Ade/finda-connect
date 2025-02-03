@@ -28,60 +28,65 @@
 @import url(components/job.css);
 
 /* Using Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&amp;display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap');
 
 /* Button styles */
-.prd_btn_square:hover, .prd_btn_square:focus{
-	color:#ffffff;
-	background:#212121;
+.prd_btn_square:hover, 
+.prd_btn_square:focus {
+  color: #ffffff;
+  background: #212121;
 }
-.btn.btn-default{
-	background:#ebedf1;
+
+.btn.btn-default {
+  background: #ebedf1;
 }
+
 .btn-dark {
-    color:#ffffff;
-    background-color: #172228;
-    border-color: #172228;
+  color: #ffffff;
+  background-color: #172228;
+  border-color: #172228;
 }
-.btn-dark:hover, .btn-dark:focus{
-    color:#ffffff;
-    background-color: #000000;
-    border-color: #000000;
+
+.btn-dark:hover, 
+.btn-dark:focus {
+  color: #ffffff;
+  background-color: #000000;
+  border-color: #000000;
 }
 .btn-dark-light {
-    color:#172228;
-    background-color:#ffffff;
+    color: #172228;
+    background-color: #ffffff;
     border-color: #172228;
 }
-.btn-dark-light:hover, .btn-dark-light:focus{
-    color:#ffffff;
-    background-color:#000000;
+.btn-dark-light:hover, .btn-dark-light:focus {
+    color: #ffffff;
+    background-color: #000000;
     border-color: #000000;
 }
 .btn-light {
     background: #ffffff;
     border: 1px solid #e4e9ef;
     transition: all ease 0.4s;
-    color:#6e81a0;
+    color: #6e81a0;
 }
 .btn-light:hover, .btn-light:focus {
-    background:#e4e9ef;
+    background: #e4e9ef;
     border: 1px solid #e4e9ef;
-	color:#6e81a0;
+    color: #6e81a0;
 }
 .theme-btn-light {
-	color:#F41b3b;
+    color: #F41b3b;
     background: #ffffff;
-    border:1px solid #F41b3b;
-	transition:all ease 0.4s;
+    border: 1px solid #F41b3b;
+    transition: all ease 0.4s;
 }
 .theme-btn-light:hover, .btn-light:focus {
-    background:#F41b3b;
+    background: #F41b3b;
     border: 1px solid #F41b3b;
-	color:#ffffff;
+    color: #ffffff;
 }
-.btn.bg-dark{
-	color:#ffffff;
+.btn.bg-dark {
+    color: #ffffff;
 }
 
 /* Modal styles */
@@ -98,10 +103,9 @@ button.close {
     display: flex;
     align-items: center;
     justify-content: center;
-    justify-content: center;
     border-radius: 50%;
-	z-index:1;
-	cursor:pointer;
+    z-index: 1;
+    cursor: pointer;
 }
 .modal.lg-modal .modal-dialog {
     max-width: 950px;
@@ -125,7 +129,7 @@ button.close {
     justify-content: center;
     flex: 0 0 48%;
     position: relative;
-    width:48%;
+    width: 48%;
 }
 .option-log .single-log-opt .log-btn {
     position: relative;
@@ -142,23 +146,23 @@ button.close {
     width: 100%;
     margin: 0 auto;
 }
-.option-log .single-log-opt .log-btn img{
-	width:15px;
-	margin-right:7px;
+.option-log .single-log-opt .log-btn img {
+    width: 15px;
+    margin-right: 7px;
 }
 .signup-screen-wrap {
     display: flex;
     justify-content: center;
     border-radius: 10px;
     overflow: hidden;
-	flex-wrap:wrap;
+    flex-wrap: wrap;
 }
 .signup-screen-single {
     display: flex;
     flex-direction: column;
     flex: 0 0 100%;
-    background:#ffffff;
-    padding:2rem 2rem;
+    background: #ffffff;
+    padding: 2rem 2rem;
 }
 
 /* Pagination styles */
@@ -166,10 +170,10 @@ button.close {
     display: table;
     padding-left: 0;
     border-radius: 4px;
-    margin:20px auto 0 !important;
+    margin: 20px auto 0 !important;
 }
 
-.pagination>li>a, .pagination>li>a, .pagination>li>span {
+.pagination > li > a, .pagination > li > a, .pagination > li > span {
     position: relative;
     font-weight: 500;
     margin: 0;
@@ -178,50 +182,50 @@ button.close {
     text-decoration: none;
     background-color: transparent;
     border-radius: 0;
-    padding:0.8rem 1rem;
-    font-size:0.925rem;
+    padding: 0.8rem 1rem;
+    font-size: 0.925rem;
     line-height: 1;
     text-align: center;
     border: none;
     border-bottom: 1px solid #ecedf1;
 }
 
-.pagination>.active>a,
-.pagination>.active>a:focus,
-.pagination>.active>a:hover,
-.pagination>.active>span,
-.pagination>.active>span:focus,
-.pagination>.active>span:hover,
-.pagination>li>a:focus,
-.pagination>li>a:hover {
+.pagination > .active > a,
+.pagination > .active > a:focus,
+.pagination > .active > a:hover,
+.pagination > .active > span,
+.pagination > .active > span:focus,
+.pagination > .active > span:hover,
+.pagination > li > a:focus,
+.pagination > li > a:hover {
     z-index: 2;
-    color:#F41b3b;
+    color: #F41b3b;
     cursor: pointer;
-    background-color:transparent;
-    border-color#F41b3b;
+    background-color: transparent;
+    border-color: #F41b3b;
 }
 
 .pagination li:first-child a {
-    background:transparent;
-    border:none;
-    border-radius:0% !important;
-    color:#172228;
+    background: transparent;
+    border: none;
+    border-radius: 0% !important;
+    color: #172228;
 }
 
 .pagination li:last-child a {
-    background:transparent;
-    border:none;
-    border-radius:0% !important;
-    color:#172228;
+    background: transparent;
+    border: none;
+    border-radius: 0% !important;
+    color: #172228;
 }
-.pagination>li {
+.pagination > li {
     display: inline;
 }
 .page-item.active .page-link {
     z-index: 2;
-    color:#F41b3b;
-    background-color:transparent;
-    border-color:#F41b3b;
+    color: #F41b3b;
+    background-color: transparent;
+    border-color: #F41b3b;
 }
 
 /* Custom Checkbox & Radio Button Styles */
@@ -238,21 +242,21 @@ button.close {
     margin-left: 0;
 }
 .checkbox-custom-label, .radio-custom-label {
-	position: relative;
-	width: 100%;
+    position: relative;
+    width: 100%;
 }
-.checkbox-custom + .checkbox-custom-label:before{
-	content: '';
-	background: #fff;
-	border: 2px solid #dae3ec;
-	display: inline-block;
-	vertical-align: middle;
-	width: 20px;
-	height: 20px;
-	border-radius:2px;
-	padding: 2px;
-	margin-right: 10px;
-	text-align: center;
+.checkbox-custom + .checkbox-custom-label:before {
+    content: '';
+    background: #fff;
+    border: 2px solid #dae3ec;
+    display: inline-block;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+    border-radius: 2px;
+    padding: 2px;
+    margin-right: 10px;
+    text-align: center;
 }
 
 ._adv_features_list label i {
@@ -276,17 +280,17 @@ button.close {
 }
 
 .checkbox-custom:checked + .checkbox-custom-label:before {
-    background: rgba(5, 175, 120,0.1);
+    background: rgba(5, 175, 120, 0.1);
     border-radius: 2px;
     border: none;
 }
 
 .checkbox-custom:checked + .checkbox-custom-label:after {
-    content:"\f058";
-    font-family:"Font Awesome 5 Free";
+    content: "\f058";
+    font-family: "Font Awesome 5 Free";
     position: absolute;
     left: 5px;
-    top:5px;
+    top: 5px;
     font-size: 10px;
     color: #05af78;
 }
@@ -296,28 +300,28 @@ button.close {
 }
 
 .radio-custom:checked + .radio-custom-label:before {
-    background:#F41b3b;
-    border-color:#F41b3b;
+    background: #F41b3b;
+    border-color: #F41b3b;
     box-shadow: inset 0px 0px 0px 4px #fff;
 }
 
-.company-brands label{
-    font-weight:normal;
-    color:#828f99;
-    font-size:15px;
+.company-brands label {
+    font-weight: normal;
+    color: #828f99;
+    font-size: 15px;
 }
 
 .checkbox-custom:focus + .checkbox-custom-label, 
 .radio-custom:focus + .radio-custom-label {
-    outline:none;
+    outline: none;
 }
 
-.company-brands input[type='checkbox']:focus{
-    outline:none;
+.company-brands input[type='checkbox']:focus {
+    outline: none;
 }
 
-.company-brands label:focus{
-    outline:none;
+.company-brands label:focus {
+    outline: none;
 }
 
 /* On/Off Switch Styles */
@@ -405,10 +409,9 @@ button.close {
 }
 
 /* Text styles */
-.text-dark{
-	color:#00438b;
+.text-dark {
+    color: #00438b;
 }
-.text-gray{
-	color:#e3ecfc;
+.text-gray {
+    color: #e3ecfc;
 }
-

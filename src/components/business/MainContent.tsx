@@ -30,6 +30,20 @@ export const MainContent = ({ business, isOwner }: MainContentProps) => {
       business.faqs
     ) : [];
 
+  // Transform reviews to match expected format
+  const transformedReviews = business.reviews?.map(review => ({
+    id: review.id,
+    rating: review.rating,
+    comment: review.review_text, // Map review_text to comment
+    created_at: review.created_at,
+    helpful_count: review.helpful_votes,
+    reply_count: review.reply_count,
+    user_id: review.user_id,
+    profiles: review.profiles,
+    review_responses: review.review_responses,
+    review_photos: review.review_photos
+  })) || [];
+
   return (
     <div className="lg:col-span-2 space-y-8">
       <AboutSection name={business.name} description={business.description || ''} />
@@ -43,7 +57,7 @@ export const MainContent = ({ business, isOwner }: MainContentProps) => {
       <FAQ businessId={business.id} questions={questionsList} />
       <ReviewSection 
         businessId={business.id} 
-        reviews={business.reviews || []} 
+        reviews={transformedReviews}
         isOwner={isOwner}
       />
     </div>

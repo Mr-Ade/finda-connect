@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BusinessCard } from "@/components/BusinessCard";
-import type { Business } from "@/types/business";
+import type { Business, BusinessHour } from "@/types/business";
 
 export const RecentlyViewedListings = () => {
   const { data: businesses, isLoading } = useQuery({
@@ -14,6 +14,13 @@ export const RecentlyViewedListings = () => {
           *,
           business_photos (
             photo_url
+          ),
+          business_hours (
+            id,
+            day_of_week,
+            open_time,
+            close_time,
+            is_closed
           )
         `)
         .limit(4)
@@ -24,7 +31,33 @@ export const RecentlyViewedListings = () => {
         throw error;
       }
 
-      return data as Business[];
+      // Transform the data to match Business type
+      const transformedData: Business[] = data.map(business => ({
+        ...business,
+        business_hours: business.business_hours as BusinessHour[],
+        amenities: business.amenities ? 
+          (typeof business.amenities === 'string' ? 
+            JSON.parse(business.amenities) : 
+            business.amenities) : {},
+        faqs: business.faqs ? 
+          (typeof business.faqs === 'string' ? 
+            JSON.parse(business.faqs) : 
+            business.faqs) : [],
+        delivery_info: business.delivery_info ? 
+          (typeof business.delivery_info === 'string' ? 
+            JSON.parse(business.delivery_info) : 
+            business.delivery_info) : undefined,
+        social_links: business.social_links ? 
+          (typeof business.social_links === 'string' ? 
+            JSON.parse(business.social_links) : 
+            business.social_links) : {},
+        business_photos: business.business_photos || [],
+        reviews: [],
+        is_open: business.is_open || false,
+        price_range: business.price_range || null
+      }));
+
+      return transformedData;
     }
   });
 
