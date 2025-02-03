@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import mapboxgl from 'mapbox-gl';
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 interface MapProps {
@@ -34,19 +35,22 @@ const getMapboxToken = async () => {
 };
 
 export const Map = ({ center, markers = [], onMapClick, className = "" }: MapProps) => {
+  const { toast } = useToast();
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const initMap = async () => {
       try {
+        setIsLoading(true);
         const token = await getMapboxToken();
         mapboxgl.accessToken = token;
         
         if (!mapRef.current) {
-          console.error("Map container ref not found");
-          return;
+          throw new Error("Map container ref not found");
         }
 
         const defaultCenter = center || { lat: 9.0820, lng: 8.6753 }; // Nigeria center
@@ -96,9 +100,18 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
         });
 
         console.log("Markers updated:", markers.length);
+        setError(null);
 
       } catch (error) {
         console.error("Error initializing map:", error);
+        setError(error instanceof Error ? error.message : 'Failed to initialize map');
+        toast({
+          title: "Map Error",
+          description: "There was an error loading the map. Please try again later.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -111,7 +124,26 @@ export const Map = ({ center, markers = [], onMapClick, className = "" }: MapPro
         mapInstanceRef.current.remove();
       }
     };
-  }, [center, markers, onMapClick]);
+  }, [center, markers, onMapClick, toast]);
+
+  if (isLoading) {
+    return (
+      <div className={`w-full h-full flex items-center justify-center bg-gray-100 ${className}`}>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={`w-full h-full flex items-center justify-center bg-gray-100 ${className}`}>
+        <div className="text-center text-gray-500">
+          <p>Unable to load map</p>
+          <p className="text-sm">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return <div ref={mapRef} className={`w-full h-full ${className}`} />;
 };

@@ -25,7 +25,7 @@ export const LocationInfo = () => {
     website: ""
   });
 
-  const [availableStates, setAvailableStates] = useState<{ name: string; code: string }[]>(
+  const [availableStates] = useState<{ name: string; code: string }[]>(
     getStatesByCountry("Nigeria")
   );
 
@@ -45,42 +45,44 @@ export const LocationInfo = () => {
     }));
   }, [locationContext]);
 
-  const handleLocationSelect = (lat: number, lng: number) => {
+  const handleLocationSelect = async (lat: number, lng: number) => {
     setCoordinates({ latitude: lat, longitude: lng });
     console.log("Location selected:", { lat, lng });
 
-    // Reverse geocoding using OpenCage API
-    fetch(`https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=155e6c1220b94de0a87f628b659b430b`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        if (data.results && data.results[0]) {
-          const components = data.results[0].components;
-          console.log("Reverse geocoding result:", components);
-          
-          setAddress(prev => ({
-            ...prev,
-            state: components.state || prev.state,
-            city: components.city || components.town || components.village || prev.city,
-            zip_code: components.postcode || prev.zip_code,
-            street: components.road ? 
-              `${components.road}${components.house_number ? `, ${components.house_number}` : ''}` : 
-              prev.street
-          }));
-        }
-      })
-      .catch(error => {
-        console.error("Error reverse geocoding:", error);
-        toast({
-          title: "Location Error",
-          description: "Could not fetch location details. Please enter them manually.",
-          variant: "destructive",
-        });
+    try {
+      // Reverse geocoding using OpenCage API
+      const response = await fetch(
+        `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=155e6c1220b94de0a87f628b659b430b`
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.results && data.results[0]) {
+        const components = data.results[0].components;
+        console.log("Reverse geocoding result:", components);
+        
+        setAddress(prev => ({
+          ...prev,
+          state: components.state || prev.state,
+          city: components.city || components.town || components.village || prev.city,
+          zip_code: components.postcode || prev.zip_code,
+          street: components.road ? 
+            `${components.road}${components.house_number ? `, ${components.house_number}` : ''}` : 
+            prev.street
+        }));
+      }
+    } catch (error) {
+      console.error("Error reverse geocoding:", error);
+      toast({
+        title: "Location Error",
+        description: "Could not fetch location details. Please enter them manually.",
+        variant: "destructive",
       });
+    }
   };
 
   const handleAddressChange = (field: string, value: string) => {
