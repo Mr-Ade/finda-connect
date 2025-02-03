@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { ListingInfo } from "@/components/listings/ListingInfo";
@@ -8,118 +8,20 @@ import { MenuItems } from "@/components/listings/MenuItems";
 import { WorkingHours } from "@/components/listings/WorkingHours";
 import { Amenities } from "@/components/listings/Amenities";
 import { SocialLinks } from "@/components/listings/SocialLinks";
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { BusinessFormProvider, useBusinessForm } from "@/contexts/BusinessFormContext";
-import { Loader2 } from "lucide-react";
-import type { Business } from "@/types/business";
+import { ListingFormHeader } from "@/components/listings/edit/ListingFormHeader";
+import { ListingFormActions } from "@/components/listings/edit/ListingFormActions";
+import { ListingDataLoader } from "@/components/listings/edit/ListingDataLoader";
 import type { Json } from "@/integrations/supabase/types";
 
 const EditListingForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { formData, updateFormData, isSubmitting, setIsSubmitting } = useBusinessForm();
+  const { formData, isSubmitting, setIsSubmitting } = useBusinessForm();
   const [progress, setProgress] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchListing = async () => {
-      try {
-        const { data: business, error } = await supabase
-          .from('businesses')
-          .select('*')
-          .eq('id', id)
-          .single();
-
-        if (error) throw error;
-
-        if (business) {
-          // Map business data to form data structure
-          updateFormData('name', business.name);
-          updateFormData('description', business.description || '');
-          updateFormData('category', business.category);
-          updateFormData('keywords', business.keywords || []);
-          updateFormData('address', business.address);
-          updateFormData('city', business.city);
-          updateFormData('state', business.state);
-          updateFormData('zipCode', business.zip_code);
-          updateFormData('phone', business.phone || '');
-          updateFormData('email', business.email || '');
-          updateFormData('website', business.website || '');
-          
-          // Cast JSON types to expected types
-          const amenities = business.amenities as Json[] || [];
-          updateFormData('amenities', amenities.map(item => ({
-            name: String(item),
-            available: true
-          })));
-
-          const workingHours = business.business_hours as Json[] || [];
-          updateFormData('workingHours', workingHours.map(hour => ({
-            dayOfWeek: Number((hour as any).dayOfWeek),
-            openTime: String((hour as any).openTime),
-            closeTime: String((hour as any).closeTime),
-            isClosed: Boolean((hour as any).isClosed)
-          })));
-
-          const menuItems = (business as any).menu_items || [];
-          updateFormData('menuItems', menuItems);
-
-          const socialLinks = business.social_links as { [key: string]: string } || {};
-          updateFormData('socialLinks', socialLinks);
-        }
-      } catch (error) {
-        console.error('Error fetching business:', error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch business details",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchListing();
-  }, [id, updateFormData, toast]);
-
-  const uploadImages = async (businessId: string) => {
-    const uploadPromises = [];
-    
-    if (formData.logo) {
-      const logoExt = formData.logo.name.split(".").pop();
-      const logoPath = `${businessId}/logo.${logoExt}`;
-      uploadPromises.push(
-        supabase.storage
-          .from("business-images")
-          .upload(logoPath, formData.logo)
-      );
-    }
-
-    if (formData.featuredImage) {
-      const featuredExt = formData.featuredImage.name.split(".").pop();
-      const featuredPath = `${businessId}/featured.${featuredExt}`;
-      uploadPromises.push(
-        supabase.storage
-          .from("business-images")
-          .upload(featuredPath, formData.featuredImage)
-      );
-    }
-
-    for (const [index, file] of formData.galleryImages.entries()) {
-      const ext = file.name.split(".").pop();
-      const path = `${businessId}/gallery-${index}.${ext}`;
-      uploadPromises.push(
-        supabase.storage
-          .from("business-images")
-          .upload(path, file)
-      );
-    }
-
-    return Promise.all(uploadPromises);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -222,13 +124,41 @@ const EditListingForm = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin" />
-      </div>
-    );
-  }
+  const uploadImages = async (businessId: string) => {
+    const uploadPromises = [];
+    
+    if (formData.logo) {
+      const logoExt = formData.logo.name.split(".").pop();
+      const logoPath = `${businessId}/logo.${logoExt}`;
+      uploadPromises.push(
+        supabase.storage
+          .from("business-images")
+          .upload(logoPath, formData.logo)
+      );
+    }
+
+    if (formData.featuredImage) {
+      const featuredExt = formData.featuredImage.name.split(".").pop();
+      const featuredPath = `${businessId}/featured.${featuredExt}`;
+      uploadPromises.push(
+        supabase.storage
+          .from("business-images")
+          .upload(featuredPath, formData.featuredImage)
+      );
+    }
+
+    for (const [index, file] of formData.galleryImages.entries()) {
+      const ext = file.name.split(".").pop();
+      const path = `${businessId}/gallery-${index}.${ext}`;
+      uploadPromises.push(
+        supabase.storage
+          .from("business-images")
+          .upload(path, file)
+      );
+    }
+
+    return Promise.all(uploadPromises);
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -239,25 +169,7 @@ const EditListingForm = () => {
       <WorkingHours />
       <Amenities />
       <SocialLinks />
-      
-      <div className="flex flex-col gap-4">
-        {progress > 0 && progress < 100 && (
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div 
-              className="bg-primary h-2.5 rounded-full transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-        )}
-        
-        <Button 
-          type="submit" 
-          disabled={isSubmitting}
-          className="w-full md:w-auto ml-auto"
-        >
-          {isSubmitting ? `Saving... ${progress}%` : "Save Changes"}
-        </Button>
-      </div>
+      <ListingFormActions isSubmitting={isSubmitting} progress={progress} />
     </form>
   );
 };
@@ -265,23 +177,11 @@ const EditListingForm = () => {
 const EditListing = () => {
   return (
     <DashboardLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold mb-2">Edit Listing</h1>
-        <nav className="text-sm breadcrumbs">
-          <ol className="flex gap-2 text-muted-foreground">
-            <li><a href="/">Home</a></li>
-            <li>•</li>
-            <li><a href="/dashboard">Dashboard</a></li>
-            <li>•</li>
-            <li><a href="/dashboard/listings">My Listings</a></li>
-            <li>•</li>
-            <li className="text-primary">Edit Listing</li>
-          </ol>
-        </nav>
-      </div>
-
       <BusinessFormProvider>
-        <EditListingForm />
+        <ListingDataLoader>
+          <ListingFormHeader isLoading={false} />
+          <EditListingForm />
+        </ListingDataLoader>
       </BusinessFormProvider>
     </DashboardLayout>
   );
