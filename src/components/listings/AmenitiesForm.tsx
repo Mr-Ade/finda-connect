@@ -1,8 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import { AmenityType, AMENITY_LABELS, DEFAULT_AMENITIES } from "@/types/amenities";
 import type { Amenities } from "@/types/amenities";
+import { useEffect } from "react";
 
 interface AmenitiesFormProps {
   amenities: Partial<Amenities>;
@@ -10,14 +12,41 @@ interface AmenitiesFormProps {
   disabled?: boolean;
 }
 
-export const AmenitiesForm = ({ amenities = {}, onChange, disabled = false }: AmenitiesFormProps) => {
+export const AmenitiesForm = ({ 
+  amenities = {}, 
+  onChange, 
+  disabled = false 
+}: AmenitiesFormProps) => {
+  const { toast } = useToast();
+
+  // Initialize with default amenities if none provided
+  useEffect(() => {
+    if (Object.keys(amenities).length === 0) {
+      onChange(DEFAULT_AMENITIES);
+    }
+  }, []);
+
   const handleAmenityChange = (amenity: AmenityType, checked: boolean) => {
-    const updatedAmenities = {
-      ...DEFAULT_AMENITIES,
-      ...amenities,
-      [amenity]: checked
-    };
-    onChange(updatedAmenities);
+    try {
+      const updatedAmenities = {
+        ...DEFAULT_AMENITIES,
+        ...amenities,
+        [amenity]: checked
+      };
+      onChange(updatedAmenities);
+
+      toast({
+        title: "Amenity updated",
+        description: `${AMENITY_LABELS[amenity]} has been ${checked ? 'added' : 'removed'}`,
+      });
+    } catch (error) {
+      console.error("Error updating amenity:", error);
+      toast({
+        title: "Error updating amenity",
+        description: "Please try again",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -38,10 +67,11 @@ export const AmenitiesForm = ({ amenities = {}, onChange, disabled = false }: Am
                   handleAmenityChange(amenity, checked as boolean)
                 }
                 disabled={disabled}
+                aria-label={AMENITY_LABELS[amenity]}
               />
               <Label 
                 htmlFor={`amenity-${amenity}`}
-                className="text-sm"
+                className="text-sm cursor-pointer"
               >
                 {AMENITY_LABELS[amenity]}
               </Label>
