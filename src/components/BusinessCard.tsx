@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import type { Amenities } from "@/types/amenities";
 
 interface BusinessCardProps {
   id: string;
@@ -22,12 +23,7 @@ interface BusinessCardProps {
   description?: string;
   tags?: string[];
   authorImage?: string;
-  amenities?: {
-    wifi: boolean;
-    parking: boolean;
-    petFriendly: boolean;
-    airConditioned: boolean;
-  };
+  amenities?: Partial<Amenities>;
   email?: string;
   authorId?: string;
 }

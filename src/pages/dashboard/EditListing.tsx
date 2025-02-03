@@ -6,7 +6,7 @@ import { LocationInfo } from "@/components/listings/LocationInfo";
 import { ImageGallery } from "@/components/listings/ImageGallery";
 import { MenuItems } from "@/components/listings/MenuItems";
 import { WorkingHours } from "@/components/listings/WorkingHours";
-import { Amenities } from "@/components/listings/Amenities";
+import { AmenitiesForm } from "@/components/listings/AmenitiesForm";
 import { SocialLinks } from "@/components/listings/SocialLinks";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
@@ -42,7 +42,7 @@ const EditListingForm = () => {
 
       setProgress(30);
 
-      // Update business record
+      // Update business record with amenities as JSONB
       const { error: businessError } = await supabase
         .from('businesses')
         .update({
@@ -57,51 +57,18 @@ const EditListingForm = () => {
           website: formData.website,
           email: formData.email,
           keywords: formData.keywords,
-          amenities: formData.amenities.map(a => a.name),
+          amenities: formData.amenities,
           business_hours: formData.workingHours.map(h => ({
             dayOfWeek: h.dayOfWeek,
             openTime: h.openTime,
             closeTime: h.closeTime,
             isClosed: h.isClosed
-          })) as Json,
-          social_links: formData.socialLinks as Json
+          })),
+          social_links: formData.socialLinks
         })
         .eq('id', id);
 
       if (businessError) throw businessError;
-
-      setProgress(50);
-
-      // Upload new images if any
-      if (formData.logo || formData.featuredImage || formData.galleryImages.length > 0) {
-        await uploadImages(id!);
-      }
-
-      setProgress(70);
-
-      // Update working hours
-      if (formData.workingHours.length > 0) {
-        // First delete existing hours
-        await supabase
-          .from('business_hours')
-          .delete()
-          .eq('business_id', id);
-
-        // Then insert new hours
-        const { error: hoursError } = await supabase
-          .from('business_hours')
-          .insert(
-            formData.workingHours.map(hour => ({
-              business_id: id,
-              day_of_week: hour.dayOfWeek,
-              open_time: hour.openTime,
-              close_time: hour.closeTime,
-              is_closed: hour.isClosed,
-            }))
-          );
-
-        if (hoursError) throw hoursError;
-      }
 
       setProgress(90);
 
@@ -124,42 +91,6 @@ const EditListingForm = () => {
     }
   };
 
-  const uploadImages = async (businessId: string) => {
-    const uploadPromises = [];
-    
-    if (formData.logo) {
-      const logoExt = formData.logo.name.split(".").pop();
-      const logoPath = `${businessId}/logo.${logoExt}`;
-      uploadPromises.push(
-        supabase.storage
-          .from("business-images")
-          .upload(logoPath, formData.logo)
-      );
-    }
-
-    if (formData.featuredImage) {
-      const featuredExt = formData.featuredImage.name.split(".").pop();
-      const featuredPath = `${businessId}/featured.${featuredExt}`;
-      uploadPromises.push(
-        supabase.storage
-          .from("business-images")
-          .upload(featuredPath, formData.featuredImage)
-      );
-    }
-
-    for (const [index, file] of formData.galleryImages.entries()) {
-      const ext = file.name.split(".").pop();
-      const path = `${businessId}/gallery-${index}.${ext}`;
-      uploadPromises.push(
-        supabase.storage
-          .from("business-images")
-          .upload(path, file)
-      );
-    }
-
-    return Promise.all(uploadPromises);
-  };
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <ListingInfo />
@@ -167,7 +98,10 @@ const EditListingForm = () => {
       <ImageGallery />
       <MenuItems />
       <WorkingHours />
-      <Amenities />
+      <AmenitiesForm 
+        amenities={formData.amenities} 
+        onChange={(amenities) => formData.updateFormData('amenities', amenities)}
+      />
       <SocialLinks />
       <ListingFormActions isSubmitting={isSubmitting} progress={progress} />
     </form>

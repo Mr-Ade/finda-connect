@@ -21,9 +21,7 @@ export type AmenityType =
   | 'alcohol'
   | 'staffWearsMasks';
 
-export interface Amenities {
-  [key in AmenityType]: boolean;
-}
+export type Amenities = Record<AmenityType, boolean>;
 
 export const DEFAULT_AMENITIES: Amenities = {
   wifi: false,

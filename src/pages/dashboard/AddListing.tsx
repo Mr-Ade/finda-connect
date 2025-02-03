@@ -6,57 +6,19 @@ import { LocationInfo } from "@/components/listings/LocationInfo";
 import { ImageGallery } from "@/components/listings/ImageGallery";
 import { MenuItems } from "@/components/listings/MenuItems";
 import { WorkingHours } from "@/components/listings/WorkingHours";
-import { Amenities } from "@/components/listings/Amenities";
+import { AmenitiesForm } from "@/components/listings/AmenitiesForm";
 import { SocialLinks } from "@/components/listings/SocialLinks";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { BusinessFormProvider, useBusinessForm } from "@/contexts/BusinessFormContext";
+import { ListingFormActions } from "@/components/listings/edit/ListingFormActions";
 
 const AddListingForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { formData, isSubmitting, setIsSubmitting } = useBusinessForm();
   const [progress, setProgress] = useState(0);
-
-  const uploadImages = async (businessId: string) => {
-    const uploadPromises = [];
-    
-    // Upload logo if exists
-    if (formData.logo) {
-      const logoExt = formData.logo.name.split(".").pop();
-      const logoPath = `${businessId}/logo.${logoExt}`;
-      uploadPromises.push(
-        supabase.storage
-          .from("business-images")
-          .upload(logoPath, formData.logo)
-      );
-    }
-
-    // Upload featured image if exists
-    if (formData.featuredImage) {
-      const featuredExt = formData.featuredImage.name.split(".").pop();
-      const featuredPath = `${businessId}/featured.${featuredExt}`;
-      uploadPromises.push(
-        supabase.storage
-          .from("business-images")
-          .upload(featuredPath, formData.featuredImage)
-      );
-    }
-
-    // Upload gallery images
-    for (const [index, file] of formData.galleryImages.entries()) {
-      const ext = file.name.split(".").pop();
-      const path = `${businessId}/gallery-${index}.${ext}`;
-      uploadPromises.push(
-        supabase.storage
-          .from("business-images")
-          .upload(path, file)
-      );
-    }
-
-    return Promise.all(uploadPromises);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +39,7 @@ const AddListingForm = () => {
 
       setProgress(10);
 
-      // Insert business record
+      // Insert business record with amenities as JSONB
       const { data: business, error: businessError } = await supabase
         .from('businesses')
         .insert({
@@ -92,6 +54,7 @@ const AddListingForm = () => {
           phone: formData.phone,
           website: formData.website,
           email: formData.email,
+          amenities: formData.amenities
         })
         .select()
         .single();
@@ -170,27 +133,12 @@ const AddListingForm = () => {
       <ImageGallery />
       <MenuItems />
       <WorkingHours />
-      <Amenities />
+      <AmenitiesForm 
+        amenities={formData.amenities} 
+        onChange={(amenities) => formData.updateFormData('amenities', amenities)}
+      />
       <SocialLinks />
-      
-      <div className="flex flex-col gap-4">
-        {progress > 0 && progress < 100 && (
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div 
-              className="bg-primary h-2.5 rounded-full transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-        )}
-        
-        <Button 
-          type="submit" 
-          disabled={isSubmitting}
-          className="w-full md:w-auto ml-auto"
-        >
-          {isSubmitting ? `Saving... ${progress}%` : "Submit & Preview"}
-        </Button>
-      </div>
+      <ListingFormActions isSubmitting={isSubmitting} progress={progress} />
     </form>
   );
 };

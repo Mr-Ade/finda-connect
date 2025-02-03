@@ -2,10 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { AmenityType, AMENITY_LABELS, DEFAULT_AMENITIES } from "@/types/amenities";
+import type { Amenities } from "@/types/amenities";
 
 interface AmenitiesFormProps {
-  amenities: Partial<Record<AmenityType, boolean>>;
-  onChange: (amenities: Record<AmenityType, boolean>) => void;
+  amenities: Partial<Amenities>;
+  onChange: (amenities: Amenities) => void;
   disabled?: boolean;
 }
 

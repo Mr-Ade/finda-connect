@@ -9,9 +9,12 @@ import { BusinessStats } from "./components/BusinessStats";
 import { BusinessInfo } from "./components/BusinessInfo";
 import { BusinessFooter } from "./components/BusinessFooter";
 import type { Business } from "@/types/business";
+import type { Amenities } from "@/types/amenities";
 
 interface ListingCardProps {
-  business: Business;
+  business: Business & {
+    amenities?: Partial<Amenities>;
+  };
 }
 
 export const ListingCard = ({ business }: ListingCardProps) => {
