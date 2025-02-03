@@ -2,10 +2,12 @@
     display: table;
     padding-left: 0;
     border-radius: 4px;
-    margin:20px auto 0 !important;
+    margin: 20px auto 0 !important;
 }
 
-.pagination>li>a, .pagination>li>a, .pagination>li>span {
+.pagination > li > a, 
+.pagination > li > a, 
+.pagination > li > span {
     position: relative;
     font-weight: 500;
     margin: 0;
@@ -14,48 +16,50 @@
     text-decoration: none;
     background-color: transparent;
     border-radius: 0;
-    padding:0.8rem 1rem;
-    font-size:0.925rem;
+    padding: 0.8rem 1rem;
+    font-size: 0.925rem;
     line-height: 1;
     text-align: center;
     border: none;
     border-bottom: 1px solid #ecedf1;
 }
 
-.pagination>.active>a,
-.pagination>.active>a:focus,
-.pagination>.active>a:hover,
-.pagination>.active>span,
-.pagination>.active>span:focus,
-.pagination>.active>span:hover,
-.pagination>li>a:focus,
-.pagination>li>a:hover {
+.pagination > .active > a,
+.pagination > .active > a:focus,
+.pagination > .active > a:hover,
+.pagination > .active > span,
+.pagination > .active > span:focus,
+.pagination > .active > span:hover,
+.pagination > li > a:focus,
+.pagination > li > a:hover {
     z-index: 2;
-    color:#F41b3b;
+    color: #F41b3b;
     cursor: pointer;
-    background-color:transparent;
-    border-color#F41b3b;
+    background-color: transparent;
+    border-color: #F41b3b;
 }
 
 .pagination li:first-child a {
-    background:transparent;
-    border:none;
-    border-radius:0% !important;
-    color:#172228;
+    background: transparent;
+    border: none;
+    border-radius: 0% !important;
+    color: #172228;
 }
 
 .pagination li:last-child a {
-    background:transparent;
-    border:none;
-    border-radius:0% !important;
-    color:#172228;
+    background: transparent;
+    border: none;
+    border-radius: 0% !important;
+    color: #172228;
 }
-.pagination>li {
+
+.pagination > li {
     display: inline;
 }
+
 .page-item.active .page-link {
     z-index: 2;
-    color:#F41b3b;
-    background-color:transparent;
-    border-color:#F41b3b;
+    color: #F41b3b;
+    background-color: transparent;
+    border-color: #F41b3b;
 }

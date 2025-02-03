@@ -99,7 +99,7 @@ const RecentListings = () => {
               location={`${business.city}, ${business.state}`}
               description={business.description}
               isFeatured={business.status === 'approved'}
-              amenities={business.amenities}
+              amenities={business.amenities as any}
               email={business.email}
               authorId={business.owner_id}
             />

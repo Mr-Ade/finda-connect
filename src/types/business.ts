@@ -117,4 +117,6 @@ export interface Business {
   is_open?: boolean;
   price_range?: string | null;
   claimed?: boolean;
+  rating?: number;
+  review_count?: number;
 }
