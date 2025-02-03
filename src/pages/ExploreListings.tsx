@@ -82,7 +82,7 @@ const ExploreListings = () => {
         business_hours: business.business_hours ? 
           (typeof business.business_hours === 'string' ? 
             JSON.parse(business.business_hours) : 
-            business.business_hours) as BusinessHour[],
+            business.business_hours) : [],
         amenities: business.amenities ? 
           (typeof business.amenities === 'string' ? 
             JSON.parse(business.amenities) : 
