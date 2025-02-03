@@ -4,38 +4,69 @@ import { Label } from "@/components/ui/label";
 import { Image, Plus, X } from "lucide-react";
 import { useBusinessForm } from "@/contexts/BusinessFormContext";
 import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { useImageUpload } from "@/hooks/use-image-upload";
 
 export const ImageGallery = () => {
   const { formData, updateFormData } = useBusinessForm();
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [featuredPreview, setFeaturedPreview] = useState<string | null>(null);
+  const { toast } = useToast();
+  const { uploadImage, isUploading } = useImageUpload("business-images");
 
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const validateImage = (file: File) => {
+    const maxSize = 800 * 1024; // 800KB
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    
+    if (!validTypes.includes(file.type)) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload JPEG, PNG or WebP images only",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    if (file.size > maxSize) {
+      toast({
+        title: "File too large",
+        description: "Image must be less than 800KB",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    return true;
+  };
+
+  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (file && validateImage(file)) {
       updateFormData('logo', file);
       const url = URL.createObjectURL(file);
       setLogoPreview(url);
     }
   };
 
-  const handleFeaturedImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFeaturedImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (file && validateImage(file)) {
       updateFormData('featuredImage', file);
       const url = URL.createObjectURL(file);
       setFeaturedPreview(url);
     }
   };
 
-  const handleGalleryImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleGalleryImagesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    updateFormData('galleryImages', files);
-
-    // Create preview URLs
-    const urls = files.map(file => URL.createObjectURL(file));
-    setPreviewUrls(urls);
+    const validFiles = files.filter(validateImage);
+    
+    if (validFiles.length) {
+      updateFormData('galleryImages', validFiles);
+      const urls = validFiles.map(file => URL.createObjectURL(file));
+      setPreviewUrls(prev => [...prev, ...urls]);
+    }
   };
 
   const removeGalleryImage = (index: number) => {
@@ -65,7 +96,6 @@ export const ImageGallery = () => {
     }
   };
 
-  // Cleanup URLs when component unmounts
   useEffect(() => {
     return () => {
       previewUrls.forEach(url => URL.revokeObjectURL(url));
@@ -89,9 +119,10 @@ export const ImageGallery = () => {
                 <input 
                   type="file" 
                   className="hidden" 
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
                   onChange={handleLogoChange}
                   id="logo-upload"
+                  disabled={isUploading}
                 />
                 <label htmlFor="logo-upload" className="cursor-pointer">
                   {logoPreview ? (
@@ -106,7 +137,7 @@ export const ImageGallery = () => {
                     <div className="text-gray-500">
                       <Image className="w-6 h-6 mx-auto mb-2" />
                       <p className="text-sm">Click to upload</p>
-                      <p className="text-xs">Maximum file size: 2 MB</p>
+                      <p className="text-xs">Maximum file size: 800KB</p>
                     </div>
                   )}
                 </label>
@@ -116,6 +147,7 @@ export const ImageGallery = () => {
                   type="button"
                   onClick={removeLogo}
                   className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                  disabled={isUploading}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -130,9 +162,10 @@ export const ImageGallery = () => {
                 <input 
                   type="file" 
                   className="hidden" 
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
                   onChange={handleFeaturedImageChange}
                   id="featured-upload"
+                  disabled={isUploading}
                 />
                 <label htmlFor="featured-upload" className="cursor-pointer">
                   {featuredPreview ? (
@@ -147,7 +180,7 @@ export const ImageGallery = () => {
                     <div className="text-gray-500">
                       <Image className="w-6 h-6 mx-auto mb-2" />
                       <p className="text-sm">Click to upload</p>
-                      <p className="text-xs">Maximum file size: 2 MB</p>
+                      <p className="text-xs">Maximum file size: 800KB</p>
                     </div>
                   )}
                 </label>
@@ -157,6 +190,7 @@ export const ImageGallery = () => {
                   type="button"
                   onClick={removeFeaturedImage}
                   className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                  disabled={isUploading}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -170,16 +204,17 @@ export const ImageGallery = () => {
               <input 
                 type="file" 
                 className="hidden" 
-                accept="image/*" 
+                accept="image/jpeg,image/png,image/webp"
                 multiple
                 onChange={handleGalleryImagesChange}
                 id="gallery-upload"
+                disabled={isUploading}
               />
               <label htmlFor="gallery-upload" className="cursor-pointer">
                 <div className="text-gray-500">
                   <Image className="w-6 h-6 mx-auto mb-2" />
                   <p className="text-sm">Click to upload</p>
-                  <p className="text-xs">Maximum file size: 2 MB</p>
+                  <p className="text-xs">Maximum file size: 800KB</p>
                 </div>
               </label>
             </div>
@@ -199,6 +234,7 @@ export const ImageGallery = () => {
                   type="button"
                   onClick={() => removeGalleryImage(index)}
                   className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  disabled={isUploading}
                 >
                   <X className="w-4 h-4" />
                 </button>
