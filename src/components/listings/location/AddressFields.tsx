@@ -11,6 +11,9 @@ interface AddressFieldsProps {
     city: string;
     state: string;
     zip_code: string;
+    phone: string;
+    email: string;
+    website: string;
   };
   availableStates: {
     name: string;
@@ -41,10 +44,6 @@ export const AddressFields = ({ address, availableStates, onAddressChange }: Add
       try {
         setLoading(true);
         
-        // First check if we have an authenticated session
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        // Get state ID
         const { data: stateData, error: stateError } = await supabase
           .from('states')
           .select('id')
@@ -97,22 +96,8 @@ export const AddressFields = ({ address, availableStates, onAddressChange }: Add
     fetchCities();
   }, [address.state, toast]);
 
-  console.log("Current state:", address.state);
-  console.log("Available states:", availableStates);
-  console.log("Available cities:", cities);
-
   return (
-    <>
-      <div className="space-y-2">
-        <Label htmlFor="street">Street Address</Label>
-        <Input 
-          id="street"
-          value={address.street}
-          onChange={(e) => onAddressChange('street', e.target.value)}
-          placeholder="Enter street address"
-        />
-      </div>
-
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="space-y-2">
         <Label htmlFor="state">State</Label>
         <Select
@@ -152,8 +137,18 @@ export const AddressFields = ({ address, availableStates, onAddressChange }: Add
         </Select>
       </div>
 
+      <div className="space-y-2 md:col-span-2">
+        <Label htmlFor="street">Address</Label>
+        <Input 
+          id="street"
+          value={address.street}
+          onChange={(e) => onAddressChange('street', e.target.value)}
+          placeholder="Enter street address"
+        />
+      </div>
+
       <div className="space-y-2">
-        <Label htmlFor="zip_code">ZIP Code</Label>
+        <Label htmlFor="zip_code">Zip Code</Label>
         <Input 
           id="zip_code"
           value={address.zip_code}
@@ -161,6 +156,39 @@ export const AddressFields = ({ address, availableStates, onAddressChange }: Add
           placeholder="Enter ZIP code"
         />
       </div>
-    </>
+
+      <div className="space-y-2">
+        <Label htmlFor="phone">Mobile</Label>
+        <Input 
+          id="phone"
+          type="tel"
+          value={address.phone}
+          onChange={(e) => onAddressChange('phone', e.target.value)}
+          placeholder="Enter mobile number"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
+        <Input 
+          id="email"
+          type="email"
+          value={address.email}
+          onChange={(e) => onAddressChange('email', e.target.value)}
+          placeholder="Enter email address"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="website">Website</Label>
+        <Input 
+          id="website"
+          type="url"
+          value={address.website}
+          onChange={(e) => onAddressChange('website', e.target.value)}
+          placeholder="Enter website URL"
+        />
+      </div>
+    </div>
   );
 };
