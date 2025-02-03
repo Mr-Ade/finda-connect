@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Star, Clock, CheckCircle, Image } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, Clock, CheckCircle, Image, ImageOff, Loader } from "lucide-react";
 import type { Business, BusinessHour } from "@/types/business";
 import { useState } from "react";
 
@@ -107,12 +107,21 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
 
   if (isLoading) {
     return (
-      <div className="h-[400px] bg-gray-100 animate-pulse"></div>
+      <div className="h-[400px] bg-gray-100 animate-pulse flex items-center justify-center">
+        <Loader className="w-8 h-8 animate-spin text-gray-400" />
+      </div>
     );
   }
 
   if (!business) {
-    return null;
+    return (
+      <div className="h-[400px] bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <ImageOff className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+          <p className="text-gray-500">Business not found</p>
+        </div>
+      </div>
+    );
   }
 
   const photos = business.business_photos || [];
@@ -147,9 +156,11 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
     <div className="relative">
       {/* Hero Image Gallery */}
       <div 
-        className="h-[500px] w-full bg-cover bg-center relative"
+        className="h-[500px] w-full bg-cover bg-center relative group"
         style={{ 
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${photos[currentSlide]?.photo_url || business.hero_image || defaultImage})` 
+          backgroundImage: photos[currentSlide]?.photo_url ? 
+            `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${photos[currentSlide].photo_url})` :
+            `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${business.hero_image || defaultImage})`
         }}
       >
         {/* Navigation Arrows */}
@@ -157,13 +168,13 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
           <>
             <button 
               onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white transition-colors"
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white transition-colors opacity-0 group-hover:opacity-100"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
             <button 
               onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white transition-colors"
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white transition-colors opacity-0 group-hover:opacity-100"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
@@ -183,13 +194,17 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
         <div className="container mx-auto h-full flex flex-col justify-end pb-8">
           <div className="flex items-end gap-6">
             {/* Business Logo */}
-            {business.owner?.avatar_url && (
+            {business.owner?.avatar_url ? (
               <div className="w-24 h-24 rounded-lg overflow-hidden border-4 border-white shadow-lg mb-4">
                 <img 
                   src={business.owner.avatar_url} 
                   alt={`${business.name} logo`}
                   className="w-full h-full object-cover"
                 />
+              </div>
+            ) : (
+              <div className="w-24 h-24 rounded-lg overflow-hidden border-4 border-white shadow-lg mb-4 bg-gray-200 flex items-center justify-center">
+                <ImageOff className="w-8 h-8 text-gray-400" />
               </div>
             )}
 

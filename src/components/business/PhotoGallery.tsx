@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Image, Plus, X, Video, Store, Coffee, Building2, User } from "lucide-react";
+import { Image, Plus, X, Video, Store, Coffee, Building2, User, Loader, ImageOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -34,7 +34,7 @@ export const PhotoGallery = ({ businessId, isOwner }: PhotoGalleryProps) => {
   const [selectedCategory, setSelectedCategory] = useState<PhotoCategory>('all');
   const { toast } = useToast();
   
-  const { data: photos, refetch } = useQuery({
+  const { data: photos, isLoading, error, refetch } = useQuery({
     queryKey: ["business-photos", businessId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -156,6 +156,29 @@ export const PhotoGallery = ({ businessId, isOwner }: PhotoGalleryProps) => {
     { id: 'menu', label: 'Food & Drinks', icon: Coffee },
   ];
 
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="p-6 flex items-center justify-center min-h-[300px]">
+          <Loader className="w-8 h-8 animate-spin text-gray-400" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="p-6 flex items-center justify-center min-h-[300px]">
+          <div className="text-center">
+            <ImageOff className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+            <p className="text-gray-500">Failed to load photos</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardContent className="p-6">
@@ -180,8 +203,17 @@ export const PhotoGallery = ({ businessId, isOwner }: PhotoGalleryProps) => {
                   asChild
                 >
                   <span>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add photos & videos
+                    {uploading ? (
+                      <>
+                        <Loader className="w-4 h-4 mr-2 animate-spin" />
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add photos & videos
+                      </>
+                    )}
                   </span>
                 </Button>
               </label>
