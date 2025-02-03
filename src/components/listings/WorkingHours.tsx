@@ -7,11 +7,14 @@ import { useBusinessForm } from "@/contexts/BusinessFormContext";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { formatTimeDisplay, validateTimeRange, generateTimeOptions } from "@/lib/utils/timeUtils";
 
 const days = [
   "Monday", "Tuesday", "Wednesday", "Thursday",
   "Friday", "Saturday", "Sunday"
 ];
+
+const timeOptions = generateTimeOptions();
 
 export const WorkingHours = () => {
   const { formData, updateFormData } = useBusinessForm();
@@ -23,11 +26,24 @@ export const WorkingHours = () => {
       setLoading(true);
       const updatedHours = [...(formData.workingHours || [])];
       const dayIndex = updatedHours.findIndex(h => h.dayOfWeek === day);
+      const currentHours = updatedHours[dayIndex];
 
-      // Validate time format
-      const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
-      if (!timeRegex.test(value)) {
-        throw new Error("Invalid time format");
+      // Get the other time value for validation
+      const otherTime = type === 'open' 
+        ? currentHours?.closeTime 
+        : currentHours?.openTime;
+
+      // Validate time range if both times are set
+      if (otherTime && !validateTimeRange(
+        type === 'open' ? value : otherTime,
+        type === 'close' ? value : otherTime
+      )) {
+        toast({
+          title: "Invalid time range",
+          description: "Opening time must be before closing time",
+          variant: "destructive"
+        });
+        return;
       }
 
       if (dayIndex === -1) {
@@ -82,9 +98,14 @@ export const WorkingHours = () => {
       }
 
       updateFormData('workingHours', updatedHours);
+      
+      toast({
+        title: "Status updated",
+        description: `Business is now ${updatedHours[dayIndex]?.isClosed ? 'closed' : 'open'} on ${days[day]}`
+      });
     } catch (error) {
       toast({
-        title: "Error updating hours",
+        title: "Error updating status",
         description: "Failed to update business hours",
         variant: "destructive"
       });
@@ -101,12 +122,6 @@ export const WorkingHours = () => {
       isClosed: false
     };
   };
-
-  const timeOptions = Array.from({ length: 24 * 4 }, (_, i) => {
-    const hour = Math.floor(i / 4);
-    const minute = (i % 4) * 15;
-    return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-  });
 
   return (
     <Card>
@@ -125,12 +140,14 @@ export const WorkingHours = () => {
                 disabled={getHoursForDay(index).isClosed || loading}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Opening Time" />
+                  <SelectValue placeholder="Opening Time">
+                    {formatTimeDisplay(getHoursForDay(index).openTime)}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {timeOptions.map((time) => (
                     <SelectItem key={time} value={time}>
-                      {time}
+                      {formatTimeDisplay(time)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -143,12 +160,14 @@ export const WorkingHours = () => {
                 disabled={getHoursForDay(index).isClosed || loading}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Closing Time" />
+                  <SelectValue placeholder="Closing Time">
+                    {formatTimeDisplay(getHoursForDay(index).closeTime)}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {timeOptions.map((time) => (
                     <SelectItem key={time} value={time}>
-                      {time}
+                      {formatTimeDisplay(time)}
                     </SelectItem>
                   ))}
                 </SelectContent>
