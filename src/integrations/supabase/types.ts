@@ -799,6 +799,7 @@ export type Database = {
           id: string
           image_url: string | null
           name: string
+          order_index: number | null
           price: number
           updated_at: string
         }
@@ -810,6 +811,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           name: string
+          order_index?: number | null
           price: number
           updated_at?: string
         }
@@ -821,6 +823,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           name?: string
+          order_index?: number | null
           price?: number
           updated_at?: string
         }
