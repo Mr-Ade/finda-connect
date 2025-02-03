@@ -14,35 +14,10 @@ import { BusinessFormProvider, useBusinessForm } from "@/contexts/BusinessFormCo
 import { ListingFormActions } from "@/components/listings/edit/ListingFormActions";
 import type { Json } from "@/integrations/supabase/types";
 
-const uploadImages = async (files: File[], bucket: string) => {
-  const uploadedUrls: string[] = [];
-  
-  for (const file of files) {
-    const fileExt = file.name.split('.').pop();
-    const filePath = `${crypto.randomUUID()}.${fileExt}`;
-
-    const { error: uploadError, data } = await supabase.storage
-      .from(bucket)
-      .upload(filePath, file);
-
-    if (uploadError) {
-      throw uploadError;
-    }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(filePath);
-
-    uploadedUrls.push(publicUrl);
-  }
-
-  return uploadedUrls;
-};
-
 const AddListingForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { formData, isSubmitting, setIsSubmitting } = useBusinessForm();
+  const { formData, updateFormData, isSubmitting, setIsSubmitting } = useBusinessForm();
   const [progress, setProgress] = useState(0);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,9 +37,9 @@ const AddListingForm = () => {
         return;
       }
 
-      setProgress(10);
+      setProgress(30);
 
-      // Insert business record with amenities as JSONB
+      // Insert business record
       const { data: business, error: businessError } = await supabase
         .from('businesses')
         .insert({
@@ -93,63 +68,6 @@ const AddListingForm = () => {
         .single();
 
       if (businessError) throw businessError;
-
-      setProgress(30);
-
-      // Upload images
-      if (formData.galleryImages.length > 0) {
-        const imageUrls = await uploadImages(formData.galleryImages, 'business-images');
-        
-        const { error: photosError } = await supabase
-          .from('business_photos')
-          .insert(
-            imageUrls.map(url => ({
-              business_id: business.id,
-              photo_url: url
-            }))
-          );
-
-        if (photosError) throw photosError;
-      }
-
-      setProgress(50);
-
-      // Insert working hours
-      if (formData.workingHours.length > 0) {
-        const { error: hoursError } = await supabase
-          .from('business_hours')
-          .insert(
-            formData.workingHours.map(hour => ({
-              business_id: business.id,
-              day_of_week: hour.dayOfWeek,
-              open_time: hour.openTime,
-              close_time: hour.closeTime,
-              is_closed: hour.isClosed,
-            }))
-          );
-
-        if (hoursError) throw hoursError;
-      }
-
-      setProgress(70);
-
-      // Insert menu items
-      if (formData.menuItems.length > 0) {
-        const { error: menuError } = await supabase
-          .from('menu_items')
-          .insert(
-            formData.menuItems.map(item => ({
-              business_id: business.id,
-              name: item.name,
-              description: item.description,
-              price: item.price,
-              category: item.category,
-              image_url: item.imageUrl,
-            }))
-          );
-
-        if (menuError) throw menuError;
-      }
 
       setProgress(90);
 
@@ -181,7 +99,7 @@ const AddListingForm = () => {
       <WorkingHours />
       <AmenitiesForm 
         amenities={formData.amenities} 
-        onChange={(amenities) => formData.amenities = amenities}
+        onChange={(amenities) => updateFormData('amenities', amenities)}
       />
       <SocialLinks />
       <ListingFormActions isSubmitting={isSubmitting} progress={progress} />

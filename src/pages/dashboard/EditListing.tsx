@@ -20,7 +20,7 @@ const EditListingForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { formData, isSubmitting, setIsSubmitting } = useBusinessForm();
+  const { formData, updateFormData, isSubmitting, setIsSubmitting } = useBusinessForm();
   const [progress, setProgress] = useState(0);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -100,7 +100,7 @@ const EditListingForm = () => {
       <WorkingHours />
       <AmenitiesForm 
         amenities={formData.amenities} 
-        onChange={(amenities) => formData.amenities = amenities}
+        onChange={(amenities) => updateFormData('amenities', amenities)}
       />
       <SocialLinks />
       <ListingFormActions isSubmitting={isSubmitting} progress={progress} />
