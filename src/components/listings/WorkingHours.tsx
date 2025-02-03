@@ -9,7 +9,7 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { formatTimeDisplay, validateTimeRange, generateTimeOptions } from "@/lib/utils/timeUtils";
 
-const days = [
+const DAYS = [
   "Monday", "Tuesday", "Wednesday", "Thursday",
   "Friday", "Saturday", "Sunday"
 ];
@@ -28,12 +28,10 @@ export const WorkingHours = () => {
       const dayIndex = updatedHours.findIndex(h => h.dayOfWeek === day);
       const currentHours = updatedHours[dayIndex];
 
-      // Get the other time value for validation
       const otherTime = type === 'open' 
         ? currentHours?.closeTime 
         : currentHours?.openTime;
 
-      // Validate time range if both times are set
       if (otherTime && !validateTimeRange(
         type === 'open' ? value : otherTime,
         type === 'close' ? value : otherTime
@@ -101,7 +99,7 @@ export const WorkingHours = () => {
       
       toast({
         title: "Status updated",
-        description: `Business is now ${updatedHours[dayIndex]?.isClosed ? 'closed' : 'open'} on ${days[day]}`
+        description: `Business is now ${updatedHours[dayIndex]?.isClosed ? 'closed' : 'open'} on ${DAYS[day]}`
       });
     } catch (error) {
       toast({
@@ -130,7 +128,7 @@ export const WorkingHours = () => {
         <h3 className="font-medium">Working Hours</h3>
       </CardHeader>
       <CardContent className="space-y-4">
-        {days.map((day, index) => (
+        {DAYS.map((day, index) => (
           <div key={day} className="grid grid-cols-12 gap-4 items-center">
             <Label className="col-span-2">{day}</Label>
             <div className="col-span-5">
@@ -196,7 +194,7 @@ export const WorkingHours = () => {
             id="24hours"
             checked={formData.workingHours?.every(h => !h.isClosed)}
             onCheckedChange={(checked) => {
-              const updatedHours = days.map((_, index) => ({
+              const updatedHours = DAYS.map((_, index) => ({
                 dayOfWeek: index,
                 openTime: "00:00",
                 closeTime: "23:59",

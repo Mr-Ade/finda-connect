@@ -4,17 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Map } from "@/components/Map";
 import { Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Skeleton } from "@/components/ui/skeleton";
-
-const DAYS = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
+import { WorkingHoursDisplay } from "./WorkingHoursDisplay";
 
 export const BusinessHours = ({ businessId, business }: { businessId: string, business?: any }) => {
   const { toast } = useToast();
@@ -41,25 +31,6 @@ export const BusinessHours = ({ businessId, business }: { businessId: string, bu
       }
     },
   });
-
-  const formatTime = (time: string) => {
-    return new Date(`2000-01-01T${time}`).toLocaleTimeString([], {
-      hour: 'numeric',
-      minute: '2-digit',
-    });
-  };
-
-  const isOpen = (dayHours: any) => {
-    if (!dayHours || dayHours.is_closed) return false;
-    
-    const now = new Date();
-    const currentDay = now.getDay();
-    const currentTime = now.toLocaleTimeString('en-US', { hour12: false });
-    
-    return dayHours.day_of_week === currentDay && 
-           currentTime >= dayHours.open_time && 
-           currentTime <= dayHours.close_time;
-  };
 
   return (
     <Card className="p-6">
@@ -97,42 +68,7 @@ export const BusinessHours = ({ businessId, business }: { businessId: string, bu
 
         {/* Hours Section */}
         <div className="space-y-4">
-          {isLoading ? (
-            Array(7).fill(0).map((_, i) => (
-              <div key={i} className="flex justify-between items-center">
-                <Skeleton className="h-4 w-20" />
-                <Skeleton className="h-4 w-32" />
-              </div>
-            ))
-          ) : (
-            DAYS.map((day, index) => {
-              const dayHours = hours?.find((h) => h.day_of_week === index);
-              const isCurrentlyOpen = isOpen(dayHours);
-              
-              return (
-                <div
-                  key={day}
-                  className="flex justify-between items-center"
-                >
-                  <span className="font-medium w-32">{day}</span>
-                  <span className="text-gray-600">
-                    {dayHours?.is_closed ? (
-                      "Closed"
-                    ) : dayHours ? (
-                      <span>
-                        {formatTime(dayHours.open_time)} - {formatTime(dayHours.close_time)}
-                        {isCurrentlyOpen && (
-                          <span className="ml-2 text-green-600">Open now</span>
-                        )}
-                      </span>
-                    ) : (
-                      "Not available"
-                    )}
-                  </span>
-                </div>
-              );
-            })
-          )}
+          <WorkingHoursDisplay hours={hours} isLoading={isLoading} />
         </div>
       </div>
     </Card>
