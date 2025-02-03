@@ -14,6 +14,7 @@ import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { BusinessFormProvider, useBusinessForm } from "@/contexts/BusinessFormContext";
 import { Loader2 } from "lucide-react";
 import type { Business } from "@/types/business";
+import type { Json } from "@/integrations/supabase/types";
 
 const EditListingForm = () => {
   const { id } = useParams();
@@ -47,10 +48,27 @@ const EditListingForm = () => {
           updateFormData('phone', business.phone || '');
           updateFormData('email', business.email || '');
           updateFormData('website', business.website || '');
-          updateFormData('amenities', business.amenities || []);
-          updateFormData('workingHours', business.business_hours || []);
-          updateFormData('menuItems', business.menu_items || []);
-          updateFormData('socialLinks', business.social_links || {});
+          
+          // Cast JSON types to expected types
+          const amenities = business.amenities as Json[] || [];
+          updateFormData('amenities', amenities.map(item => ({
+            name: String(item),
+            available: true
+          })));
+
+          const workingHours = business.business_hours as Json[] || [];
+          updateFormData('workingHours', workingHours.map(hour => ({
+            dayOfWeek: Number((hour as any).dayOfWeek),
+            openTime: String((hour as any).openTime),
+            closeTime: String((hour as any).closeTime),
+            isClosed: Boolean((hour as any).isClosed)
+          })));
+
+          const menuItems = (business as any).menu_items || [];
+          updateFormData('menuItems', menuItems);
+
+          const socialLinks = business.social_links as { [key: string]: string } || {};
+          updateFormData('socialLinks', socialLinks);
         }
       } catch (error) {
         console.error('Error fetching business:', error);
@@ -137,8 +155,13 @@ const EditListingForm = () => {
           website: formData.website,
           email: formData.email,
           keywords: formData.keywords,
-          amenities: formData.amenities,
-          business_hours: formData.workingHours,
+          amenities: formData.amenities.map(a => a.name),
+          business_hours: formData.workingHours.map(h => ({
+            dayOfWeek: h.dayOfWeek,
+            openTime: h.openTime,
+            closeTime: h.closeTime,
+            isClosed: h.isClosed
+          })),
           social_links: formData.socialLinks
         })
         .eq('id', id);
