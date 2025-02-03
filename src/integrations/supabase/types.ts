@@ -408,6 +408,7 @@ export type Database = {
           hero_image: string | null
           id: string
           is_open: boolean | null
+          keywords: string[] | null
           latitude: number | null
           longitude: number | null
           menu_categories: string[] | null
@@ -443,6 +444,7 @@ export type Database = {
           hero_image?: string | null
           id?: string
           is_open?: boolean | null
+          keywords?: string[] | null
           latitude?: number | null
           longitude?: number | null
           menu_categories?: string[] | null
@@ -478,6 +480,7 @@ export type Database = {
           hero_image?: string | null
           id?: string
           is_open?: boolean | null
+          keywords?: string[] | null
           latitude?: number | null
           longitude?: number | null
           menu_categories?: string[] | null
