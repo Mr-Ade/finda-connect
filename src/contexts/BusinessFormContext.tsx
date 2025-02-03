@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import type { Amenities } from "@/types/amenities";
 
 interface WorkingHour {
   dayOfWeek: number;
@@ -47,10 +48,7 @@ export interface BusinessFormData {
   menuItems: MenuItem[];
 
   // Amenities
-  amenities: {
-    name: string;
-    available: boolean;
-  }[];
+  amenities: Partial<Amenities>;
 
   // Social Links
   socialLinks: SocialLinks;
@@ -87,7 +85,7 @@ const defaultFormData: BusinessFormData = {
   website: "",
   workingHours: [],
   menuItems: [],
-  amenities: [],
+  amenities: {},
   socialLinks: {},
   galleryImages: [],
 };

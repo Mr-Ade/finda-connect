@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check } from "lucide-react";
 import { AmenityType, AMENITY_LABELS } from "@/types/amenities";
-import type { Amenities } from "@/types/amenities";
+import type { Amenities as AmenitiesType } from "@/types/amenities";
 
 interface AmenitiesProps {
-  amenities: Partial<Amenities>;
+  amenities: Partial<AmenitiesType>;
 }
 
 export const Amenities = ({ amenities }: AmenitiesProps) => {

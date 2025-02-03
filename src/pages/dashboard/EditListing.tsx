@@ -57,14 +57,14 @@ const EditListingForm = () => {
           website: formData.website,
           email: formData.email,
           keywords: formData.keywords,
-          amenities: formData.amenities,
+          amenities: formData.amenities as Json,
           business_hours: formData.workingHours.map(h => ({
             dayOfWeek: h.dayOfWeek,
             openTime: h.openTime,
             closeTime: h.closeTime,
             isClosed: h.isClosed
-          })),
-          social_links: formData.socialLinks
+          })) as Json,
+          social_links: formData.socialLinks as Json
         })
         .eq('id', id);
 

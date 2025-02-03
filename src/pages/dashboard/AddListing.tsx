@@ -14,6 +14,31 @@ import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { BusinessFormProvider, useBusinessForm } from "@/contexts/BusinessFormContext";
 import { ListingFormActions } from "@/components/listings/edit/ListingFormActions";
 
+const uploadImages = async (files: File[], bucket: string) => {
+  const uploadedUrls: string[] = [];
+  
+  for (const file of files) {
+    const fileExt = file.name.split('.').pop();
+    const filePath = `${crypto.randomUUID()}.${fileExt}`;
+
+    const { error: uploadError, data } = await supabase.storage
+      .from(bucket)
+      .upload(filePath, file);
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(filePath);
+
+    uploadedUrls.push(publicUrl);
+  }
+
+  return uploadedUrls;
+};
+
 const AddListingForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -54,7 +79,15 @@ const AddListingForm = () => {
           phone: formData.phone,
           website: formData.website,
           email: formData.email,
-          amenities: formData.amenities
+          keywords: formData.keywords,
+          amenities: formData.amenities,
+          business_hours: formData.workingHours.map(h => ({
+            dayOfWeek: h.dayOfWeek,
+            openTime: h.openTime,
+            closeTime: h.closeTime,
+            isClosed: h.isClosed
+          })),
+          social_links: formData.socialLinks
         })
         .select()
         .single();
@@ -64,7 +97,20 @@ const AddListingForm = () => {
       setProgress(30);
 
       // Upload images
-      await uploadImages(business.id);
+      if (formData.galleryImages.length > 0) {
+        const imageUrls = await uploadImages(formData.galleryImages, 'business-images');
+        
+        const { error: photosError } = await supabase
+          .from('business_photos')
+          .insert(
+            imageUrls.map(url => ({
+              business_id: business.id,
+              photo_url: url
+            }))
+          );
+
+        if (photosError) throw photosError;
+      }
 
       setProgress(50);
 
