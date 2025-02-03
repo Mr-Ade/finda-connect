@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useBusinessForm } from "@/contexts/BusinessFormContext";
 import { Loader2 } from "lucide-react";
 import type { Json } from "@/integrations/supabase/types";
+import type { Amenities } from "@/types/amenities";
 
 interface ListingDataLoaderProps {
   children: React.ReactNode;

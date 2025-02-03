@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { BusinessFormProvider, useBusinessForm } from "@/contexts/BusinessFormContext";
 import { ListingFormActions } from "@/components/listings/edit/ListingFormActions";
+import type { Json } from "@/integrations/supabase/types";
 
 const uploadImages = async (files: File[], bucket: string) => {
   const uploadedUrls: string[] = [];
@@ -80,14 +81,14 @@ const AddListingForm = () => {
           website: formData.website,
           email: formData.email,
           keywords: formData.keywords,
-          amenities: formData.amenities,
+          amenities: formData.amenities as Json,
           business_hours: formData.workingHours.map(h => ({
             dayOfWeek: h.dayOfWeek,
             openTime: h.openTime,
             closeTime: h.closeTime,
             isClosed: h.isClosed
-          })),
-          social_links: formData.socialLinks
+          })) as Json,
+          social_links: formData.socialLinks as Json
         })
         .select()
         .single();
