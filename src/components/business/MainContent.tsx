@@ -39,13 +39,13 @@ export const MainContent = ({ business, isOwner }: MainContentProps) => {
         isOwner={isOwner} 
       />
       <Amenities amenities={amenitiesList} />
+      <BusinessHours businessId={business.id} business={business} />
       <FAQ businessId={business.id} questions={questionsList} />
       <ReviewSection 
         businessId={business.id} 
         reviews={business.reviews || []} 
         isOwner={isOwner}
       />
-      <BusinessHours businessId={business.id} />
     </div>
   );
 };
