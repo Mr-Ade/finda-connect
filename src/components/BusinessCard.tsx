@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { isBusinessOpen } from "@/lib/utils/businessHours";
-import type { BusinessHour } from "@/lib/utils/businessHours";
+import type { BusinessHour } from "@/types/business"; // Updated import
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
