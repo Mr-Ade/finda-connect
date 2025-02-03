@@ -1,284 +1,346 @@
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Image, Plus, X, Loader } from "lucide-react";
-import { useBusinessForm } from "@/contexts/BusinessFormContext";
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Image, Plus, X, Video, Store, Coffee, Building2, User, Loader, ImageOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { useImageUpload } from "@/hooks/use-image-upload";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-export const ImageGallery = () => {
-  const { formData, updateFormData } = useBusinessForm();
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [featuredPreview, setFeaturedPreview] = useState<string | null>(null);
+type PhotoCategory = 'all' | 'inside' | 'outside' | 'videos' | 'owner' | 'menu';
+
+interface BusinessPhoto {
+  id: string;
+  photo_url: string;
+  category: PhotoCategory;
+  caption?: string;
+  is_video: boolean;
+  business_id: string;
+  created_at: string;
+  updated_at: string;
+  order_index: number;
+}
+
+interface ImageGalleryProps {
+  businessId: string;
+  isOwner: boolean;
+}
+
+export const ImageGallery = ({ businessId, isOwner }: ImageGalleryProps) => {
+  const [selectedPhoto, setSelectedPhoto] = useState<BusinessPhoto | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<PhotoCategory>('all');
   const { toast } = useToast();
-  const { uploadImage, isUploading } = useImageUpload("business-images");
-  const [loadingStates, setLoadingStates] = useState<{[key: string]: boolean}>({
-    logo: false,
-    featured: false,
-    gallery: false
+  
+  const { data: photos, isLoading, error, refetch } = useQuery({
+    queryKey: ["business-photos", businessId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("business_photos")
+        .select("*")
+        .eq("business_id", businessId)
+        .order("order_index", { ascending: true });
+
+      if (error) {
+        console.error("Error fetching photos:", error);
+        throw error;
+      }
+
+      return data as BusinessPhoto[];
+    },
   });
 
-  const validateImage = (file: File) => {
-    const maxSize = 800 * 1024; // 800KB
-    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    
-    if (!validTypes.includes(file.type)) {
-      toast({
-        title: "Invalid file type",
-        description: "Please upload JPEG, PNG or WebP images only",
-        variant: "destructive"
-      });
-      return false;
-    }
-    
-    if (file.size > maxSize) {
-      toast({
-        title: "File too large",
-        description: "Image must be less than 800KB",
-        variant: "destructive"
-      });
-      return false;
-    }
-    
-    return true;
-  };
-
-  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && validateImage(file)) {
-      setLoadingStates(prev => ({ ...prev, logo: true }));
-      try {
-        updateFormData('logo', file);
-        const url = URL.createObjectURL(file);
-        setLogoPreview(url);
-      } catch (error) {
-        toast({
-          title: "Error uploading logo",
-          description: "Please try again",
-          variant: "destructive"
-        });
-      } finally {
-        setLoadingStates(prev => ({ ...prev, logo: false }));
-      }
-    }
-  };
-
-  const handleFeaturedImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && validateImage(file)) {
-      setLoadingStates(prev => ({ ...prev, featured: true }));
-      try {
-        updateFormData('featuredImage', file);
-        const url = URL.createObjectURL(file);
-        setFeaturedPreview(url);
-      } catch (error) {
-        toast({
-          title: "Error uploading featured image",
-          description: "Please try again",
-          variant: "destructive"
-        });
-      } finally {
-        setLoadingStates(prev => ({ ...prev, featured: false }));
-      }
-    }
-  };
-
-  const handleGalleryImagesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    const validFiles = files.filter(validateImage);
-    
-    if (validFiles.length) {
-      setLoadingStates(prev => ({ ...prev, gallery: true }));
-      try {
-        updateFormData('galleryImages', validFiles);
-        const urls = validFiles.map(file => URL.createObjectURL(file));
-        setPreviewUrls(prev => [...prev, ...urls]);
-      } catch (error) {
-        toast({
-          title: "Error uploading gallery images",
-          description: "Please try again",
-          variant: "destructive"
-        });
-      } finally {
-        setLoadingStates(prev => ({ ...prev, gallery: false }));
-      }
-    }
-  };
-
-  const removeGalleryImage = (index: number) => {
-    const newGalleryImages = [...formData.galleryImages];
-    newGalleryImages.splice(index, 1);
-    updateFormData('galleryImages', newGalleryImages);
-
-    const newPreviewUrls = [...previewUrls];
-    URL.revokeObjectURL(newPreviewUrls[index]);
-    newPreviewUrls.splice(index, 1);
-    setPreviewUrls(newPreviewUrls);
-  };
-
-  const removeLogo = () => {
-    updateFormData('logo', undefined);
-    if (logoPreview) {
-      URL.revokeObjectURL(logoPreview);
-      setLogoPreview(null);
-    }
-  };
-
-  const removeFeaturedImage = () => {
-    updateFormData('featuredImage', undefined);
-    if (featuredPreview) {
-      URL.revokeObjectURL(featuredPreview);
-      setFeaturedPreview(null);
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      previewUrls.forEach(url => URL.revokeObjectURL(url));
-      if (logoPreview) URL.revokeObjectURL(logoPreview);
-      if (featuredPreview) URL.revokeObjectURL(featuredPreview);
-    };
-  }, []);
-
-  const renderPlaceholder = (type: 'logo' | 'featured' | 'gallery') => (
-    <div className="flex flex-col items-center justify-center text-gray-500">
-      {loadingStates[type] ? (
-        <>
-          <Loader className="w-6 h-6 mb-2 animate-spin" />
-          <p className="text-sm">Uploading...</p>
-        </>
-      ) : (
-        <>
-          <Image className="w-6 h-6 mb-2" />
-          <p className="text-sm">Click to upload</p>
-          <p className="text-xs">Maximum file size: 800KB</p>
-        </>
-      )}
-    </div>
+  const filteredPhotos = photos?.filter(photo => 
+    selectedCategory === 'all' || photo.category === selectedCategory
   );
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+
+      setUploading(true);
+      
+      for (const file of files) {
+        const fileExt = file.name.split(".").pop();
+        const filePath = `${businessId}/${crypto.randomUUID()}.${fileExt}`;
+        const isVideo = file.type.startsWith('video/');
+
+        const { error: uploadError } = await supabase.storage
+          .from("business-images")
+          .upload(filePath, file);
+
+        if (uploadError) {
+          console.error("Error uploading file:", uploadError);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to upload file",
+          });
+          continue;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from("business-images")
+          .getPublicUrl(filePath);
+
+        const { error: dbError } = await supabase
+          .from("business_photos")
+          .insert({
+            business_id: businessId,
+            photo_url: publicUrl,
+            category: selectedCategory,
+            is_video: isVideo,
+            order_index: (photos?.length || 0) + 1,
+          });
+
+        if (dbError) {
+          console.error("Error saving photo record:", dbError);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to save file information",
+          });
+        }
+      }
+
+      refetch();
+      toast({
+        title: "Success",
+        description: "Files uploaded successfully",
+      });
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An error occurred while uploading files",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDelete = async (photoId: string) => {
+    try {
+      const { error } = await supabase
+        .from("business_photos")
+        .delete()
+        .eq("id", photoId);
+
+      if (error) throw error;
+
+      refetch();
+      toast({
+        title: "Success",
+        description: "File deleted successfully",
+      });
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete file",
+      });
+    }
+  };
+
+  const handleReorder = async (photoId: string, newIndex: number) => {
+    try {
+      const { error } = await supabase
+        .from("business_photos")
+        .update({ order_index: newIndex })
+        .eq("id", photoId);
+
+      if (error) throw error;
+
+      refetch();
+    } catch (error) {
+      console.error("Reorder error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to reorder photos",
+      });
+    }
+  };
+
+  const categories = [
+    { id: 'all', label: 'All', icon: Image },
+    { id: 'inside', label: 'Inside', icon: Building2 },
+    { id: 'outside', label: 'Outside', icon: Store },
+    { id: 'videos', label: 'Videos', icon: Video },
+    { id: 'owner', label: 'By Owner', icon: User },
+    { id: 'menu', label: 'Food & Drinks', icon: Coffee },
+  ];
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="p-6 flex items-center justify-center min-h-[300px]">
+          <Loader className="w-8 h-8 animate-spin text-gray-400" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="p-6 flex items-center justify-center min-h-[300px]">
+          <div className="text-center">
+            <ImageOff className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+            <p className="text-gray-500">Failed to load photos</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center gap-2 text-primary">
-        <Image className="w-5 h-5" />
-        <h3 className="font-medium">Image & Gallery</h3>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="space-y-2">
-            <Label className="mb-1">Upload Logo</Label>
-            <div className="relative">
-              <div className={`border-2 border-dashed rounded-lg p-4 text-center hover:bg-gray-50 transition-colors cursor-pointer ${logoPreview ? 'border-primary' : ''}`}>
-                <input 
-                  type="file" 
-                  className="hidden" 
-                  accept="image/jpeg,image/png,image/webp"
-                  onChange={handleLogoChange}
-                  id="logo-upload"
-                  disabled={isUploading || loadingStates.logo}
-                />
-                <label htmlFor="logo-upload" className="cursor-pointer">
-                  {logoPreview ? (
-                    <div className="relative w-full h-32">
-                      <img 
-                        src={logoPreview} 
-                        alt="Logo preview" 
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                  ) : renderPlaceholder('logo')}
-                </label>
-              </div>
-              {logoPreview && (
-                <button
-                  type="button"
-                  onClick={removeLogo}
-                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
-                  disabled={isUploading || loadingStates.logo}
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label className="mb-1">Featured Image</Label>
-            <div className="relative">
-              <div className={`border-2 border-dashed rounded-lg p-4 text-center hover:bg-gray-50 transition-colors cursor-pointer ${featuredPreview ? 'border-primary' : ''}`}>
-                <input 
-                  type="file" 
-                  className="hidden" 
-                  accept="image/jpeg,image/png,image/webp"
-                  onChange={handleFeaturedImageChange}
-                  id="featured-upload"
-                  disabled={isUploading || loadingStates.featured}
-                />
-                <label htmlFor="featured-upload" className="cursor-pointer">
-                  {featuredPreview ? (
-                    <div className="relative w-full h-32">
-                      <img 
-                        src={featuredPreview} 
-                        alt="Featured image preview" 
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                    </div>
-                  ) : renderPlaceholder('featured')}
-                </label>
-              </div>
-              {featuredPreview && (
-                <button
-                  type="button"
-                  onClick={removeFeaturedImage}
-                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
-                  disabled={isUploading || loadingStates.featured}
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label className="mb-1">Gallery Images</Label>
-            <div className="border-2 border-dashed rounded-lg p-4 text-center hover:bg-gray-50 transition-colors cursor-pointer">
-              <input 
-                type="file" 
-                className="hidden" 
-                accept="image/jpeg,image/png,image/webp"
+      <CardContent className="p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-2xl font-semibold">Photos & Videos</h3>
+          {isOwner && (
+            <div>
+              <input
+                type="file"
+                id="photo-upload"
                 multiple
-                onChange={handleGalleryImagesChange}
-                id="gallery-upload"
-                disabled={isUploading || loadingStates.gallery}
+                accept="image/*,video/*"
+                className="hidden"
+                onChange={handleFileUpload}
+                disabled={uploading}
               />
-              <label htmlFor="gallery-upload" className="cursor-pointer">
-                {renderPlaceholder('gallery')}
+              <label htmlFor="photo-upload">
+                <Button
+                  variant="outline"
+                  className="cursor-pointer"
+                  disabled={uploading}
+                  asChild
+                >
+                  <span>
+                    {uploading ? (
+                      <>
+                        <Loader className="w-4 h-4 mr-2 animate-spin" />
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add photos & videos
+                      </>
+                    )}
+                  </span>
+                </Button>
               </label>
             </div>
-          </div>
+          )}
         </div>
 
-        {previewUrls.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-            {previewUrls.map((url, index) => (
-              <div key={index} className="relative group">
-                <img
-                  src={url}
-                  alt={`Gallery preview ${index + 1}`}
-                  className="w-full h-32 object-cover rounded-lg"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeGalleryImage(index)}
-                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                  disabled={isUploading || loadingStates.gallery}
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
+        <Tabs defaultValue="all" className="w-full" onValueChange={(value) => setSelectedCategory(value as PhotoCategory)}>
+          <TabsList className="mb-6">
+            {categories.map((category) => (
+              <TabsTrigger key={category.id} value={category.id} className="flex items-center gap-2">
+                <category.icon className="w-4 h-4" />
+                {category.label}
+              </TabsTrigger>
             ))}
+          </TabsList>
+
+          {categories.map((category) => (
+            <TabsContent key={category.id} value={category.id}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {filteredPhotos?.map((photo, index) => (
+                  <div key={photo.id} className="relative group">
+                    <Dialog>
+                      <DialogTrigger>
+                        <div className="relative cursor-pointer">
+                          {photo.is_video ? (
+                            <video 
+                              src={photo.photo_url}
+                              className="w-full h-48 object-cover rounded-lg"
+                            />
+                          ) : (
+                            <img
+                              src={photo.photo_url}
+                              alt={photo.caption || "Business photo"}
+                              className="w-full h-48 object-cover rounded-lg"
+                            />
+                          )}
+                          {isOwner && (
+                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                              {index > 0 && (
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleReorder(photo.id, index - 1);
+                                  }}
+                                  className="text-white hover:text-white/80"
+                                >
+                                  ↑
+                                </Button>
+                              )}
+                              {index < (filteredPhotos.length - 1) && (
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleReorder(photo.id, index + 1);
+                                  }}
+                                  className="text-white hover:text-white/80"
+                                >
+                                  ↓
+                                </Button>
+                              )}
+                              <Button
+                                size="icon"
+                                variant="destructive"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDelete(photo.id);
+                                }}
+                                className="absolute top-2 right-2"
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-4xl">
+                        {photo.is_video ? (
+                          <video 
+                            src={photo.photo_url}
+                            controls
+                            className="w-full h-auto"
+                          />
+                        ) : (
+                          <img
+                            src={photo.photo_url}
+                            alt={photo.caption || "Business photo"}
+                            className="w-full h-auto"
+                          />
+                        )}
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+          ))}
+        </Tabs>
+
+        {(!photos || photos.length === 0) && (
+          <div className="text-center py-8 text-gray-500">
+            <Image className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+            <p>No photos yet</p>
           </div>
         )}
       </CardContent>
