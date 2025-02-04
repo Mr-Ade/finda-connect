@@ -15,7 +15,6 @@ interface BusinessHeroProps {
 export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showGallery, setShowGallery] = useState(false);
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
   const { data: business, isLoading } = useQuery({
     queryKey: ['business', businessId],
@@ -128,7 +127,15 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
     );
   }
 
-  const photos = business.business_photos || [];
+  const photos = [
+    ...(business.hero_image ? [{ id: 'hero', photo_url: business.hero_image }] : []),
+    ...(business.gallery_images || []).map((url, index) => ({
+      id: `gallery-${index}`,
+      photo_url: url
+    })),
+    ...(business.business_photos || [])
+  ];
+
   const defaultImage = '/placeholder.svg';
 
   const nextSlide = () => {
@@ -174,7 +181,7 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
   return (
     <div className="relative">
       <div className="hero-gallery">
-        {photos.slice(currentSlide, currentSlide + 3).map((photo, index) => (
+        {photos.slice(currentSlide, currentSlide + 3).map((photo) => (
           <Dialog key={photo.id}>
             <DialogTrigger asChild>
               <div className="hero-gallery-image cursor-pointer">
