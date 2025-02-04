@@ -6,8 +6,11 @@ import { useToast } from "@/hooks/use-toast";
 import { getStatesByCountry } from "@/lib/states";
 import { MapSection } from "./location/MapSection";
 import { AddressFields } from "./location/AddressFields";
+import { supabase } from "@/integrations/supabase/client";
+import { useParams } from "react-router-dom";
 
 export const LocationInfo = () => {
+  const { id } = useParams();
   const { toast } = useToast();
   const locationContext = useLocation();
   const [coordinates, setCoordinates] = useState({
@@ -74,6 +77,9 @@ export const LocationInfo = () => {
             `${components.road}${components.house_number ? `, ${components.house_number}` : ''}` : 
             prev.street
         }));
+
+        // Save the updated location to the database
+        await updateBusinessLocation();
       }
     } catch (error) {
       console.error("Error reverse geocoding:", error);
@@ -85,9 +91,51 @@ export const LocationInfo = () => {
     }
   };
 
-  const handleAddressChange = (field: string, value: string) => {
+  const handleAddressChange = async (field: string, value: string) => {
     console.log("Address field changed:", field, value);
     setAddress(prev => ({ ...prev, [field]: value }));
+    
+    // Save changes to database after a short delay
+    await updateBusinessLocation();
+  };
+
+  const updateBusinessLocation = async () => {
+    if (!id) return;
+
+    try {
+      const { error } = await supabase
+        .from('businesses')
+        .update({
+          address: address.street,
+          city: address.city,
+          state: address.state,
+          zip_code: address.zip_code,
+          phone: address.phone,
+          email: address.email,
+          website: address.website,
+          latitude: coordinates.latitude,
+          longitude: coordinates.longitude
+        })
+        .eq('id', id);
+
+      if (error) {
+        console.error("Error updating business location:", error);
+        toast({
+          title: "Error",
+          description: "Failed to save location information",
+          variant: "destructive",
+        });
+      } else {
+        console.log("Successfully updated business location");
+      }
+    } catch (error) {
+      console.error("Error updating business location:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save location information",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
