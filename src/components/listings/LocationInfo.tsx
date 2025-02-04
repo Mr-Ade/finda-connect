@@ -11,11 +11,11 @@ export const LocationInfo = () => {
   const { toast } = useToast();
   const locationContext = useLocation();
   const [coordinates, setCoordinates] = useState({
-    latitude: locationContext.coordinates.latitude || 9.0820,  // Nigeria's approximate center
+    latitude: locationContext.coordinates.latitude || 9.0820,
     longitude: locationContext.coordinates.longitude || 8.6753
   });
   const [address, setAddress] = useState({
-    country: "Nigeria",  // Default to Nigeria
+    country: "Nigeria",
     state: locationContext.state || "",
     city: locationContext.city || "",
     street: "",

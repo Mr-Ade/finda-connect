@@ -20,6 +20,8 @@ export const ContactDetails = ({
   state,
   zip_code
 }: ContactDetailsProps) => {
+  const formattedWebsite = website?.startsWith('http') ? website : `https://${website}`;
+  
   return (
     <div className="bg-white rounded-lg p-4 shadow-sm space-y-4">
       {website && (
@@ -30,7 +32,7 @@ export const ContactDetails = ({
           <div>
             <h4 className="text-sm font-medium text-gray-500">Live Site</h4>
             <a 
-              href={website.startsWith('http') ? website : `https://${website}`} 
+              href={formattedWebsite} 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-primary hover:underline"
@@ -79,6 +81,13 @@ export const ContactDetails = ({
             <p className="text-gray-900">
               {address}, {city}, {state} {zip_code}
             </p>
+            <Button
+              variant="link"
+              className="px-0 text-primary hover:underline"
+              onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${address}, ${city}, ${state} ${zip_code}`)}`)}
+            >
+              View on Map
+            </Button>
           </div>
         </div>
       )}
