@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Star, Clock, CheckCircle, Image, ImageOff, Loader } from "lucide-react";
 import type { Business, BusinessHour } from "@/types/business";
 import { useState } from "react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { PhotoGallery } from "./PhotoGallery";
 
 interface BusinessHeroProps {
   businessId: string;
@@ -12,6 +14,7 @@ interface BusinessHeroProps {
 
 export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [showGallery, setShowGallery] = useState(false);
 
   const { data: business, isLoading } = useQuery({
     queryKey: ['business', businessId],
@@ -107,7 +110,7 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
 
   if (isLoading) {
     return (
-      <div className="h-[400px] bg-gray-100 animate-pulse flex items-center justify-center">
+      <div className="h-[520px] bg-gray-100 animate-pulse flex items-center justify-center">
         <Loader className="w-8 h-8 animate-spin text-gray-400" />
       </div>
     );
@@ -115,7 +118,7 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
 
   if (!business) {
     return (
-      <div className="h-[400px] bg-gray-100 flex items-center justify-center">
+      <div className="h-[520px] bg-gray-100 flex items-center justify-center">
         <div className="text-center">
           <ImageOff className="w-12 h-12 mx-auto mb-4 text-gray-400" />
           <p className="text-gray-500">Business not found</p>
@@ -148,108 +151,98 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
     ));
   };
 
-  const formatBusinessHours = (openTime: string, closeTime: string) => {
-    return `${openTime} - ${closeTime}`;
+  const formatTime = (time: string) => {
+    return new Date(`2000-01-01T${time}`).toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    });
+  };
+
+  const getCurrentHours = () => {
+    const today = new Date().getDay();
+    const currentHours = business.business_hours?.find(h => h.day_of_week === today);
+    
+    if (!currentHours || currentHours.is_closed) {
+      return "Closed";
+    }
+    
+    return `${formatTime(currentHours.open_time)} - ${formatTime(currentHours.close_time)}`;
   };
 
   return (
     <div className="relative">
-      {/* Hero Image Gallery */}
-      <div 
-        className="h-[500px] w-full bg-cover bg-center relative group"
-        style={{ 
-          backgroundImage: photos[currentSlide]?.photo_url ? 
-            `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${photos[currentSlide].photo_url})` :
-            `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${business.hero_image || defaultImage})`
-        }}
-      >
-        {/* Navigation Arrows */}
-        {photos.length > 1 && (
-          <>
-            <button 
-              onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white transition-colors opacity-0 group-hover:opacity-100"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-            <button 
-              onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white transition-colors opacity-0 group-hover:opacity-100"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
-          </>
-        )}
+      <div className="hero-gallery">
+        {photos.slice(currentSlide, currentSlide + 3).map((photo, index) => (
+          <div key={photo.id} className="hero-gallery-image">
+            <img src={photo.photo_url || defaultImage} alt={photo.caption || "Business photo"} />
+          </div>
+        ))}
+        
+        <div className="hero-gallery-nav">
+          <button onClick={prevSlide} className="prev-btn">
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <button onClick={nextSlide} className="next-btn">
+            <ChevronRight className="w-6 h-6" />
+          </button>
+        </div>
 
-        {/* See Photos Button */}
-        <Button 
-          variant="secondary" 
-          className="absolute bottom-4 right-4 bg-white hover:bg-white/90 text-black flex items-center gap-2"
-          onClick={() => {/* Add photo gallery modal handler */}}
-        >
-          <Image className="w-4 h-4" />
-          See {photos.length}+ Photos
-        </Button>
+        <div className="hero-content">
+          <div className="business-logo">
+            <img 
+              src={business.owner?.avatar_url || defaultImage} 
+              alt={`${business.name} logo`}
+            />
+          </div>
 
-        <div className="container mx-auto h-full flex flex-col justify-end pb-8">
-          <div className="flex items-end gap-6">
-            {/* Business Logo */}
-            {business.owner?.avatar_url ? (
-              <div className="w-24 h-24 rounded-lg overflow-hidden border-4 border-white shadow-lg mb-4">
-                <img 
-                  src={business.owner.avatar_url} 
-                  alt={`${business.name} logo`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ) : (
-              <div className="w-24 h-24 rounded-lg overflow-hidden border-4 border-white shadow-lg mb-4 bg-gray-200 flex items-center justify-center">
-                <ImageOff className="w-8 h-8 text-gray-400" />
-              </div>
-            )}
-
-            <div className="text-white space-y-4 flex-1">
-              <div className="flex items-center gap-2">
-                <h1 className="text-4xl font-bold">{business.name}</h1>
-                {business.claimed && (
-                  <div className="flex items-center gap-1 text-sm bg-green-500/20 px-2 py-1 rounded">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span>Claimed</span>
-                  </div>
-                )}
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <div className="flex">{renderStars(Math.round(averageRating))}</div>
-                <span className="text-sm">
-                  {business.reviews?.length || 0} Reviews
-                </span>
-                <span className="text-sm">
-                  {business.price_range && `• ${business.price_range}`}
-                </span>
+          <div className="business-info">
+            <h1 className="business-name">{business.name}</h1>
+            
+            <div className="business-meta">
+              <div className="business-rating">
+                {renderStars(Math.round(averageRating))}
+                <span>({business.reviews?.length || 0})</span>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                {business.category && (
-                  <span className="text-sm bg-white/20 px-2 py-1 rounded">
-                    {business.category}
-                  </span>
-                )}
-              </div>
+              {business.claimed && (
+                <div className="flex items-center gap-1">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>Claimed</span>
+                </div>
+              )}
 
-              <div className="flex items-center gap-2 text-sm">
-                <Clock className="w-4 h-4" />
-                <span className={business.is_open ? "text-green-400" : "text-red-400"}>
-                  {business.is_open ? "Open" : "Closed"}
-                </span>
-                {business.business_hours && business.business_hours[0] && (
-                  <span>
-                    • {formatBusinessHours(business.business_hours[0].open_time, business.business_hours[0].close_time)}
-                  </span>
-                )}
+              <div className="business-tags">
+                <span>•</span>
+                <span>{business.keywords?.join(", ")}</span>
               </div>
             </div>
+
+            <div className="business-hours">
+              <Clock className="w-4 h-4" />
+              <span className={business.is_open ? "text-green-400" : "text-red-400"}>
+                {business.is_open ? "Open" : "Closed"}
+              </span>
+              <span>•</span>
+              <span>{getCurrentHours()}</span>
+            </div>
           </div>
+
+          <Dialog open={showGallery} onOpenChange={setShowGallery}>
+            <DialogTrigger asChild>
+              <Button 
+                variant="secondary"
+                className="see-photos-btn"
+                onClick={() => setShowGallery(true)}
+              >
+                <Image className="w-4 h-4" />
+                See {photos.length}+ Photos
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-7xl h-[90vh]">
+              <PhotoGallery businessId={businessId} isOwner={false} />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>
