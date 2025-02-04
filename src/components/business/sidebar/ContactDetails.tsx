@@ -22,6 +22,17 @@ export const ContactDetails = ({
 }: ContactDetailsProps) => {
   const formattedWebsite = website?.startsWith('http') ? website : `https://${website}`;
   
+  // Add debug logs
+  console.log("ContactDetails props:", {
+    website,
+    email,
+    phone,
+    address,
+    city,
+    state,
+    zip_code
+  });
+  
   return (
     <div className="bg-white rounded-lg p-4 shadow-sm space-y-4">
       {website && (
