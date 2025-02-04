@@ -6,6 +6,9 @@ interface SidebarWrapperProps {
 }
 
 export const SidebarWrapper = ({ business }: SidebarWrapperProps) => {
+  // Add debug logs
+  console.log("SidebarWrapper - Received business data:", business);
+
   return (
     <div className="lg:col-span-1 space-y-8">
       <BusinessSidebar business={{
