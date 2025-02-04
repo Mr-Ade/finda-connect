@@ -42,7 +42,7 @@ const EditListingForm = () => {
 
       setProgress(30);
 
-      // Update business record
+      // Update business record with all fields
       const { error: businessError } = await supabase
         .from('businesses')
         .update({
@@ -64,7 +64,17 @@ const EditListingForm = () => {
             closeTime: h.closeTime,
             isClosed: h.isClosed
           })) as Json,
-          social_links: formData.socialLinks as Json
+          social_links: formData.socialLinks as Json,
+          // Add location fields
+          latitude: formData.latitude,
+          longitude: formData.longitude,
+          // Add hero image and gallery images if changed
+          ...(formData.featuredImage && {
+            hero_image: await uploadImage(formData.featuredImage)
+          }),
+          ...(formData.galleryImages?.length && {
+            gallery_images: await Promise.all(formData.galleryImages.map(uploadImage))
+          })
         })
         .eq('id', id);
 
@@ -88,6 +98,28 @@ const EditListingForm = () => {
       });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const uploadImage = async (file: File): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${crypto.randomUUID()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('business-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('business-images')
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      return null;
     }
   };
 

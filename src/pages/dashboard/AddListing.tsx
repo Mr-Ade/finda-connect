@@ -39,7 +39,7 @@ const AddListingForm = () => {
 
       setProgress(30);
 
-      // Insert business record
+      // Insert business record with all fields
       const { data: business, error: businessError } = await supabase
         .from('businesses')
         .insert({
@@ -62,7 +62,13 @@ const AddListingForm = () => {
             closeTime: h.closeTime,
             isClosed: h.isClosed
           })) as Json,
-          social_links: formData.socialLinks as Json
+          social_links: formData.socialLinks as Json,
+          // Add location fields
+          latitude: formData.latitude,
+          longitude: formData.longitude,
+          // Add hero image and gallery images
+          hero_image: formData.featuredImage ? await uploadImage(formData.featuredImage) : null,
+          gallery_images: formData.galleryImages ? await Promise.all(formData.galleryImages.map(uploadImage)) : null
         })
         .select()
         .single();
@@ -87,6 +93,28 @@ const AddListingForm = () => {
       });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const uploadImage = async (file: File): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${crypto.randomUUID()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('business-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('business-images')
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      return null;
     }
   };
 
