@@ -41,6 +41,9 @@ export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
   const isService = business.category?.toLowerCase().includes('service') ||
                    business.category?.toLowerCase().includes('salon');
 
+  // Add debug logs
+  console.log("BusinessSidebar props:", business);
+
   return (
     <div className="space-y-4">
       {isRestaurant && <RestaurantSection delivery_info={business.delivery_info} />}

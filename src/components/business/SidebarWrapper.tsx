@@ -17,8 +17,10 @@ export const SidebarWrapper = ({ business }: SidebarWrapperProps) => {
         state: business.state,
         zip_code: business.zip_code,
         phone: business.phone || '',
+        website: business.website || '',
         email: business.email || '',
         category: business.category,
+        delivery_info: business.delivery_info,
         owner: business.owner ? {
           username: business.owner.username,
           avatar_url: business.owner.avatar_url,
