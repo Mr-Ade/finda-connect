@@ -15,6 +15,7 @@ interface BusinessHeroProps {
 export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showGallery, setShowGallery] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const { data: business, isLoading } = useQuery({
     queryKey: ['business', businessId],
@@ -174,9 +175,24 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
     <div className="relative">
       <div className="hero-gallery">
         {photos.slice(currentSlide, currentSlide + 3).map((photo, index) => (
-          <div key={photo.id} className="hero-gallery-image">
-            <img src={photo.photo_url || defaultImage} alt={photo.caption || "Business photo"} />
-          </div>
+          <Dialog key={photo.id}>
+            <DialogTrigger asChild>
+              <div className="hero-gallery-image cursor-pointer">
+                <img 
+                  src={photo.photo_url || defaultImage} 
+                  alt={photo.caption || "Business photo"} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl h-[90vh]">
+              <img
+                src={photo.photo_url || defaultImage}
+                alt={photo.caption || "Business photo"}
+                className="w-full h-full object-contain"
+              />
+            </DialogContent>
+          </Dialog>
         ))}
         
         <div className="hero-gallery-nav">
@@ -199,26 +215,30 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
           <div className="business-info">
             <h1 className="business-name">{business.name}</h1>
             
-            <div className="business-meta">
-              <div className="business-rating">
-                {renderStars(Math.round(averageRating))}
-                <span>({business.reviews?.length || 0})</span>
+            <div className="business-meta flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <div className="business-rating flex items-center gap-1">
+                  {renderStars(Math.round(averageRating))}
+                  <span className="ml-2">({business.reviews?.length || 0})</span>
+                </div>
+
+                {business.claimed && (
+                  <div className="flex items-center gap-1">
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
+                    <span>Claimed</span>
+                    <span className="mx-1">•</span>
+                  </div>
+                )}
               </div>
 
-              {business.claimed && (
-                <div className="flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Claimed</span>
+              {business.keywords && business.keywords.length > 0 && (
+                <div className="business-tags text-gray-600">
+                  {business.keywords.join(", ")}
                 </div>
               )}
-
-              <div className="business-tags">
-                <span>•</span>
-                <span>{business.keywords?.join(", ")}</span>
-              </div>
             </div>
 
-            <div className="business-hours">
+            <div className="business-hours flex items-center gap-2 mt-2">
               <Clock className="w-4 h-4" />
               <span className={business.is_open ? "text-green-400" : "text-red-400"}>
                 {business.is_open ? "Open" : "Closed"}
@@ -235,7 +255,7 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
                 className="see-photos-btn"
                 onClick={() => setShowGallery(true)}
               >
-                <Image className="w-4 h-4" />
+                <Image className="w-4 h-4 mr-2" />
                 See {photos.length}+ Photos
               </Button>
             </DialogTrigger>
