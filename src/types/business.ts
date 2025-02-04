@@ -119,4 +119,5 @@ export interface Business {
   claimed?: boolean;
   rating?: number;
   review_count?: number;
+  keywords?: string[];  // Added this line to fix the error
 }
