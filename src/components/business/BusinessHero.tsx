@@ -15,6 +15,7 @@ interface BusinessHeroProps {
 export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showGallery, setShowGallery] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
   const { data: business, isLoading } = useQuery({
     queryKey: ['business', businessId],
@@ -101,7 +102,8 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
           }] : []
         })) : [],
         is_open: data.is_open || false,
-        price_range: data.price_range || null
+        price_range: data.price_range || null,
+        keywords: data.keywords || []
       };
 
       return transformedData;
@@ -174,9 +176,24 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
     <div className="relative">
       <div className="hero-gallery">
         {photos.slice(currentSlide, currentSlide + 3).map((photo, index) => (
-          <div key={photo.id} className="hero-gallery-image">
-            <img src={photo.photo_url || defaultImage} alt={photo.caption || "Business photo"} />
-          </div>
+          <Dialog key={photo.id}>
+            <DialogTrigger asChild>
+              <div className="hero-gallery-image cursor-pointer">
+                <img 
+                  src={photo.photo_url || defaultImage} 
+                  alt={photo.caption || "Business photo"}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </DialogTrigger>
+            <DialogContent className="max-w-7xl h-[90vh]">
+              <img 
+                src={photo.photo_url || defaultImage} 
+                alt={photo.caption || "Business photo"}
+                className="w-full h-full object-contain"
+              />
+            </DialogContent>
+          </Dialog>
         ))}
         
         <div className="hero-gallery-nav">
@@ -200,25 +217,26 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
             <h1 className="business-name">{business.name}</h1>
             
             <div className="business-meta">
-              <div className="business-rating">
+              <div className="business-rating flex items-center gap-2">
                 {renderStars(Math.round(averageRating))}
-                <span>({business.reviews?.length || 0})</span>
+                <span className="text-white">({business.reviews?.length || 0})</span>
               </div>
 
               {business.claimed && (
-                <div className="flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
+                <div className="flex items-center gap-1 text-blue-400">
+                  <CheckCircle className="w-4 h-4" />
                   <span>Claimed</span>
                 </div>
               )}
 
-              <div className="business-tags">
-                <span>•</span>
-                <span>{business.keywords?.join(", ")}</span>
-              </div>
+              <span className="text-white mx-2">•</span>
+
+              {business.keywords && business.keywords.length > 0 && (
+                <span className="text-white">{business.keywords.join(", ")}</span>
+              )}
             </div>
 
-            <div className="business-hours">
+            <div className="business-hours flex items-center gap-2 text-white">
               <Clock className="w-4 h-4" />
               <span className={business.is_open ? "text-green-400" : "text-red-400"}>
                 {business.is_open ? "Open" : "Closed"}
