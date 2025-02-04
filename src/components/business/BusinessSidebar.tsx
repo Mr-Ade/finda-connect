@@ -41,8 +41,17 @@ export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
   const isService = business.category?.toLowerCase().includes('service') ||
                    business.category?.toLowerCase().includes('salon');
 
-  // Add debug logs
-  console.log("BusinessSidebar props:", business);
+  // Add detailed debug logs
+  console.log("BusinessSidebar - Full business data:", business);
+  console.log("BusinessSidebar - Contact details:", {
+    website: business.website,
+    email: business.email,
+    phone: business.phone,
+    address: business.address,
+    city: business.city,
+    state: business.state,
+    zip_code: business.zip_code
+  });
 
   return (
     <div className="space-y-4">

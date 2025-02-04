@@ -22,8 +22,8 @@ export const ContactDetails = ({
 }: ContactDetailsProps) => {
   const formattedWebsite = website?.startsWith('http') ? website : `https://${website}`;
   
-  // Add debug logs
-  console.log("ContactDetails props:", {
+  // Add detailed debug logs
+  console.log("ContactDetails - Received props:", {
     website,
     email,
     phone,
@@ -32,6 +32,15 @@ export const ContactDetails = ({
     state,
     zip_code
   });
+
+  // Add validation checks
+  const hasAnyContact = website || email || phone || address;
+  console.log("ContactDetails - Has any contact info:", hasAnyContact);
+  
+  if (!hasAnyContact) {
+    console.log("ContactDetails - No contact information available");
+    return null;
+  }
   
   return (
     <div className="bg-white rounded-lg p-4 shadow-sm space-y-4">
