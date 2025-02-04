@@ -15,19 +15,19 @@ export const SidebarWrapper = ({ business }: SidebarWrapperProps) => {
         id: business.id,
         name: business.name,
         description: business.description || '',
-        address: business.address,
-        city: business.city,
-        state: business.state,
-        zip_code: business.zip_code,
+        address: business.address || '',
+        city: business.city || '',
+        state: business.state || '',
+        zip_code: business.zip_code || '',
         phone: business.phone || '',
         website: business.website || '',
         email: business.email || '',
         category: business.category,
         delivery_info: business.delivery_info,
         owner: business.owner ? {
-          username: business.owner.username,
-          avatar_url: business.owner.avatar_url,
-          full_name: business.owner.full_name
+          username: business.owner.username || '',
+          avatar_url: business.owner.avatar_url || '',
+          full_name: business.owner.full_name || ''
         } : undefined
       }} />
     </div>
