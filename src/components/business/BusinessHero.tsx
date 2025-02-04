@@ -187,7 +187,7 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
               <div className="hero-gallery-image cursor-pointer">
                 <img 
                   src={photo.photo_url || defaultImage} 
-                  alt={photo.caption || "Business photo"}
+                  alt={`Business photo`}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -195,7 +195,7 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
             <DialogContent className="max-w-4xl">
               <img 
                 src={photo.photo_url || defaultImage}
-                alt={photo.caption || "Business photo"}
+                alt={`Business photo`}
                 className="w-full h-auto"
               />
             </DialogContent>
