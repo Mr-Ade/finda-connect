@@ -36,7 +36,7 @@ export const SidebarWrapper = ({ business }: { business: Business }) => {
       console.log('Latest business data fetched:', data);
       return data;
     },
-    initialData: () => ({
+    initialData: {
       ...business,
       approved_at: business.approved_at || null,
       approved_by: business.approved_by || null,
@@ -46,7 +46,7 @@ export const SidebarWrapper = ({ business }: { business: Business }) => {
       claimed: business.claimed || false,
       is_open: business.is_open || false,
       owner: business.owner || null
-    })
+    }
   });
 
   // Merge the latest data with passed props

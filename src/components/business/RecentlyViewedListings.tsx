@@ -84,13 +84,10 @@ export const RecentlyViewedListings = () => {
           {businesses.map((business) => (
             <BusinessCard
               key={business.id}
-              id={business.id}
-              name={business.name}
+              business={business}
               image={business.business_photos?.[0]?.photo_url || '/placeholder.svg'}
-              category={business.category}
               rating={4.5} // TODO: Calculate from reviews
               reviewCount={30} // TODO: Get from reviews count
-              location={`${business.city}, ${business.state}`}
             />
           ))}
         </div>
