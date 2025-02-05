@@ -36,7 +36,17 @@ export const SidebarWrapper = ({ business }: { business: Business }) => {
       console.log('Latest business data fetched:', data);
       return data;
     },
-    initialData: () => business // Wrap business in a function to match InitialDataFunction type
+    initialData: () => ({
+      ...business,
+      approved_at: business.approved_at || null,
+      approved_by: business.approved_by || null,
+      business_hours: business.business_hours || null,
+      amenities: business.amenities || {},
+      delivery_info: business.delivery_info || null,
+      claimed: business.claimed || false,
+      is_open: business.is_open || false,
+      owner: business.owner || null
+    })
   });
 
   // Merge the latest data with passed props
@@ -68,11 +78,14 @@ export const SidebarWrapper = ({ business }: { business: Business }) => {
         website: businessData.website,
         email: businessData.email,
         category: businessData.category,
-        delivery_info: businessData.delivery_info ? {
-          available: !!businessData.delivery_info.available,
-          minimum_order: businessData.delivery_info.minimum_order,
-          fee: businessData.delivery_info.fee,
-          estimated_time: businessData.delivery_info.estimated_time
+        delivery_info: typeof businessData.delivery_info === 'object' && businessData.delivery_info ? {
+          available: Boolean(businessData.delivery_info.available),
+          minimum_order: typeof businessData.delivery_info.minimum_order === 'number' ? 
+            businessData.delivery_info.minimum_order : undefined,
+          fee: typeof businessData.delivery_info.fee === 'number' ? 
+            businessData.delivery_info.fee : undefined,
+          estimated_time: typeof businessData.delivery_info.estimated_time === 'string' ? 
+            businessData.delivery_info.estimated_time : undefined
         } : undefined,
         owner: businessData.owner ? {
           username: businessData.owner.username || '',
