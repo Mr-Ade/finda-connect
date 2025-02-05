@@ -36,7 +36,7 @@ export const SidebarWrapper = ({ business }: { business: Business }) => {
       console.log('Latest business data fetched:', data);
       return data;
     },
-    initialData: business
+    initialData: () => business // Wrap business in a function to match InitialDataFunction type
   });
 
   // Merge the latest data with passed props
@@ -68,7 +68,12 @@ export const SidebarWrapper = ({ business }: { business: Business }) => {
         website: businessData.website,
         email: businessData.email,
         category: businessData.category,
-        delivery_info: businessData.delivery_info,
+        delivery_info: businessData.delivery_info ? {
+          available: !!businessData.delivery_info.available,
+          minimum_order: businessData.delivery_info.minimum_order,
+          fee: businessData.delivery_info.fee,
+          estimated_time: businessData.delivery_info.estimated_time
+        } : undefined,
         owner: businessData.owner ? {
           username: businessData.owner.username || '',
           avatar_url: businessData.owner.avatar_url || '',
