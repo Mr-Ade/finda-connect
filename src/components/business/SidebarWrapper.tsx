@@ -36,7 +36,7 @@ export const SidebarWrapper = ({ business }: { business: Business }) => {
       console.log('Latest business data fetched:', data);
       return data;
     },
-    initialData: () => business // Wrap business in a function to match InitialDataFunction type
+    initialData: business // Use the passed business as initial data
   });
 
   // Merge the latest data with passed props
@@ -69,7 +69,7 @@ export const SidebarWrapper = ({ business }: { business: Business }) => {
         email: businessData.email,
         category: businessData.category,
         delivery_info: businessData.delivery_info ? {
-          available: !!businessData.delivery_info.available,
+          available: businessData.delivery_info.available || false,
           minimum_order: businessData.delivery_info.minimum_order,
           fee: businessData.delivery_info.fee,
           estimated_time: businessData.delivery_info.estimated_time

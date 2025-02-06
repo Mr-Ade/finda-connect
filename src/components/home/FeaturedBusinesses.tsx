@@ -1,100 +1,51 @@
-import { BusinessCard } from "@/components/BusinessCard";
-import { useLocation } from "@/contexts/LocationContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
-
-const CATEGORIES = ["Places", "Events", "Doctors", "Cars", "Real Estate", "Hotels", "Jobs"];
+import { BusinessCard } from "@/components/BusinessCard";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Business } from "@/types/business";
 
 export const FeaturedBusinesses = () => {
-  const { city, state, country } = useLocation();
-  const [selectedCategory, setSelectedCategory] = useState("Places");
-
   const { data: businesses, isLoading } = useQuery({
-    queryKey: ['featured-businesses', city, state, country, selectedCategory],
+    queryKey: ['featured-businesses'],
     queryFn: async () => {
-      console.log('Fetching featured businesses with filters:', { city, state, country, selectedCategory });
-      
-      let query = supabase
+      const { data, error } = await supabase
         .from('businesses')
-        .select(`
-          *,
-          business_photos (photo_url),
-          business_reviews (rating)
-        `);
+        .select('*')
+        .eq('status', 'approved')
+        .order('rating', { ascending: false })
+        .limit(6);
 
-      // Filter by location if available
-      if (city) query = query.eq('city', city);
-      if (state) query = query.eq('state', state);
-      
-      // Filter by category
-      if (selectedCategory) {
-        query = query.ilike('category', `%${selectedCategory}%`);
-      }
-
-      const { data, error } = await query.limit(8);
-
-      if (error) {
-        console.error('Error fetching businesses:', error);
-        throw error;
-      }
-
-      console.log('Fetched businesses:', data);
-      return data.map(business => ({
-        id: business.id,
-        name: business.name,
-        description: business.description,
-        image: business.business_photos?.[0]?.photo_url || "/placeholder.svg",
-        category: business.category,
-        rating: business.business_reviews?.reduce((acc: number, review: any) => acc + review.rating, 0) / (business.business_reviews?.length || 1) || 0,
-        reviewCount: business.business_reviews?.length || 0,
-        location: `${business.city}, ${business.state}`,
-        isOpen: true, // This should be calculated based on business hours
-        isFeatured: true
-      }));
-    },
+      if (error) throw error;
+      return data as Business[];
+    }
   });
 
-  return (
-    <section className="py-16 px-4 bg-white">
-      <div className="container mx-auto">
-        <div className="mb-8 text-center">
-          <span className="text-primary text-sm">Featured Listings</span>
-          <h2 className="text-3xl font-bold mt-2">Featured Businesses</h2>
-          <div className="flex flex-wrap gap-2 mt-4 justify-center items-center">
-            {CATEGORIES.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full transition-colors ${
-                  selectedCategory === category
-                    ? 'bg-primary text-white'
-                    : 'hover:bg-gray-100'
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <Skeleton key={i} className="h-[300px] rounded-lg" />
+          ))}
         </div>
-        
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-72 bg-gray-100 rounded-lg animate-pulse" />
-            ))}
-          </div>
-        ) : businesses?.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            No businesses found in this category
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {businesses?.map((business) => (
-              <BusinessCard key={business.id} {...business} />
-            ))}
-          </div>
-        )}
+      </div>
+    );
+  }
+
+  return (
+    <section className="container mx-auto py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold">Featured Businesses</h2>
+        <Button variant="outline">View All</Button>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {businesses?.map((business) => (
+          <BusinessCard 
+            key={business.id} 
+            business={business}
+          />
+        ))}
       </div>
     </section>
   );
