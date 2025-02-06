@@ -53,9 +53,6 @@ export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
     zip_code: business.zip_code
   });
 
-  // Force re-render of contact details by adding a key
-  const contactDetailsKey = `${business.address}-${business.city}-${business.state}-${business.zip_code}-${business.phone}-${business.website}-${business.email}`;
-
   return (
     <div className="space-y-4">
       {isRestaurant && <RestaurantSection delivery_info={business.delivery_info} />}
@@ -70,7 +67,6 @@ export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
       )}
 
       <ContactDetails
-        key={contactDetailsKey}
         website={business.website}
         email={business.email}
         phone={business.phone}
