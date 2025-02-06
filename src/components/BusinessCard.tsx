@@ -9,6 +9,10 @@ export interface BusinessCardProps {
 }
 
 export const BusinessCard = ({ business, className = "" }: BusinessCardProps) => {
+  if (!business) {
+    return null; // Return null if business is undefined
+  }
+
   return (
     <Link to={`/business/${business.id}`}>
       <Card className={`overflow-hidden hover:shadow-lg transition-shadow ${className}`}>
