@@ -1,9 +1,9 @@
-import { Business } from "@/types/business";
-import { BusinessSidebar } from "./BusinessSidebar";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useParams } from "react-router-dom";
+import { BusinessSidebar } from "./BusinessSidebar";
+import type { Business } from "@/types/business";
 
 export const SidebarWrapper = ({ business }: { business: Business }) => {
   const { id } = useParams();
@@ -34,13 +34,13 @@ export const SidebarWrapper = ({ business }: { business: Business }) => {
       }
 
       console.log('Latest business data fetched:', data);
-      return data;
+      return data as Business;
     },
     initialData: () => ({
       ...business,
       approved_at: business.approved_at || null,
       approved_by: business.approved_by || null,
-      business_hours: business.business_hours || null,
+      business_hours: business.business_hours || [],
       amenities: business.amenities || {},
       delivery_info: business.delivery_info || null,
       claimed: business.claimed || false,
