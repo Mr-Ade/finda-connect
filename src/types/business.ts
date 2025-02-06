@@ -79,12 +79,12 @@ export interface Business {
   latitude?: number;
   longitude?: number;
   status: string;
-  approved_at?: string;
-  approved_by?: string;
+  approved_at?: string | null;
+  approved_by?: string | null;
   payment_methods?: Json;
-  hero_image?: string;
-  gallery_images?: string[];
-  menu_categories?: string[];
+  hero_image?: string | null;
+  gallery_images?: string[] | null;
+  menu_categories?: string[] | null;
   business_hours: BusinessHour[];
   amenities: { [key: string]: boolean } | Json;
   faqs?: { question: string; answer: string; }[];
@@ -119,5 +119,5 @@ export interface Business {
   claimed?: boolean;
   rating?: number;
   review_count?: number;
-  keywords?: string[];  // Added this line to fix the error
+  keywords?: string[];
 }
