@@ -3,9 +3,19 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Sidebar } from "@/components/ui/sidebar";
+import { 
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem
+} from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2 } from "lucide-react";
+import { Loader2, LayoutDashboard, BarChart, ListTodo, MessageSquare, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface BusinessOwnerLayoutProps {
   children: React.ReactNode;
@@ -67,12 +77,57 @@ export const BusinessOwnerLayout = ({ children, loading }: BusinessOwnerLayoutPr
     );
   }
 
+  const menuItems = [
+    {
+      title: "Dashboard",
+      icon: LayoutDashboard,
+      url: "/business-owner"
+    },
+    {
+      title: "Analytics",
+      icon: BarChart,
+      url: "/business-owner/analytics"
+    },
+    {
+      title: "Listings",
+      icon: ListTodo,
+      url: "/business-owner/listings"
+    },
+    {
+      title: "Reviews",
+      icon: MessageSquare,
+      url: "/business-owner/reviews"
+    },
+    {
+      title: "Settings",
+      icon: Settings,
+      url: "/business-owner/settings"
+    }
+  ];
+
   return (
     <div className="flex min-h-screen">
-      <Sidebar 
-        isBusiness={true}
-        businessName={business.name}
-      />
+      <Sidebar>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>{business.name}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {menuItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <Link to={item.url}>
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
       <main className="flex-1 overflow-hidden">
         <ScrollArea className="h-screen">
           <div className="container mx-auto py-6 px-4 md:px-6">
