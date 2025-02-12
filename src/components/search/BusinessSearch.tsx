@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -38,7 +39,11 @@ export const BusinessSearch = () => {
         `);
 
       if (searchTerm) {
-        query = query.ilike('name', `%${searchTerm}%`);
+        // Use text search with the indexed name column
+        query = query.textSearch('name', searchTerm, {
+          type: 'websearch',
+          config: 'english'
+        });
       }
 
       if (category && category !== 'all') {
