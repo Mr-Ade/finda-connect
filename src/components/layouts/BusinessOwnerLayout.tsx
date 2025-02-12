@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Sidebar } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2, LayoutDashboard, BarChart, ListTodo, MessageSquare, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
