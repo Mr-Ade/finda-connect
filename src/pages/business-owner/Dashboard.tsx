@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, BellRing, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 export const BusinessOwnerDashboard = () => {
   const { data: analytics, isLoading } = useQuery({
@@ -108,7 +108,7 @@ export const BusinessOwnerDashboard = () => {
 
         <Card className="p-6">
           <CardHeader>
-            <CardTitle>Views Over Time</CardTitle>
+            <CardTitle>Analytics Overview</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
@@ -123,10 +123,33 @@ export const BusinessOwnerDashboard = () => {
                   <Tooltip 
                     labelFormatter={(value) => new Date(value).toLocaleDateString()}
                   />
+                  <Legend />
                   <Line 
                     type="monotone" 
+                    name="Views"
                     dataKey="views" 
                     stroke="#8884d8" 
+                    activeDot={{ r: 8 }} 
+                  />
+                  <Line 
+                    type="monotone" 
+                    name="Unique Visitors"
+                    dataKey="unique_visitors" 
+                    stroke="#82ca9d" 
+                    activeDot={{ r: 8 }} 
+                  />
+                  <Line 
+                    type="monotone" 
+                    name="Website Clicks"
+                    dataKey="website_clicks" 
+                    stroke="#ffc658" 
+                    activeDot={{ r: 8 }} 
+                  />
+                  <Line 
+                    type="monotone" 
+                    name="Phone Views"
+                    dataKey="phone_views" 
+                    stroke="#ff7300" 
                     activeDot={{ r: 8 }} 
                   />
                 </LineChart>
