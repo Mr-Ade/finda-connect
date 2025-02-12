@@ -1,5 +1,6 @@
-import Login from "@/pages/Login";
-import Signup from "@/pages/Signup";
+
+import Login from "@/pages/auth/Login";
+import Signup from "@/pages/auth/Signup";
 
 export const authRoutes = [
   { path: "/login", element: <Login /> },
