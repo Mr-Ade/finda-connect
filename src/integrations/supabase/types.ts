@@ -241,6 +241,53 @@ export type Database = {
           },
         ]
       }
+      business_analytics: {
+        Row: {
+          bookmarks: number | null
+          business_id: string | null
+          created_at: string | null
+          date: string
+          id: string
+          phone_views: number | null
+          unique_visitors: number | null
+          updated_at: string | null
+          views: number | null
+          website_clicks: number | null
+        }
+        Insert: {
+          bookmarks?: number | null
+          business_id?: string | null
+          created_at?: string | null
+          date: string
+          id?: string
+          phone_views?: number | null
+          unique_visitors?: number | null
+          updated_at?: string | null
+          views?: number | null
+          website_clicks?: number | null
+        }
+        Update: {
+          bookmarks?: number | null
+          business_id?: string | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          phone_views?: number | null
+          unique_visitors?: number | null
+          updated_at?: string | null
+          views?: number | null
+          website_clicks?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_analytics_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_hours: {
         Row: {
           business_id: string
@@ -278,6 +325,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "business_hours_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_insights: {
+        Row: {
+          business_id: string | null
+          created_at: string | null
+          description: string
+          id: string
+          importance: string | null
+          status: string | null
+          title: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          business_id?: string | null
+          created_at?: string | null
+          description: string
+          id?: string
+          importance?: string | null
+          status?: string | null
+          title: string
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          business_id?: string | null
+          created_at?: string | null
+          description?: string
+          id?: string
+          importance?: string | null
+          status?: string | null
+          title?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_insights_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
