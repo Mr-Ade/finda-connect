@@ -5,51 +5,90 @@ import { Eye, BellRing, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { DatePickerWithRange } from "@/components/ui/date-range-picker";
+import { addDays, subDays } from "date-fns";
+import { useState } from "react";
+import { DateRange } from "react-day-picker";
 
 export const BusinessOwnerDashboard = () => {
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 30),
+    to: new Date(),
+  });
+
   const { data: analytics, isLoading } = useQuery({
-    queryKey: ['business-analytics'],
+    queryKey: ['business-analytics', dateRange],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) throw new Error('No user session found');
       
-      const { data, error } = await supabase
+      const query = supabase
         .from('business_analytics')
         .select('*')
         .order('date', { ascending: false })
-        .limit(1)
-        .single();
-        
+        .limit(1);
+
+      if (dateRange?.from) {
+        query.gte('date', dateRange.from.toISOString().split('T')[0]);
+      }
+      if (dateRange?.to) {
+        query.lte('date', dateRange.to.toISOString().split('T')[0]);
+      }
+
+      const { data, error } = await query.single();
       if (error) throw error;
       return data;
     }
   });
 
   const { data: analyticsHistory } = useQuery({
-    queryKey: ['analytics-history'],
+    queryKey: ['analytics-history', dateRange],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) throw new Error('No user session found');
       
-      const { data, error } = await supabase
+      const query = supabase
         .from('business_analytics')
         .select('*')
-        .order('date', { ascending: true })
-        .limit(30);
-        
+        .order('date', { ascending: true });
+
+      if (dateRange?.from) {
+        query.gte('date', dateRange.from.toISOString().split('T')[0]);
+      }
+      if (dateRange?.to) {
+        query.lte('date', dateRange.to.toISOString().split('T')[0]);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data;
     }
   });
 
+  // Calculate percentage changes
+  const calculatePercentageChange = (current: number, previous: number) => {
+    if (previous === 0) return 0;
+    return ((current - previous) / previous) * 100;
+  };
+
+  const getPercentageChange = (metric: string) => {
+    if (!analyticsHistory || analyticsHistory.length < 2) return 0;
+    const currentValue = analyticsHistory[analyticsHistory.length - 1][metric] || 0;
+    const previousValue = analyticsHistory[0][metric] || 0;
+    return calculatePercentageChange(currentValue, previousValue);
+  };
+
   return (
     <BusinessOwnerLayout loading={isLoading}>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Welcome to your business dashboard. Here's an overview of your performance.
-          </p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+            <p className="text-muted-foreground">
+              Welcome to your business dashboard. Here's an overview of your performance.
+            </p>
+          </div>
+          <DatePickerWithRange date={dateRange} onDateChange={setDateRange} />
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -60,8 +99,8 @@ export const BusinessOwnerDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{analytics?.views || 0}</div>
-              <p className="text-xs text-muted-foreground">
-                +20.1% from last month
+              <p className={`text-xs ${getPercentageChange('views') > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {getPercentageChange('views').toFixed(1)}% from previous period
               </p>
             </CardContent>
           </Card>
@@ -73,8 +112,8 @@ export const BusinessOwnerDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{analytics?.unique_visitors || 0}</div>
-              <p className="text-xs text-muted-foreground">
-                +10.5% from last month
+              <p className={`text-xs ${getPercentageChange('unique_visitors') > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {getPercentageChange('unique_visitors').toFixed(1)}% from previous period
               </p>
             </CardContent>
           </Card>
@@ -86,8 +125,8 @@ export const BusinessOwnerDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{analytics?.website_clicks || 0}</div>
-              <p className="text-xs text-muted-foreground">
-                -2.5% from last month
+              <p className={`text-xs ${getPercentageChange('website_clicks') > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {getPercentageChange('website_clicks').toFixed(1)}% from previous period
               </p>
             </CardContent>
           </Card>
@@ -99,8 +138,8 @@ export const BusinessOwnerDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{analytics?.phone_views || 0}</div>
-              <p className="text-xs text-muted-foreground">
-                +5.2% from last month
+              <p className={`text-xs ${getPercentageChange('phone_views') > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {getPercentageChange('phone_views').toFixed(1)}% from previous period
               </p>
             </CardContent>
           </Card>
