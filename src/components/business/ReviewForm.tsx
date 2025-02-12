@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,28 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ReviewPhotoUpload } from "./ReviewPhotoUpload";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+const reviewSchema = z.object({
+  rating: z.number().min(1, "Please select a rating").max(5),
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email"),
+  comment: z.string()
+    .min(10, "Review must be at least 10 characters")
+    .max(1000, "Review cannot exceed 1000 characters"),
+});
+
+type ReviewFormValues = z.infer<typeof reviewSchema>;
 
 interface ReviewFormProps {
   businessId: string;
@@ -13,72 +36,66 @@ interface ReviewFormProps {
 }
 
 export const ReviewForm = ({ businessId, onReviewSubmitted }: ReviewFormProps) => {
-  const [rating, setRating] = useState(0);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reviewId, setReviewId] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const handleSubmitReview = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<ReviewFormValues>({
+    resolver: zodResolver(reviewSchema),
+    defaultValues: {
+      rating: 0,
+      name: "",
+      email: "",
+      comment: "",
+    },
+  });
+
+  const handleSubmitReview = async (values: ReviewFormValues) => {
     setIsSubmitting(true);
 
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Please login to submit a review",
+        });
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("reviews")
+        .insert({
+          business_id: businessId,
+          rating: values.rating,
+          comment: values.comment,
+          user_id: user.id
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please login to submit a review",
+        title: "Success",
+        description: "Your review has been submitted. You can now add photos to your review.",
       });
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (!rating) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please select a rating",
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from("reviews")
-      .insert({
-        business_id: businessId,
-        rating,
-        comment,
-        user_id: user.id
-      })
-      .select()
-      .single();
-
-    if (error) {
+      
+      setReviewId(data.id);
+      form.reset();
+      onReviewSubmitted();
+    } catch (error: any) {
       console.error("Review submission error:", error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "Failed to submit review. Please try again.",
       });
-    } else {
-      toast({
-        title: "Success",
-        description: "Your review has been submitted. You can now add photos to your review.",
-      });
-      setReviewId(data.id);
-      setRating(0);
-      setName("");
-      setEmail("");
-      setComment("");
-      onReviewSubmitted();
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setIsSubmitting(false);
   };
 
   const handlePhotoUploaded = () => {
@@ -87,77 +104,99 @@ export const ReviewForm = ({ businessId, onReviewSubmitted }: ReviewFormProps) =
   };
 
   return (
-    <form onSubmit={handleSubmitReview} className="space-y-6">
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">Choose Rating</label>
-        <div className="flex gap-1">
-          {[1, 2, 3, 4, 5].map((value) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setRating(value)}
-              className="focus:outline-none"
-            >
-              <Star
-                className={`w-6 h-6 ${
-                  value <= rating ? "text-yellow-400 fill-current" : "text-gray-300"
-                }`}
-              />
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Name</label>
-          <Input
-            placeholder="Your Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Email</label>
-          <Input
-            type="email"
-            placeholder="Your Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">Review</label>
-        <Textarea
-          placeholder="Write your review..."
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          className="min-h-[150px]"
-          required
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmitReview)} className="space-y-6">
+        <FormField
+          control={form.control}
+          name="rating"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Rating</FormLabel>
+              <div className="flex gap-1">
+                {[1, 2, 3, 4, 5].map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => field.onChange(value)}
+                    className="focus:outline-none"
+                  >
+                    <Star
+                      className={`w-6 h-6 ${
+                        value <= field.value ? "text-yellow-400 fill-current" : "text-gray-300"
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
 
-      <Button 
-        type="submit" 
-        disabled={isSubmitting || rating === 0}
-        className="w-full bg-red-500 hover:bg-red-600"
-      >
-        Submit Review
-      </Button>
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Your name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      {reviewId && (
-        <div className="mt-4">
-          <h3 className="text-sm font-medium mb-2">Add photos to your review</h3>
-          <ReviewPhotoUpload
-            reviewId={reviewId}
-            onPhotoUploaded={handlePhotoUploaded}
-          />
-        </div>
-      )}
-    </form>
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="Your email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="comment"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Review</FormLabel>
+              <FormControl>
+                <Textarea 
+                  placeholder="Write your review..." 
+                  className="min-h-[150px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button 
+          type="submit" 
+          disabled={isSubmitting}
+          className="w-full bg-red-500 hover:bg-red-600"
+        >
+          Submit Review
+        </Button>
+
+        {reviewId && (
+          <div className="mt-4">
+            <h3 className="text-sm font-medium mb-2">Add photos to your review</h3>
+            <ReviewPhotoUpload
+              reviewId={reviewId}
+              onPhotoUploaded={handlePhotoUploaded}
+            />
+          </div>
+        )}
+      </form>
+    </Form>
   );
 };
