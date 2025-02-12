@@ -1,21 +1,12 @@
 
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { 
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem
-} from "@/components/ui/sidebar";
+import { Sidebar } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2, LayoutDashboard, BarChart, ListTodo, MessageSquare, Settings } from "lucide-react";
-import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 interface BusinessOwnerLayoutProps {
   children: React.ReactNode;
@@ -107,27 +98,28 @@ export const BusinessOwnerLayout = ({ children, loading }: BusinessOwnerLayoutPr
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>{business.name}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {menuItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <Link to={item.url}>
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-      </Sidebar>
+      <div className="hidden md:flex flex-col w-64 border-r bg-white">
+        <div className="p-6">
+          <h2 className="text-lg font-semibold">{business.name}</h2>
+        </div>
+        <ScrollArea className="flex-1">
+          <div className="space-y-1 p-2">
+            {menuItems.map((item) => (
+              <Link
+                key={item.title}
+                to={item.url}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900",
+                  "hover:bg-gray-100"
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                <span>{item.title}</span>
+              </Link>
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
       <main className="flex-1 overflow-hidden">
         <ScrollArea className="h-screen">
           <div className="container mx-auto py-6 px-4 md:px-6">
