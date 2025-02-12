@@ -1,11 +1,15 @@
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BusinessCard } from "@/components/BusinessCard";
 import { useLocation } from "@/contexts/LocationContext";
+import { useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export const LocationRecommendations = () => {
   const { coordinates, city, state } = useLocation();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   
   const { data: recommendations, isLoading } = useQuery({
     queryKey: ['location-recommendations', coordinates, city, state],
@@ -48,6 +52,35 @@ export const LocationRecommendations = () => {
       }));
     },
   });
+
+  // Subscribe to real-time updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('business_updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'businesses',
+          filter: city ? `city=eq.${city}` : undefined
+        },
+        (payload) => {
+          console.log('Business update received:', payload);
+          queryClient.invalidateQueries({ queryKey: ['location-recommendations'] });
+          
+          toast({
+            title: "Update Available",
+            description: "New business information is available.",
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [city, queryClient, toast]);
 
   if (isLoading) {
     return <div className="text-center py-4">Loading recommendations...</div>;

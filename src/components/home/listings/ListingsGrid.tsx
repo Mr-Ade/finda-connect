@@ -1,6 +1,10 @@
 
+import { useEffect } from "react";
 import type { Business } from "@/types/business";
 import { ListingCard } from "./ListingCard";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 interface ListingsGridProps {
   businesses: Business[];
@@ -8,7 +12,36 @@ interface ListingsGridProps {
 }
 
 export const ListingsGrid = ({ businesses, showAll }: ListingsGridProps) => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   const displayedBusinesses = showAll ? businesses : businesses.slice(0, 8);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('business_listings')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'businesses'
+        },
+        (payload) => {
+          console.log('Business listing update received:', payload);
+          queryClient.invalidateQueries({ queryKey: ['businesses'] });
+          
+          toast({
+            title: "Listings Updated",
+            description: "New business listings are available.",
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient, toast]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
