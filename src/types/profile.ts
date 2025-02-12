@@ -1,3 +1,4 @@
+
 import { Database } from "@/integrations/supabase/types";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
