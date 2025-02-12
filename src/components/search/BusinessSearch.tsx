@@ -16,19 +16,28 @@ import { BusinessCard } from "@/components/BusinessCard";
 import { Search, SlidersHorizontal, MapIcon, List } from "lucide-react";
 import { useLocation } from "@/contexts/LocationContext";
 import { MapView } from "@/components/map/MapView";
+import type { SearchFilters, BusinessSearchResult, MapMarker } from "@/types/search";
 
 export const BusinessSearch = () => {
   const { city, state } = useLocation();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [category, setCategory] = useState<string>("all");
-  const [priceRange, setPriceRange] = useState([0]);
-  const [showFilters, setShowFilters] = useState(false);
-  const [showMap, setShowMap] = useState(false);
+  const [priceRange, setPriceRange] = useState<number[]>([0]);
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [showMap, setShowMap] = useState<boolean>(false);
 
-  const { data: businesses, isLoading } = useQuery({
-    queryKey: ['search-businesses', searchTerm, category, priceRange, city, state],
+  const filters: SearchFilters = {
+    searchTerm,
+    category,
+    priceRange,
+    city,
+    state
+  };
+
+  const { data: businesses, isLoading } = useQuery<BusinessSearchResult[]>({
+    queryKey: ['search-businesses', filters],
     queryFn: async () => {
-      console.log('Fetching businesses with filters:', { searchTerm, category, priceRange, city, state });
+      console.log('Fetching businesses with filters:', filters);
       
       let query = supabase
         .from('businesses')
@@ -39,7 +48,6 @@ export const BusinessSearch = () => {
         `);
 
       if (searchTerm) {
-        // Use text search with the indexed name column
         query = query.textSearch('name', searchTerm, {
           type: 'websearch',
           config: 'english'
@@ -80,13 +88,19 @@ export const BusinessSearch = () => {
     },
   });
 
-  const handleMarkerClick = (businessId: string) => {
-    // Implement smooth scroll to business card
+  const handleMarkerClick = (businessId: string): void => {
     const element = document.getElementById(`business-${businessId}`);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  const mapMarkers: MapMarker[] = businesses?.map(b => ({
+    id: b.id,
+    latitude: b.latitude,
+    longitude: b.longitude,
+    title: b.name
+  })) || [];
 
   return (
     <div className="space-y-6">
@@ -182,12 +196,7 @@ export const BusinessSearch = () => {
           {showMap && (
             <div className="lg:w-1/2 h-[calc(100vh-200px)] sticky top-20">
               <MapView
-                markers={businesses?.map(b => ({
-                  id: b.id,
-                  latitude: b.latitude,
-                  longitude: b.longitude,
-                  title: b.name
-                }))}
+                markers={mapMarkers}
                 onMarkerClick={handleMarkerClick}
                 className="w-full h-full rounded-lg shadow-lg"
               />
