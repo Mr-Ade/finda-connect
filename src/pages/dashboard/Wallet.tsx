@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
@@ -28,7 +29,7 @@ const Wallet = () => {
         .eq('status', 'approved')
         .order('approved_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle(); // Changed from .single() to .maybeSingle()
 
       if (error && error.code !== 'PGRST116') {
         console.error('Error fetching notification:', error);
