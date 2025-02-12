@@ -1,3 +1,4 @@
+
 import type { Business } from "@/types/business";
 import { ListingCard } from "./ListingCard";
 
