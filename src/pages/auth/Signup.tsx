@@ -57,13 +57,7 @@ const Signup = () => {
                 }}
                 providers={["google"]}
                 redirectTo={`${window.location.origin}/`}
-                onError={(error) => {
-                  toast({
-                    variant: "destructive",
-                    title: "Authentication Error",
-                    description: error.message,
-                  });
-                }}
+                magicLink={true}
               />
 
               <div className="mt-6 text-center text-sm text-gray-600">
