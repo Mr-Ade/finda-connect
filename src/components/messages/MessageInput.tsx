@@ -90,14 +90,17 @@ export const MessageInput = ({ onSend, replyingTo, onCancelReply }: MessageInput
   };
 
   return (
-    <div className="p-4 border-t flex flex-col gap-2">
+    <div className="p-4 border-t flex flex-col gap-3 bg-background shadow-sm">
       {replyingTo && (
-        <div className="flex items-center justify-between text-sm text-muted-foreground bg-muted p-2 rounded">
-          <span className="truncate flex-1">Replying to: {replyingTo.content}</span>
+        <div className="flex items-center justify-between text-sm bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-100 dark:border-blue-800">
+          <div className="flex items-center gap-2 flex-1">
+            <div className="w-1 h-4 bg-blue-500 rounded-full" />
+            <span className="truncate">Replying to: {replyingTo.content}</span>
+          </div>
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 px-2"
+            className="h-6 px-2 hover:bg-blue-100 dark:hover:bg-blue-900"
             onClick={onCancelReply}
           >
             <X className="h-4 w-4" />
@@ -106,37 +109,39 @@ export const MessageInput = ({ onSend, replyingTo, onCancelReply }: MessageInput
       )}
 
       {isUploading && previewFile && (
-        <div className="bg-muted p-2 rounded flex items-center gap-2">
-          <Paperclip className="h-4 w-4" />
+        <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg border border-orange-100 dark:border-orange-800 flex items-center gap-3">
+          <Paperclip className="h-4 w-4 text-orange-500" />
           <div className="flex-1">
-            <div className="flex justify-between text-sm">
-              <span className="truncate">{previewFile.name}</span>
-              <span>{formatFileSize(previewFile.size)}</span>
+            <div className="flex justify-between text-sm mb-1">
+              <span className="truncate font-medium">{previewFile.name}</span>
+              <span className="text-muted-foreground">{formatFileSize(previewFile.size)}</span>
             </div>
-            <Progress value={uploadProgress} className="h-1 mt-1" />
+            <Progress value={uploadProgress} className="h-1.5 bg-orange-100 dark:bg-orange-900">
+              <div className="h-full bg-orange-500 transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+            </Progress>
           </div>
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 w-6 p-0"
+            className="h-7 w-7 p-0 hover:bg-orange-100 dark:hover:bg-orange-900 rounded-full"
             onClick={() => {
               setIsUploading(false);
               setUploadProgress(0);
               setPreviewFile(null);
             }}
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4 text-orange-500" />
           </Button>
         </div>
       )}
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         <Input
           ref={inputRef}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Type a message... (Ctrl + Enter to send)"
-          className="flex-1"
+          className="flex-1 h-11 px-4 bg-muted/50"
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
@@ -169,13 +174,14 @@ export const MessageInput = ({ onSend, replyingTo, onCancelReply }: MessageInput
                 type="button"
                 size="icon"
                 variant="ghost"
+                className="h-11 w-11 rounded-full hover:bg-muted transition-colors"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
               >
-                <Paperclip className="h-4 w-4" />
+                <Paperclip className="h-5 w-5" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent className="bg-popover/95 backdrop-blur-sm">
               Attach file (or paste an image)
             </TooltipContent>
           </Tooltip>
@@ -186,15 +192,31 @@ export const MessageInput = ({ onSend, replyingTo, onCancelReply }: MessageInput
                 type="button"
                 size="icon"
                 variant="ghost"
+                className={`h-11 w-11 rounded-full transition-colors ${
+                  isRecording 
+                    ? "bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/40" 
+                    : "hover:bg-muted"
+                }`}
                 onClick={isRecording ? stopRecording : startRecording}
-                className={isRecording ? "text-red-500" : ""}
                 disabled={isUploading}
               >
-                <Mic className="h-4 w-4" />
-                {isRecording && <span className="ml-2">{recordingTime}s</span>}
+                <div className="relative">
+                  <Mic className="h-5 w-5" />
+                  {isRecording && (
+                    <div className="absolute -top-1 -right-1 w-2 h-2">
+                      <div className="absolute w-full h-full bg-red-500 rounded-full animate-ping" />
+                      <div className="absolute w-full h-full bg-red-500 rounded-full" />
+                    </div>
+                  )}
+                </div>
+                {isRecording && (
+                  <span className="absolute -top-2 -right-2 min-w-[20px] h-5 px-1 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+                    {recordingTime}s
+                  </span>
+                )}
               </Button>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent className="bg-popover/95 backdrop-blur-sm">
               {isRecording ? "Stop recording" : "Start voice message"}
             </TooltipContent>
           </Tooltip>
@@ -204,6 +226,11 @@ export const MessageInput = ({ onSend, replyingTo, onCancelReply }: MessageInput
               <Button 
                 type="submit" 
                 size="icon"
+                className={`h-11 w-11 rounded-full transition-all duration-200 ${
+                  message.trim() 
+                    ? "bg-blue-500 hover:bg-blue-600 text-white shadow-lg hover:shadow-blue-200 dark:hover:shadow-blue-900" 
+                    : "bg-muted text-muted-foreground"
+                }`}
                 onClick={() => {
                   if (message.trim()) {
                     onSend(message);
@@ -212,10 +239,10 @@ export const MessageInput = ({ onSend, replyingTo, onCancelReply }: MessageInput
                 }}
                 disabled={!message.trim() || isUploading}
               >
-                <Send className="h-4 w-4" />
+                <Send className="h-5 w-5" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent className="bg-popover/95 backdrop-blur-sm">
               Send message (Ctrl + Enter)
             </TooltipContent>
           </Tooltip>
