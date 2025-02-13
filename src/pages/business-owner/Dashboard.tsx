@@ -1,16 +1,19 @@
-
 import { BusinessOwnerLayout } from "@/components/layouts/BusinessOwnerLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, Users, MousePointerClick, Phone } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { Eye, Users, MousePointerClick, Phone, Download } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import { subDays } from "date-fns";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DateRange } from "react-day-picker";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 export const BusinessOwnerDashboard = () => {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: subDays(new Date(), 30),
     to: new Date(),
@@ -65,7 +68,6 @@ export const BusinessOwnerDashboard = () => {
     }
   });
 
-  // Calculate percentage changes
   const calculatePercentageChange = (current: number, previous: number) => {
     if (previous === 0) return 0;
     return ((current - previous) / previous) * 100;
@@ -78,6 +80,60 @@ export const BusinessOwnerDashboard = () => {
     return calculatePercentageChange(currentValue, previousValue);
   };
 
+  useEffect(() => {
+    const channel = supabase.channel('analytics-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'business_analytics' },
+        () => {
+          console.log('Analytics updated, refreshing data...');
+          queryClient.invalidateQueries({ queryKey: ['business-analytics'] });
+          queryClient.invalidateQueries({ queryKey: ['analytics-history'] });
+          
+          toast({
+            title: "Analytics Updated",
+            description: "Your analytics data has been updated in real-time",
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient, toast]);
+
+  const handleExport = async () => {
+    if (!analyticsHistory) return;
+
+    const csvContent = [
+      // CSV Headers
+      ['Date', 'Views', 'Unique Visitors', 'Website Clicks', 'Phone Views'].join(','),
+      // CSV Data
+      ...analyticsHistory.map(row => [
+        row.date,
+        row.views,
+        row.unique_visitors,
+        row.website_clicks,
+        row.phone_views
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `analytics_${dateRange?.from?.toISOString().split('T')[0]}_to_${dateRange?.to?.toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "Export Successful",
+      description: "Your analytics data has been exported to CSV",
+    });
+  };
+
   return (
     <BusinessOwnerLayout loading={isLoading}>
       <div className="space-y-6">
@@ -88,7 +144,17 @@ export const BusinessOwnerDashboard = () => {
               Welcome to your business dashboard. Here's an overview of your performance.
             </p>
           </div>
-          <DatePickerWithRange date={dateRange} onDateChange={setDateRange} />
+          <div className="flex gap-4">
+            <DatePickerWithRange date={dateRange} onDateChange={setDateRange} />
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleExport}
+              title="Export to CSV"
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
