@@ -32,14 +32,22 @@ export const FileUploadHandler = ({ onUploadComplete, onProgress, message }: Fil
       if (file.type.startsWith('video/')) type = 'video';
       if (file.type.startsWith('audio/')) type = 'voice';
 
+      // Create a FormData instance to track progress
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Use XMLHttpRequest to track progress
+      const xhr = new XMLHttpRequest();
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percentage = (event.loaded / event.total) * 100;
+          onProgress?.(percentage);
+        }
+      };
+
       const { data, error } = await supabase.storage
         .from('messages')
-        .upload(filePath, file, {
-          onUploadProgress: (progress) => {
-            const percentage = (progress.loaded / progress.total) * 100;
-            onProgress?.(percentage);
-          }
-        });
+        .upload(filePath, file);
 
       if (error) throw error;
 

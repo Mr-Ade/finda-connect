@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FileUploadHandler } from "./FileUploadHandler";
 import { VoiceRecorder } from "./VoiceRecorder";
-import { Tooltip } from "@/components/ui/tooltip";
+import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Progress } from "@/components/ui/progress";
 
 interface MessageInputProps {
@@ -162,62 +162,64 @@ export const MessageInput = ({ onSend, replyingTo, onCancelReply }: MessageInput
           accept="image/*,video/*,audio/*,.pdf,.doc,.docx"
         />
 
-        <Tooltip>
-          <Tooltip.Trigger asChild>
-            <Button
-              type="button"
-              size="icon"
-              variant="ghost"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-            >
-              <Paperclip className="h-4 w-4" />
-            </Button>
-          </Tooltip.Trigger>
-          <Tooltip.Content>
-            Attach file (or paste an image)
-          </Tooltip.Content>
-        </Tooltip>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+              >
+                <Paperclip className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              Attach file (or paste an image)
+            </TooltipContent>
+          </Tooltip>
 
-        <Tooltip>
-          <Tooltip.Trigger asChild>
-            <Button
-              type="button"
-              size="icon"
-              variant="ghost"
-              onClick={isRecording ? stopRecording : startRecording}
-              className={isRecording ? "text-red-500" : ""}
-              disabled={isUploading}
-            >
-              <Mic className="h-4 w-4" />
-              {isRecording && <span className="ml-2">{recordingTime}s</span>}
-            </Button>
-          </Tooltip.Trigger>
-          <Tooltip.Content>
-            {isRecording ? "Stop recording" : "Start voice message"}
-          </Tooltip.Content>
-        </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                onClick={isRecording ? stopRecording : startRecording}
+                className={isRecording ? "text-red-500" : ""}
+                disabled={isUploading}
+              >
+                <Mic className="h-4 w-4" />
+                {isRecording && <span className="ml-2">{recordingTime}s</span>}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {isRecording ? "Stop recording" : "Start voice message"}
+            </TooltipContent>
+          </Tooltip>
 
-        <Tooltip>
-          <Tooltip.Trigger asChild>
-            <Button 
-              type="submit" 
-              size="icon"
-              onClick={() => {
-                if (message.trim()) {
-                  onSend(message);
-                  setMessage("");
-                }
-              }}
-              disabled={!message.trim() || isUploading}
-            >
-              <Send className="h-4 w-4" />
-            </Button>
-          </Tooltip.Trigger>
-          <Tooltip.Content>
-            Send message (Ctrl + Enter)
-          </Tooltip.Content>
-        </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                type="submit" 
+                size="icon"
+                onClick={() => {
+                  if (message.trim()) {
+                    onSend(message);
+                    setMessage("");
+                  }
+                }}
+                disabled={!message.trim() || isUploading}
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              Send message (Ctrl + Enter)
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );
