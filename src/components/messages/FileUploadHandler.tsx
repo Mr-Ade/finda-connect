@@ -4,14 +4,25 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface FileUploadHandlerProps {
   onUploadComplete: (message: string, type: string, url: string) => void;
+  onProgress?: (progress: number) => void;
   message: string;
 }
 
-export const FileUploadHandler = ({ onUploadComplete, message }: FileUploadHandlerProps) => {
+export const FileUploadHandler = ({ onUploadComplete, onProgress, message }: FileUploadHandlerProps) => {
   const { toast } = useToast();
 
   const handleFileUpload = async (file: File) => {
     try {
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        toast({
+          title: "Error",
+          description: "File size must be less than 10MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `${fileName}`;
@@ -23,7 +34,12 @@ export const FileUploadHandler = ({ onUploadComplete, message }: FileUploadHandl
 
       const { data, error } = await supabase.storage
         .from('messages')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          onUploadProgress: (progress) => {
+            const percentage = (progress.loaded / progress.total) * 100;
+            onProgress?.(percentage);
+          }
+        });
 
       if (error) throw error;
 
