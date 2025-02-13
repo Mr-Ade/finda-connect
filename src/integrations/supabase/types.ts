@@ -974,6 +974,7 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          is_from_business: boolean | null
           is_typing: boolean | null
           message_type: string | null
           metadata: Json | null
@@ -981,6 +982,7 @@ export type Database = {
           receiver_id: string
           reply_to: string | null
           sender_id: string
+          status: string | null
           updated_at: string
         }
         Insert: {
@@ -989,6 +991,7 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          is_from_business?: boolean | null
           is_typing?: boolean | null
           message_type?: string | null
           metadata?: Json | null
@@ -996,6 +999,7 @@ export type Database = {
           receiver_id: string
           reply_to?: string | null
           sender_id: string
+          status?: string | null
           updated_at?: string
         }
         Update: {
@@ -1004,6 +1008,7 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          is_from_business?: boolean | null
           is_typing?: boolean | null
           message_type?: string | null
           metadata?: Json | null
@@ -1011,6 +1016,7 @@ export type Database = {
           receiver_id?: string
           reply_to?: string | null
           sender_id?: string
+          status?: string | null
           updated_at?: string
         }
         Relationships: [
