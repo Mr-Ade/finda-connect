@@ -1,3 +1,4 @@
+
 import { useState, useRef } from "react";
 import { Send, Image as ImageIcon, Paperclip, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";

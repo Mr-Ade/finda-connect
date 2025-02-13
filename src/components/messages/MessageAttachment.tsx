@@ -1,3 +1,4 @@
+
 import { Image, FileText, Video, Mic } from "lucide-react";
 
 interface MessageAttachmentProps {
