@@ -4,11 +4,16 @@ import { Session, User } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import type { AuthContextType } from "@/types/auth";
+import { signIn, signInWithGoogle, sendMagicLink, signUp, signOut as authSignOut } from "@/services/auth";
 
 const AuthContext = createContext<AuthContextType>({
   session: null,
   user: null,
   loading: true,
+  signIn: async () => null,
+  signInWithGoogle: async () => null,
+  sendMagicLink: async () => null,
+  signUp: async () => null,
   signOut: async () => {},
 });
 
@@ -42,16 +47,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    navigate('/login');
-  };
-
   const value = {
     session,
     user,
     loading,
-    signOut,
+    signIn,
+    signInWithGoogle,
+    sendMagicLink,
+    signUp,
+    signOut: async () => {
+      await authSignOut();
+      navigate('/login');
+    },
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

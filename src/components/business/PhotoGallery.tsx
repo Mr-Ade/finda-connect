@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Image, Plus, X, Video, Store, Coffee, Building2, User, Loader, ImageOff } from "lucide-react";
@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { useImageUpload } from "@/hooks/use-image-upload";
 
 interface PhotoGalleryProps {
   businessId: string;
@@ -33,6 +34,7 @@ export const PhotoGallery = ({ businessId, isOwner }: PhotoGalleryProps) => {
   const [uploading, setUploading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<PhotoCategory>('all');
   const { toast } = useToast();
+  const { uploadImage } = useImageUpload("business-images");
   
   const { data: photos, isLoading, error, refetch } = useQuery({
     queryKey: ["business-photos", businessId],
@@ -55,8 +57,7 @@ export const PhotoGallery = ({ businessId, isOwner }: PhotoGalleryProps) => {
   const filteredPhotos = photos?.filter(photo => 
     selectedCategory === 'all' || photo.category === selectedCategory
   );
-
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       const files = event.target.files;
       if (!files || files.length === 0) return;
@@ -68,9 +69,9 @@ export const PhotoGallery = ({ businessId, isOwner }: PhotoGalleryProps) => {
         const filePath = `${businessId}/${crypto.randomUUID()}.${fileExt}`;
         const isVideo = file.type.startsWith('video/');
 
-        const { error: uploadError } = await supabase.storage
-          .from("business-images")
-          .upload(filePath, file);
+        // Optimize image before upload
+        const optimizedFile = await optimizeImage(file);
+        const { url: publicUrl, error: uploadError } = await uploadImage(optimizedFile, filePath);
 
         if (uploadError) {
           console.error("Error uploading file:", uploadError);
@@ -81,10 +82,6 @@ export const PhotoGallery = ({ businessId, isOwner }: PhotoGalleryProps) => {
           });
           continue;
         }
-
-        const { data: { publicUrl } } = supabase.storage
-          .from("business-images")
-          .getPublicUrl(filePath);
 
         const { error: dbError } = await supabase
           .from("business_photos")
@@ -101,7 +98,7 @@ export const PhotoGallery = ({ businessId, isOwner }: PhotoGalleryProps) => {
           toast({
             variant: "destructive",
             title: "Error",
-            description: "Failed to save file information",
+            description: "Failed to save photo information",
           });
         }
       }
@@ -109,195 +106,140 @@ export const PhotoGallery = ({ businessId, isOwner }: PhotoGalleryProps) => {
       refetch();
       toast({
         title: "Success",
-        description: "Files uploaded successfully",
+        description: "Photos uploaded successfully",
       });
     } catch (error) {
       console.error("Upload error:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "An error occurred while uploading files",
+        description: "An unexpected error occurred",
       });
     } finally {
       setUploading(false);
     }
+  }, [businessId, photos?.length, refetch, selectedCategory, toast, uploadImage]);
+  const optimizeImage = async (file: File): Promise<File> => {
+    if (!file.type.startsWith('image/')) return file;
+
+    return new Promise((resolve) => {
+      const img = new Image();
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      img.onload = () => {
+        // Max dimensions
+        const maxWidth = 1920;
+        const maxHeight = 1080;
+
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+          const ratio = Math.min(maxWidth / width, maxHeight / height);
+          width *= ratio;
+          height *= ratio;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(new File([blob], file.name, {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              }));
+            } else {
+              resolve(file);
+            }
+          },
+          'image/jpeg',
+          0.8
+        );
+      };
+
+      img.src = URL.createObjectURL(file);
+    });
   };
-
-  const handleDelete = async (photoId: string) => {
-    try {
-      const { error } = await supabase
-        .from("business_photos")
-        .delete()
-        .eq("id", photoId);
-
-      if (error) throw error;
-
-      refetch();
-      toast({
-        title: "Success",
-        description: "File deleted successfully",
-      });
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to delete file",
-      });
-    }
-  };
-
-  const categories = [
-    { id: 'all', label: 'All', icon: Image },
-    { id: 'inside', label: 'Inside', icon: Building2 },
-    { id: 'outside', label: 'Outside', icon: Store },
-    { id: 'videos', label: 'Videos', icon: Video },
-    { id: 'owner', label: 'By Owner', icon: User },
-    { id: 'menu', label: 'Food & Drinks', icon: Coffee },
-  ];
-
-  if (isLoading) {
-    return (
-      <Card>
-        <CardContent className="p-6 flex items-center justify-center min-h-[300px]">
-          <Loader className="w-8 h-8 animate-spin text-gray-400" />
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card>
-        <CardContent className="p-6 flex items-center justify-center min-h-[300px]">
-          <div className="text-center">
-            <ImageOff className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-            <p className="text-gray-500">Failed to load photos</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
-    <Card>
-      <CardContent className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-2xl font-semibold">Photos & Videos</h3>
-          {isOwner && (
-            <div>
-              <input
-                type="file"
-                id="photo-upload"
-                multiple
-                accept="image/*,video/*"
-                className="hidden"
-                onChange={handleFileUpload}
-                disabled={uploading}
-              />
-              <label htmlFor="photo-upload">
-                <Button
-                  variant="outline"
-                  className="cursor-pointer"
+    <div className="space-y-4">
+      <Tabs defaultValue="all" className="w-full">
+        <TabsList className="grid grid-cols-3 lg:grid-cols-6 gap-2">
+          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="inside">Inside</TabsTrigger>
+          <TabsTrigger value="outside">Outside</TabsTrigger>
+          <TabsTrigger value="menu">Menu</TabsTrigger>
+          <TabsTrigger value="owner">Owner</TabsTrigger>
+          <TabsTrigger value="videos">Videos</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all" className="mt-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {isOwner && (
+              <label className="cursor-pointer">
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*,video/*"
+                  className="hidden"
+                  onChange={handleFileUpload}
                   disabled={uploading}
-                  asChild
-                >
-                  <span>
-                    {uploading ? (
-                      <>
-                        <Loader className="w-4 h-4 mr-2 animate-spin" />
-                        Uploading...
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add photos & videos
-                      </>
-                    )}
-                  </span>
-                </Button>
+                />
+                <Card className="h-48 flex items-center justify-center border-dashed">
+                  {uploading ? (
+                    <Loader className="h-8 w-8 animate-spin text-gray-400" />
+                  ) : (
+                    <Plus className="h-8 w-8 text-gray-400" />
+                  )}
+                </Card>
               </label>
-            </div>
-          )}
-        </div>
+            )}
 
-        <Tabs defaultValue="all" className="w-full" onValueChange={(value) => setSelectedCategory(value as PhotoCategory)}>
-          <TabsList className="mb-6">
-            {categories.map((category) => (
-              <TabsTrigger key={category.id} value={category.id} className="flex items-center gap-2">
-                <category.icon className="w-4 h-4" />
-                {category.label}
-              </TabsTrigger>
+            {filteredPhotos?.map((photo) => (
+              <Dialog key={photo.id}>
+                <DialogTrigger asChild>
+                  <Card className="h-48 cursor-pointer overflow-hidden transition-transform hover:scale-105">
+                    {photo.is_video ? (
+                      <video
+                        src={photo.photo_url}
+                        className="h-full w-full object-cover"
+                        controls={false}
+                      />
+                    ) : (
+                      <img
+                        src={photo.photo_url}
+                        alt={photo.caption || "Business photo"}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    )}
+                  </Card>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl">
+                  {photo.is_video ? (
+                    <video
+                      src={photo.photo_url}
+                      className="w-full"
+                      controls
+                      autoPlay
+                    />
+                  ) : (
+                    <img
+                      src={photo.photo_url}
+                      alt={photo.caption || "Business photo"}
+                      className="w-full"
+                    />
+                  )}
+                </DialogContent>
+              </Dialog>
             ))}
-          </TabsList>
-
-          {categories.map((category) => (
-            <TabsContent key={category.id} value={category.id}>
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {filteredPhotos?.map((photo) => (
-                    <CarouselItem key={photo.id} className="basis-1/3">
-                      <Dialog>
-                        <DialogTrigger>
-                          <div className="relative group cursor-pointer">
-                            {photo.is_video ? (
-                              <video 
-                                src={photo.photo_url}
-                                className="w-full h-48 object-cover rounded-lg"
-                              />
-                            ) : (
-                              <img
-                                src={photo.photo_url}
-                                alt={photo.caption || "Business photo"}
-                                className="w-full h-48 object-cover rounded-lg"
-                              />
-                            )}
-                            {isOwner && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDelete(photo.id);
-                                }}
-                                className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                              >
-                                <X className="w-4 h-4" />
-                              </button>
-                            )}
-                          </div>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-4xl">
-                          {photo.is_video ? (
-                            <video 
-                              src={photo.photo_url}
-                              controls
-                              className="w-full h-auto"
-                            />
-                          ) : (
-                            <img
-                              src={photo.photo_url}
-                              alt={photo.caption || "Business photo"}
-                              className="w-full h-auto"
-                            />
-                          )}
-                        </DialogContent>
-                      </Dialog>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-              </Carousel>
-            </TabsContent>
-          ))}
-        </Tabs>
-
-        {(!photos || photos.length === 0) && (
-          <div className="text-center py-8 text-gray-500">
-            <Image className="w-12 h-12 mx-auto mb-2 text-gray-400" />
-            <p>No photos yet</p>
           </div>
-        )}
-      </CardContent>
-    </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };

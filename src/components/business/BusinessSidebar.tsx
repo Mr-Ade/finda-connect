@@ -5,6 +5,7 @@ import { ServiceSection } from "./sidebar/ServiceSection";
 import { BusinessOwnerProfile } from "./sidebar/BusinessOwnerProfile";
 import { ContactDetails } from "./sidebar/ContactDetails";
 import { ActionButtons } from "./sidebar/ActionButtons";
+import { LocationMap } from "./LocationMap";
 
 interface BusinessSidebarProps {
   business: {
@@ -41,42 +42,46 @@ export const BusinessSidebar = ({ business }: BusinessSidebarProps) => {
   const isService = business.category?.toLowerCase().includes('service') ||
                    business.category?.toLowerCase().includes('salon');
 
-  // Add detailed debug logs
-  console.log("BusinessSidebar - Full business data:", business);
-  console.log("BusinessSidebar - Contact details:", {
-    website: business.website,
-    email: business.email,
-    phone: business.phone,
-    address: business.address,
-    city: business.city,
-    state: business.state,
-    zip_code: business.zip_code
-  });
-
   return (
-    <div className="space-y-4">
-      {isRestaurant && <RestaurantSection delivery_info={business.delivery_info} />}
-      {isAccommodation && <AccommodationSection />}
-      {isService && <ServiceSection />}
+    <div className="space-y-6">
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        {isRestaurant && <RestaurantSection delivery_info={business.delivery_info} />}
+        {isAccommodation && <AccommodationSection />}
+        {isService && <ServiceSection />}
+      </div>
 
       {business.owner && (
-        <BusinessOwnerProfile 
-          owner={business.owner} 
-          city={business.city}
-        />
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <BusinessOwnerProfile 
+            owner={business.owner} 
+            city={business.city}
+          />
+        </div>
       )}
 
-      <ContactDetails
-        website={business.website}
-        email={business.email}
-        phone={business.phone}
-        address={business.address}
-        city={business.city}
-        state={business.state}
-        zip_code={business.zip_code}
-      />
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <ContactDetails
+          website={business.website}
+          email={business.email}
+          phone={business.phone}
+          address={business.address}
+          city={business.city}
+          state={business.state}
+          zip_code={business.zip_code}
+        />
+        <div className="mt-6">
+          <LocationMap
+            address={business.address}
+            city={business.city}
+            state={business.state}
+            zip_code={business.zip_code}
+          />
+        </div>
+      </div>
 
-      <ActionButtons />
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <ActionButtons />
+      </div>
     </div>
   );
 };

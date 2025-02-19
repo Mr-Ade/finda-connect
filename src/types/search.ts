@@ -5,6 +5,11 @@ export interface SearchFilters {
   priceRange: number[];
   city?: string;
   state?: string;
+  rating: number;
+  openNow: boolean;
+  sortBy: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface BusinessSearchResult {
@@ -18,6 +23,8 @@ export interface BusinessSearchResult {
   latitude: number;
   longitude: number;
   isOpen: boolean;
+  priceRange?: number;
+  distance?: number;
 }
 
 export interface MapMarker {
@@ -25,4 +32,11 @@ export interface MapMarker {
   latitude: number;
   longitude: number;
   title: string;
+}
+
+export interface FilterChangeEvent {
+  priceRange: number[];
+  rating: number;
+  openNow: boolean;
+  sortBy: string;
 }

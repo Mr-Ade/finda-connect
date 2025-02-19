@@ -1,34 +1,13 @@
 
-import { Component, ErrorInfo, ReactNode } from "react";
+import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { BaseErrorBoundary } from "./BaseErrorBoundary";
 
 interface Props {
   children: ReactNode;
 }
 
-interface State {
-  hasError: boolean;
-  error: Error | null;
-}
-
-export class SearchErrorBoundary extends Component<Props, State> {
-  public state: State = {
-    hasError: false,
-    error: null
-  };
-
-  public static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
-  }
-
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Search error:', error, errorInfo);
-  }
-
-  private handleRetry = () => {
-    this.setState({ hasError: false, error: null });
-  };
-
+export class SearchErrorBoundary extends BaseErrorBoundary {
   public render() {
     if (this.state.hasError) {
       return (
@@ -43,7 +22,7 @@ export class SearchErrorBoundary extends Component<Props, State> {
           <p className="text-gray-600 mb-6">
             We're having trouble with the search feature. Please try again.
           </p>
-          <Button onClick={this.handleRetry}>
+          <Button onClick={this.handleReset}>
             Retry Search
           </Button>
         </div>

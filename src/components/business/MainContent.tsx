@@ -46,20 +46,40 @@ export const MainContent = ({ business, isOwner }: MainContentProps) => {
 
   return (
     <div className="lg:col-span-2 space-y-8">
-      <AboutSection name={business.name} description={business.description || ''} />
-      <MenuItems businessId={business.id} menuItems={business.menu_items || []} />
-      <PhotoGallery 
-        businessId={business.id} 
-        isOwner={isOwner} 
-      />
-      <Amenities amenities={amenitiesList} />
-      <BusinessHours businessId={business.id} business={business} />
-      <FAQ businessId={business.id} questions={questionsList} />
-      <ReviewSection 
-        businessId={business.id} 
-        reviews={transformedReviews}
-        isOwner={isOwner}
-      />
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <AboutSection name={business.name} description={business.description || ''} />
+      </div>
+      {business.menu_items && business.menu_items.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <MenuItems businessId={business.id} menuItems={business.menu_items} />
+        </div>
+      )}
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <PhotoGallery 
+          businessId={business.id} 
+          isOwner={isOwner} 
+        />
+      </div>
+      {amenitiesList.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <Amenities amenities={amenitiesList} />
+        </div>
+      )}
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <BusinessHours businessId={business.id} business={business} />
+      </div>
+      {questionsList.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <FAQ businessId={business.id} questions={questionsList} />
+        </div>
+      )}
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <ReviewSection 
+          businessId={business.id} 
+          reviews={transformedReviews}
+          isOwner={isOwner}
+        />
+      </div>
     </div>
   );
 };
