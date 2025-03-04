@@ -25,21 +25,15 @@ export const BusinessSearch = () => {
   const [priceRange, setPriceRange] = useState<number[]>([0]);
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [showMap, setShowMap] = useState<boolean>(false);
-  const [sortBy, setSortBy] = useState<string>("relevance");
-  const [rating, setRating] = useState<number>(0);
-  const [openNow, setOpenNow] = useState<boolean>(false);
-  
+
   const filters: SearchFilters = {
     searchTerm,
     category,
     priceRange,
     city,
-    state,
-    rating,
-    openNow,
-    sortBy
+    state
   };
-  
+
   const { data: businesses, isLoading } = useQuery<BusinessSearchResult[]>({
     queryKey: ['search-businesses', filters],
     queryFn: async () => {
@@ -48,114 +42,66 @@ export const BusinessSearch = () => {
       let query = supabase
         .from('businesses')
         .select(`
-          id,
-          name,
-          category,
-          city,
-          state,
-          average_rating,
-          latitude,
-          longitude,
-          business_photos!inner (photo_url),
-          reviews!inner (rating),
-          business_hours!inner (day_of_week, open_time, close_time)
-        `)
-        .order('name', { ascending: true })
-        .limit(50);
-  
+          *,
+          business_photos (photo_url),
+          reviews (rating)
+        `);
+
       if (searchTerm) {
-        query = query.textSearch('name_fts', searchTerm, {
+        query = query.textSearch('name', searchTerm, {
           type: 'websearch',
           config: 'english'
         });
       }
-  
+
       if (category && category !== 'all') {
         query = query.eq('category', category);
       }
-  
+
       if (city) {
-        query = query.eq('city', city).order('average_rating', { ascending: false });
+        query = query.eq('city', city);
       }
-  
+
       if (state) {
         query = query.eq('state', state);
       }
-  
-      if (rating > 0) {
-        query = query.gte('average_rating', rating);
-      }
-  
-      if (openNow) {
-        const now = new Date();
-        const dayOfWeek = now.getDay();
-        const currentTime = now.toLocaleTimeString('en-US', { hour12: false });
-        
-        query = query
-          .eq('business_hours.day_of_week', dayOfWeek)
-          .gte('business_hours.open_time', currentTime)
-          .lte('business_hours.close_time', currentTime);
-      }
-  
-      switch(sortBy) {
-        case 'rating':
-          query = query.order('average_rating', { ascending: false });
-          break;
-        case 'reviews':
-          query = query.order('review_count', { ascending: false });
-          break;
-        case 'distance':
-          if (latitude && longitude) {
-            query = query.order('distance', { ascending: true });
-          }
-          break;
-        default:
-          // Default relevance sorting handled by FTS
-          break;
-      }
-  
+
       const { data, error } = await query;
-  
+
       if (error) {
         console.error('Error fetching businesses:', error);
         throw error;
       }
-  
+
       return data.map(business => ({
         id: business.id,
         name: business.name,
         image: business.business_photos?.[0]?.photo_url || "/placeholder.svg",
         category: business.category,
-        rating: business.average_rating,
+        rating: business.reviews?.reduce((acc: number, review: any) => acc + review.rating, 0) / (business.reviews?.length || 1) || 0,
         reviewCount: business.reviews?.length || 0,
         location: `${business.city}, ${business.state}`,
-        latitude: business.latitude,
-        longitude: business.longitude,
-        isOpen: business.business_hours?.some(hours => 
-          hours.day_of_week === new Date().getDay() &&
-          hours.open_time <= new Date().toLocaleTimeString('en-US', { hour12: false }) &&
-          hours.close_time >= new Date().toLocaleTimeString('en-US', { hour12: false })
-        ) || false
+        latitude: business.latitude || 0,
+        longitude: business.longitude || 0,
+        isOpen: true,
       }));
     },
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-    cacheTime: 1000 * 60 * 30, // Keep cache for 30 minutes
   });
-  
+
   const handleMarkerClick = (businessId: string): void => {
     const element = document.getElementById(`business-${businessId}`);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
-  
+
   const mapMarkers: MapMarker[] = businesses?.map(b => ({
     id: b.id,
     latitude: b.latitude,
     longitude: b.longitude,
     title: b.name
   })) || [];
-  
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4">
@@ -193,7 +139,7 @@ export const BusinessSearch = () => {
             )}
           </Button>
         </div>
-  
+
         {showFilters && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
             <div className="space-y-2">
@@ -210,22 +156,7 @@ export const BusinessSearch = () => {
                 </SelectContent>
               </Select>
             </div>
-  
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Sort By</label>
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sort by..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="relevance">Relevance</SelectItem>
-                  <SelectItem value="rating">Rating</SelectItem>
-                  <SelectItem value="price_low">Price: Low to High</SelectItem>
-                  <SelectItem value="price_high">Price: High to Low</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-  
+
             <div className="space-y-2">
               <label className="text-sm font-medium">Price Range</label>
               <Slider
@@ -240,39 +171,10 @@ export const BusinessSearch = () => {
                 <span>$$$$</span>
               </div>
             </div>
-  
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Minimum Rating</label>
-              <Slider
-                defaultValue={[0]}
-                max={5}
-                step={0.5}
-                value={[rating]}
-                onValueChange={(value) => setRating(value[0])}
-              />
-              <div className="flex justify-between text-sm text-gray-500">
-                <span>0</span>
-                <span>5</span>
-              </div>
-            </div>
-  
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="open-now"
-                checked={openNow}
-                onCheckedChange={(checked) => setOpenNow(checked as boolean)}
-              />
-              <label
-                htmlFor="open-now"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Open Now
-              </label>
-            </div>
           </div>
         )}
       </div>
-  
+
       {isLoading ? (
         <div className="text-center py-8">Loading businesses...</div>
       ) : businesses?.length === 0 ? (

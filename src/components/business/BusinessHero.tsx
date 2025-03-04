@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Star, Clock, CheckCircle, Image } from "lucide-react";
-import { cn } from "@/lib/utils";
 import type { Business, BusinessHour } from "@/types/business";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -181,86 +180,97 @@ export const BusinessHero = ({ businessId }: BusinessHeroProps) => {
 
   return (
     <div className="relative">
-      <div className="hero-gallery grid grid-cols-3 gap-2 h-[520px] relative overflow-hidden">
-        {photos.slice(currentSlide, currentSlide + 3).map((photo, index) => (
+      <div className="hero-gallery">
+        {photos.slice(currentSlide, currentSlide + 3).map((photo) => (
           <Dialog key={photo.id}>
             <DialogTrigger asChild>
-              <div className={cn(
-                "hero-gallery-image cursor-pointer relative overflow-hidden",
-                index === 0 ? "col-span-2 row-span-2" : ""
-              )}>
+              <div className="hero-gallery-image cursor-pointer">
                 <img 
                   src={photo.photo_url || defaultImage} 
-                  alt={`${business.name} photo`}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                  alt={`Business photo`}
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <span className="text-white bg-black/50 px-4 py-2 rounded-full">View Photo</span>
-                </div>
               </div>
             </DialogTrigger>
             <DialogContent className="max-w-4xl">
               <img 
                 src={photo.photo_url || defaultImage}
-                alt={`${business.name} photo`}
+                alt={`Business photo`}
                 className="w-full h-auto"
               />
             </DialogContent>
           </Dialog>
         ))}
         
-        <div className="absolute bottom-4 right-4 space-x-2 z-10">
-          <Button
-            variant="secondary"
-            size="icon"
-            onClick={prevSlide}
-            className="bg-white/80 hover:bg-white"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="secondary"
-            size="icon"
-            onClick={nextSlide}
-            className="bg-white/80 hover:bg-white"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => setShowGallery(true)}
-            className="bg-white/80 hover:bg-white ml-2"
-          >
-            View All Photos
-          </Button>
+        <div className="hero-gallery-nav">
+          <button onClick={prevSlide} className="prev-btn">
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <button onClick={nextSlide} className="next-btn">
+            <ChevronRight className="w-6 h-6" />
+          </button>
         </div>
 
-        <div className="absolute bottom-4 left-4 flex items-center space-x-4 z-10">
-          <div className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full flex items-center space-x-2">
-            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-            <span className="font-medium">{averageRating.toFixed(1)}</span>
-            <span className="text-gray-600">({business.reviews?.length || 0} reviews)</span>
+        <div className="hero-content">
+          <div className="business-logo">
+            <img 
+              src={business.owner?.avatar_url || defaultImage} 
+              alt={`${business.name} logo`}
+            />
           </div>
 
-          <div className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full flex items-center space-x-2">
-            <Clock className="w-5 h-5 text-gray-600" />
-            <span className="font-medium">{getCurrentHours()}</span>
-          </div>
-
-          {business.is_verified && (
-            <div className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full flex items-center space-x-2">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              <span className="font-medium text-green-600">Verified</span>
+          <div className="business-info">
+            <h1 className="business-name">{business.name}</h1>
+            
+            <div className="business-meta">
+              <div className="business-rating flex items-center gap-2">
+                {renderStars(Math.round(averageRating))}
+                <span className="ml-1">({business.reviews?.length || 0})</span>
+              </div>
             </div>
-          )}
+
+            <div className="flex items-center gap-2 text-blue-500 mt-1">
+              {business.claimed && (
+                <>
+                  <CheckCircle className="w-4 h-4" />
+                  <span>Claimed</span>
+                </>
+              )}
+              {business.keywords && (
+                <>
+                  <span className="text-white mx-2">•</span>
+                  <span className="text-white">{business.keywords.join(", ")}</span>
+                </>
+              )}
+            </div>
+
+            <div className="business-hours flex items-center gap-2 mt-2">
+              <Clock className="w-4 h-4" />
+              <span className={business.is_open ? "text-green-400" : "text-red-400"}>
+                {business.is_open ? "Open" : "Closed"}
+              </span>
+              <span>•</span>
+              <span>{getCurrentHours()}</span>
+            </div>
+          </div>
+
+          <Dialog open={showGallery} onOpenChange={setShowGallery}>
+            <DialogTrigger asChild>
+              <Button 
+                variant="secondary"
+                className="see-photos-btn"
+                onClick={() => setShowGallery(true)}
+              >
+                <Image className="w-4 h-4" />
+                See {photos.length}+ Photos
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-7xl h-[90vh]">
+              <PhotoGallery businessId={businessId} isOwner={false} />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
-
-      <Dialog open={showGallery} onOpenChange={setShowGallery}>
-        <DialogContent className="max-w-6xl">
-          <PhotoGallery photos={photos} businessName={business.name} />
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

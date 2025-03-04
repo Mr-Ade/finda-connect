@@ -139,14 +139,14 @@ export const BusinessCard = ({
   };
 
   return (
-    <Link to={`/business/${id}`} className="block h-full" aria-label={`View details for ${name}`}>
-      <Card className="overflow-hidden group relative h-full transition-all duration-200 hover:shadow-lg focus-within:ring-2 focus-within:ring-primary">
+    <Link to={`/business/${id}`} className="block h-full">
+      <Card className="overflow-hidden group relative h-full transition-all duration-200 hover:shadow-lg">
         {/* Image container */}
         <div className="relative h-48">
           <img
             src={image}
-            alt={`${name} business location`}
-            className="w-full h-full object-cover transition-transform group-hover:scale-105"
+            alt={name}
+            className="w-full h-full object-cover"
             loading="lazy"
             decoding="async"
             style={{
@@ -158,41 +158,32 @@ export const BusinessCard = ({
 
           {/* Author image */}
           {authorImage && (
-            <div className="absolute -bottom-6 right-4 transform group-hover:scale-110 transition-transform">
+            <div className="absolute -bottom-6 right-4">
               <img 
                 src={authorImage} 
-                alt={`${name} owner`}
+                alt="Author"
                 className="w-12 h-12 rounded-full border-2 border-white shadow-md"
               />
             </div>
           )}
 
           <button 
-            className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+            className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
             aria-label="Add to favorites"
-            onClick={(e) => e.preventDefault()}
           >
             <Heart className="w-5 h-5 text-gray-600" />
           </button>
 
           {/* Status badge */}
           <div className="absolute top-3 left-3">
-            <span 
-              className={`px-3 py-1 text-xs font-medium text-white rounded ${isOpen ? 'bg-green-500' : 'bg-red-500'} uppercase backdrop-blur-sm`}
-              role="status"
-              aria-label={`Business is currently ${isOpen ? 'open' : 'closed'}`}
-            >
+            <span className={`px-3 py-1 text-xs font-medium text-white rounded ${isOpen ? 'bg-green-500' : 'bg-red-500'} uppercase`}>
               {isOpen ? 'Open' : 'Closed'}
             </span>
           </div>
 
           {/* Rating badge */}
           <div className="absolute bottom-3 left-3">
-            <div 
-              className="flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-md px-3 py-1.5"
-              role="group"
-              aria-label={`Rating: ${actualRating} out of 5 stars with ${actualReviewCount} reviews`}
-            >
+            <div className="flex items-center gap-2 bg-white rounded-lg shadow-md px-3 py-1.5">
               <span className="bg-green-500 text-white text-sm font-bold px-2 py-1 rounded">
                 {actualRating}
               </span>
@@ -200,14 +191,14 @@ export const BusinessCard = ({
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}
-                    className={`w-4 h-4 ${star <= actualRating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
-                    aria-hidden="true"
+                    className={`w-4 h-4 ${
+                      star <= actualRating
+                        ? 'text-yellow-400 fill-yellow-400'
+                        : 'text-gray-300'
+                    }`}
                   />
                 ))}
-                <span className="text-sm text-gray-600 ml-1 sr-only">
-                  {actualReviewCount} reviews
-                </span>
-                <span className="text-sm text-gray-600 ml-1" aria-hidden="true">
+                <span className="text-sm text-gray-600 ml-1">
                   ({actualReviewCount})
                 </span>
               </div>
@@ -218,8 +209,8 @@ export const BusinessCard = ({
         {/* Content */}
         <div className="p-4">
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold line-clamp-1 group-hover:text-primary transition-colors">{name}</h3>
-            <span className="text-sm text-primary uppercase tracking-wider">{category}</span>
+            <h3 className="text-lg font-semibold line-clamp-1">{name}</h3>
+            <span className="text-sm text-primary uppercase">{category}</span>
             
             {description && (
               <p className="text-gray-600 text-sm line-clamp-2">
@@ -228,46 +219,33 @@ export const BusinessCard = ({
             )}
 
             <div className="flex items-center gap-2 text-gray-500 mt-2">
-              <button
+              <MapPin 
+                className="w-4 h-4 cursor-pointer hover:text-primary transition-colors" 
                 onClick={handleLocationClick}
-                className="inline-flex items-center gap-1 hover:text-primary transition-colors focus:outline-none focus:text-primary"
-                aria-label={`View ${name} location on map`}
-              >
-                <MapPin className="w-4 h-4" />
-                <span className="text-sm line-clamp-1">{location}</span>
-              </button>
+              />
+              <span className="text-sm line-clamp-1">{location}</span>
             </div>
 
             {/* Amenities */}
             <div className="flex justify-between mt-4">
-              <div 
-                className="flex gap-4 text-gray-400"
-                role="list"
-                aria-label="Business amenities"
-              >
-                {amenities?.wifi && <Wifi className="w-5 h-5" role="listitem" aria-label="WiFi available" />}
-                {amenities?.parking && <Car className="w-5 h-5" role="listitem" aria-label="Parking available" />}
-                {amenities?.petFriendly && <Dog className="w-5 h-5" role="listitem" aria-label="Pet friendly" />}
-                {amenities?.airConditioned && <Fan className="w-5 h-5" role="listitem" aria-label="Air conditioned" />}
+              <div className="flex gap-4 text-gray-400">
+                {amenities?.wifi && <Wifi className="w-5 h-5" />}
+                {amenities?.parking && <Car className="w-5 h-5" />}
+                {amenities?.petFriendly && <Dog className="w-5 h-5" />}
+                {amenities?.airConditioned && <Fan className="w-5 h-5" />}
               </div>
               <div className="flex gap-2">
                 {email && (
-                  <button
+                  <Mail 
+                    className="w-5 h-5 text-gray-400 cursor-pointer hover:text-primary transition-colors" 
                     onClick={handleContactClick}
-                    className="p-1 hover:text-primary transition-colors focus:outline-none focus:text-primary"
-                    aria-label="Contact business by email"
-                  >
-                    <Mail className="w-5 h-5" />
-                  </button>
+                  />
                 )}
                 {authorId && (
-                  <button
+                  <MessageSquare 
+                    className="w-5 h-5 text-gray-400 cursor-pointer hover:text-primary transition-colors"
                     onClick={handleMessageClick}
-                    className="p-1 hover:text-primary transition-colors focus:outline-none focus:text-primary"
-                    aria-label="Send direct message to business"
-                  >
-                    <MessageSquare className="w-5 h-5" />
-                  </button>
+                  />
                 )}
               </div>
             </div>

@@ -85,78 +85,64 @@ export const AppointmentBookingForm = ({ businessId, businessName }: Appointment
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600">
-        <CardTitle className="text-xl font-bold text-white flex items-center gap-2">
-          <Calendar className="w-5 h-5" />
-          Book an Appointment
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-xl font-bold flex items-center gap-2">
+          Make An Appointment
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6 py-4">
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium block mb-1.5">Select Date</label>
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                className="rounded-md border shadow p-3"
-                disabled={(date) => date < new Date()}
-              />
-            </div>
-            
-            <div className="grid gap-4">
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium block">Full Name</label>
-                <Input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full"
-                  placeholder="John Doe"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium block">Email</label>
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full"
-                  placeholder="john@example.com"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium block">Phone</label>
-                <Input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full"
-                  placeholder="+1 (555) 000-0000"
-                  required
-                />
-              </div>
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Select Date</label>
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              className="rounded-md border"
+              disabled={(date) => date < new Date()}
+            />
           </div>
-          
-          <Button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Name</label>
+            <Input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Email</label>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Your email"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Phone</label>
+            <Input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Your phone number"
+              required
+            />
+          </div>
+
+          <Button 
+            type="submit" 
+            className="w-full"
             disabled={bookAppointmentMutation.isPending}
           >
-            {bookAppointmentMutation.isPending ? (
-              <div className="flex items-center justify-center gap-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Booking...
-              </div>
-            ) : (
-              'Book Appointment'
-            )}
+            {bookAppointmentMutation.isPending ? "Booking..." : "Book Appointment"}
           </Button>
         </form>
       </CardContent>
