@@ -1,3 +1,4 @@
+
 import { OfferCard } from "./OfferCard";
 
 interface Offer {
