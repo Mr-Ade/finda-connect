@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { KYCProfile } from "@/types/profile";
 
 const KYCReviews = () => {
   const { toast } = useToast();
@@ -27,7 +28,7 @@ const KYCReviews = () => {
         .eq('verification_status', 'pending');
         
       if (error) throw error;
-      return data;
+      return data as KYCProfile[];
     }
   });
 

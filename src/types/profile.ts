@@ -16,3 +16,7 @@ export type ProfileUpdatePayload = {
 };
 
 export type ProfileUpdate = RealtimePostgresChangesPayload<ProfileUpdatePayload>;
+
+export interface KYCProfile extends Profile {
+  verification_status?: string;
+}
