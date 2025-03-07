@@ -1,3 +1,4 @@
+
 import AdminDashboard from "@/pages/dashboard/admin/Dashboard";
 import AdminListings from "@/pages/dashboard/admin/Listings";
 import AdminUsers from "@/pages/dashboard/admin/Users";
@@ -8,6 +9,8 @@ import AdminEditListing from "@/pages/dashboard/admin/EditListing";
 import SuperAdminDashboard from "@/pages/dashboard/admin/SuperAdminDashboard";
 import Reviews from "@/pages/dashboard/admin/Reviews";
 import CMSPage from "@/pages/dashboard/admin/cms/CMSPage";
+import KYCReviews from "@/pages/dashboard/admin/KYCReviews";
+import SubscriptionPlans from "@/pages/dashboard/admin/SubscriptionPlans";
 
 export const adminRoutes = [
   { path: "/dashboard/admin", element: <AdminDashboard /> },
@@ -21,4 +24,6 @@ export const adminRoutes = [
   { path: "/dashboard/admin/super", element: <SuperAdminDashboard /> },
   { path: "/dashboard/admin/cms", element: <CMSPage /> },
   { path: "/dashboard/admin/cms/:id", element: <CMSPage /> },
+  { path: "/dashboard/admin/kyc", element: <KYCReviews /> },
+  { path: "/dashboard/admin/subscription-plans", element: <SubscriptionPlans /> },
 ];
