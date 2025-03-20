@@ -1,6 +1,7 @@
 
 import { Database } from "@/integrations/supabase/types";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
+import { UserRole } from "./auth";
 
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
@@ -13,6 +14,7 @@ export type ProfileUpdatePayload = {
   city: string | null;
   address: string | null;
   zip_code: string | null;
+  role: UserRole | null;
 };
 
 export type ProfileUpdate = RealtimePostgresChangesPayload<ProfileUpdatePayload>;
