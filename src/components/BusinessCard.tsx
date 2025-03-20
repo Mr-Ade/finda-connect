@@ -1,3 +1,4 @@
+
 import { Heart, MapPin, Mail, Star, Wifi, Car, Dog, Fan, MessageSquare } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
