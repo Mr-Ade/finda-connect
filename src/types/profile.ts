@@ -15,10 +15,11 @@ export type ProfileUpdatePayload = {
   address: string | null;
   zip_code: string | null;
   role: UserRole | null;
+  verification_status?: string | null;
 };
 
 export type ProfileUpdate = RealtimePostgresChangesPayload<ProfileUpdatePayload>;
 
 export interface KYCProfile extends Profile {
-  verification_status?: string;
+  verification_status: string | null;
 }

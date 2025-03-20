@@ -19,7 +19,7 @@ import { KYCProfile } from "@/types/profile";
 const KYCReviews = () => {
   const { toast } = useToast();
   
-  const { data: kycSubmissions, isLoading } = useQuery({
+  const { data: kycSubmissions, isLoading, refetch } = useQuery({
     queryKey: ['kyc-submissions'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -45,6 +45,8 @@ const KYCReviews = () => {
         title: "KYC Approved",
         description: "User verification has been approved",
       });
+      
+      refetch();
     } catch (error) {
       console.error('Error approving KYC:', error);
       toast({
@@ -94,6 +96,13 @@ const KYCReviews = () => {
                 </TableCell>
               </TableRow>
             ))}
+            {(!kycSubmissions || kycSubmissions.length === 0) && (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center py-4">
+                  No pending KYC submissions found
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
