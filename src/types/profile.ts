@@ -15,7 +15,7 @@ export type ProfileUpdatePayload = {
   address: string | null;
   zip_code: string | null;
   role: UserRole | null;
-  verification_status?: string | null;
+  verification_status: string | null;
 };
 
 export type ProfileUpdate = RealtimePostgresChangesPayload<ProfileUpdatePayload>;
