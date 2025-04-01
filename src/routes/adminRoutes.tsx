@@ -7,6 +7,7 @@ import EditListing from "@/pages/dashboard/admin/EditListing";
 import Settings from "@/pages/dashboard/admin/Settings";
 import CMSPage from "@/pages/dashboard/admin/cms/CMSPage";
 import KYCReviews from "@/pages/dashboard/admin/KYCReviews";
+import DataExporter from "@/pages/dashboard/admin/DataExporter";
 
 export const adminRoutes = [
   { path: "/dashboard/admin", element: <AdminDashboard /> },
@@ -17,4 +18,5 @@ export const adminRoutes = [
   { path: "/dashboard/admin/settings", element: <Settings /> },
   { path: "/dashboard/admin/cms/:id", element: <CMSPage /> },
   { path: "/dashboard/admin/kyc-reviews", element: <KYCReviews /> },
+  { path: "/dashboard/admin/data-exporter", element: <DataExporter /> },
 ];
