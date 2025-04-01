@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { AdminRoute } from "@/components/auth/AdminRoute";
 import { Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 
 export const DataExporter = () => {
   const { toast } = useToast();
@@ -143,82 +144,84 @@ export const DataExporter = () => {
 
   return (
     <AdminRoute>
-      <div className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-8">Data Exporter</h1>
-        <div className="grid gap-6 grid-cols-1 md:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>Nigerian States</CardTitle>
-              <CardDescription>
-                Export the complete list of Nigerian states with their codes
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-500">
-                Downloads a JSON file containing the list of all states in Nigeria with their names and codes.
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button 
-                onClick={exportStates} 
-                disabled={loading.states}
-                className="w-full"
-              >
-                {loading.states ? "Exporting..." : "Export States"}
-                <Download className="ml-2 h-4 w-4" />
-              </Button>
-            </CardFooter>
-          </Card>
+      <DashboardLayout>
+        <div className="container mx-auto py-8">
+          <h1 className="text-3xl font-bold mb-8">Data Exporter</h1>
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>Nigerian States</CardTitle>
+                <CardDescription>
+                  Export the complete list of Nigerian states with their codes
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-500">
+                  Downloads a JSON file containing the list of all states in Nigeria with their names and codes.
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button 
+                  onClick={exportStates} 
+                  disabled={loading.states}
+                  className="w-full"
+                >
+                  {loading.states ? "Exporting..." : "Export States"}
+                  <Download className="ml-2 h-4 w-4" />
+                </Button>
+              </CardFooter>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Nigerian Cities</CardTitle>
-              <CardDescription>
-                Export the complete list of Nigerian cities
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-500">
-                Downloads a JSON file containing all cities with their related state IDs and ad counts.
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button 
-                onClick={exportCities} 
-                disabled={loading.cities}
-                className="w-full"
-              >
-                {loading.cities ? "Exporting..." : "Export Cities"}
-                <Download className="ml-2 h-4 w-4" />
-              </Button>
-            </CardFooter>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Nigerian Cities</CardTitle>
+                <CardDescription>
+                  Export the complete list of Nigerian cities
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-500">
+                  Downloads a JSON file containing all cities with their related state IDs and ad counts.
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button 
+                  onClick={exportCities} 
+                  disabled={loading.cities}
+                  className="w-full"
+                >
+                  {loading.cities ? "Exporting..." : "Export Cities"}
+                  <Download className="ml-2 h-4 w-4" />
+                </Button>
+              </CardFooter>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>States with Cities</CardTitle>
-              <CardDescription>
-                Export states with their associated cities
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-500">
-                Downloads a JSON file with states and their corresponding cities in a nested format.
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button 
-                onClick={exportStatesWithCities} 
-                disabled={loading.statesAndCities}
-                className="w-full"
-              >
-                {loading.statesAndCities ? "Exporting..." : "Export Combined Data"}
-                <Download className="ml-2 h-4 w-4" />
-              </Button>
-            </CardFooter>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>States with Cities</CardTitle>
+                <CardDescription>
+                  Export states with their associated cities
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-500">
+                  Downloads a JSON file with states and their corresponding cities in a nested format.
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button 
+                  onClick={exportStatesWithCities} 
+                  disabled={loading.statesAndCities}
+                  className="w-full"
+                >
+                  {loading.statesAndCities ? "Exporting..." : "Export Combined Data"}
+                  <Download className="ml-2 h-4 w-4" />
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
         </div>
-      </div>
+      </DashboardLayout>
     </AdminRoute>
   );
 };
