@@ -1,4 +1,3 @@
-
 import { Suspense, lazy } from "react";
 import { Hero } from "@/components/home/Hero";
 import { OffersSection } from "@/components/home/OffersSection";

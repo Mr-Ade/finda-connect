@@ -1,4 +1,3 @@
-
 import Index from "@/pages/Index";
 import NotFound from "@/pages/404";
 import AuthorDetail from "@/pages/AuthorDetail";
